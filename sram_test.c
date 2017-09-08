@@ -1,24 +1,17 @@
 /*
- * Byggern.c
+ * sram_test.c
  *
- * Created: 01.09.2017 10:00:34
- *  Author: gruppe 43
+ * Created: 08.09.2017 12:27:32
+ *  Author: rendellc
  */ 
 
-
-#include "global_declarations.h"
-#include <avr/io.h>
-#include <util/delay.h>
-#include <avr/interrupt.h>
-
-#include "uart.h"
-
+#include <stdlib.h>
 #include <stdint.h>
 
-void SRAM_test(void)
-{	
-	volatile char *ext_ram = (char *) 0x1400; // Start address for the SRAM
-	uint16_t ext_ram_size = 0xC00;
+void SRAM_test_(void)
+{
+	volatile char *ext_ram = (char *) 0x4000; // Start address for the SRAM
+	uint16_t ext_ram_size = 0x2000;
 	uint16_t write_errors = 0;
 	uint16_t retrieval_errors = 0;
 	printf("Starting SRAM test...\n");
@@ -34,7 +27,7 @@ void SRAM_test(void)
 		ext_ram[i] = some_value;
 		uint8_t retreived_value = ext_ram[i];
 		if (retreived_value != some_value) {
-			printf("Write phase error: ext_ram[%4d] = %02X (should be %02X)\n", i,retreived_value, some_value);
+			printf("Write phase error: ext_ram[%4d] = %02X (should be %02X)\n", i, retreived_value, some_value);
 			write_errors++;
 		}
 	}
@@ -50,23 +43,5 @@ void SRAM_test(void)
 			retrieval_errors++;
 		}
 	}
-	printf("SRAM test completed with\n%4d errors in write phase and\n%4d errors in retrieval phase\n\n", write_errors, retrieval_errors);
+	printf("SRAM test completed with\n%4d errors in write phase and\n%4d errorsin retrieval phase\n\n", write_errors, retrieval_errors);
 }
-
-
-int main(void) {
-	cli();
-	uart_init();
-
-	MCUCR |= (1 << SRE);
-	SFIOR |= (1 << XMM2);
-
-	sei();
-	
-	SRAM_test();
-	
-	
-	return(0);
-}
-
-
