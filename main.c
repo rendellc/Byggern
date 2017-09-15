@@ -7,18 +7,16 @@
 
 
 #include "global_declarations.h"
-#include <avr/io.h>
-#include <util/delay.h>
-#include <avr/interrupt.h>
+
 
 #include "uart.h"
+#include "adc.h"
 
 #include <stdint.h>
 
-void SRAM_test(void)
-{	
-	volatile char *ext_ram = (char *) 0x1400; // Start address for the SRAM
-	uint16_t ext_ram_size = 0xC00;
+void SRAM_test(void){	
+	volatile char *ext_ram = (char *) RAM_ADR; // Start address for the SRAM
+	uint16_t ext_ram_size = RAM_SIZE;
 	uint16_t write_errors = 0;
 	uint16_t retrieval_errors = 0;
 	printf("Starting SRAM test...\n");
@@ -57,16 +55,29 @@ void SRAM_test(void)
 int main(void) {
 	cli();
 	uart_init();
-
+	
+	// SRAM init
 	MCUCR |= (1 << SRE);
 	SFIOR |= (1 << XMM2);
-
+	
+	// ADC init (must be after SRAM init)
+	adc_init();
+	
 	sei();
 	
-	SRAM_test();
+	printf("Entering loop\n");
+	joystick_t joystick = {0,0};
+	touch_t touch = {0,0};
+	while(1){
+		//joystick = adc_read_joy();
+		//touch = adc_read_touch();
+		//printf("Joystick x: %i\tJoystick y: %i\n", joystick.x, joystick.y);
+		//printf("Slider: %i\tButton: %i\n", touch.slider, touch.button);
+		printf("%i\n", adc_direction_joy());
+		
+	}
 	
+	//SRAM_test();
 	
-	return(0);
+	return 0;
 }
-
-
