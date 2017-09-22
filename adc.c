@@ -7,10 +7,18 @@
 #include "adc.h"
 #include "global_declarations.h"
 
+#define ADC_CH1 0b0100
+#define ADC_CH2 0b0101
+#define ADC_CH3 0b0110
+#define ADC_CH4 0b0111
+
+#define ADC_JOY_X ADC_CH2
+#define ADC_JOY_Y ADC_CH1
+#define ADC_SLIDER ADC_CH3
+#define ADC_BUTTON ADC_CH4
 
 #define ANALOG_MID 128
 #define ANALOG_THRESH 18
-
 
 volatile char* adc_adr = ADC_ADR;
 

@@ -5,7 +5,7 @@ use ieee.std_logic_unsigned.all;
 
 entity GAL_addrSelect is
     Port (
-	gate	    : In std_logic;
+		gate	    : In std_logic;
         a11         : In std_logic;
         a10         : In std_logic;
         a9          : In std_logic;
@@ -15,7 +15,7 @@ entity GAL_addrSelect is
         adc_cs       : Out std_logic;
         oled_cs      : Out std_logic;
         gen_io0_cs   : Out std_logic;
-	gen_io1_cs   : Out std_logic
+		gen_io1_cs   : Out std_logic
     );
     
     attribute LOC : string;
@@ -26,7 +26,7 @@ entity GAL_addrSelect is
     attribute LOC of gen_io0_cs    : signal is "P16";	
     attribute LOC of gen_io1_cs    : signal is "P15";
 
-    attribute LOC of gate	: signal is "P6";
+    attribute LOC of gate		: signal is "P6";
     attribute LOC of a11        : signal is "P5";
     attribute LOC of a10        : signal is "P4";
     attribute LOC of a9         : signal is "P3";

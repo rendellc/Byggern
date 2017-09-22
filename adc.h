@@ -11,6 +11,8 @@
 
 #include "global_declarations.h"
 
+#define ADC_ADR 0x1100
+
 void adc_init(void);
 
 joystick_t adc_analogread_joy();

@@ -9,26 +9,17 @@
 #ifndef GLOBAL_DECLARATIONS_H_
 #define GLOBAL_DECLARATIONS_H_
 
-#include <avr/io.h>
-#include <util/delay.h>
-
-#include <avr/interrupt.h>
-
 #define F_CPU 4915200UL
 
+#include <avr/io.h>
+#include <util/delay.h>
+#include <avr/interrupt.h>
+
+
+#define OLED_BUFFER_ADR 0x1400
 #define RAM_ADR 0x1400
-#define RAM_SIZE 0xC00
+#define RAM_SIZE 0xc00
 
-#define ADC_ADR 0x1100
-#define ADC_CH1 0b0100
-#define ADC_CH2 0b0101
-#define ADC_CH3 0b0110
-#define ADC_CH4 0b0111
-
-#define ADC_JOY_X ADC_CH2
-#define ADC_JOY_Y ADC_CH1
-#define ADC_SLIDER ADC_CH3
-#define ADC_BUTTON ADC_CH4
 
 typedef struct {
 	int x;

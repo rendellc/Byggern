@@ -11,6 +11,7 @@
 
 #include "uart.h"
 #include "adc.h"
+#include "oled.h"
 
 #include <stdint.h>
 
@@ -65,6 +66,7 @@ int main(void) {
 	
 	sei();
 	
+	/*
 	printf("Entering loop\n");
 	joystick_t joystick = {0,0};
 	touch_t touch = {0,0};
@@ -76,7 +78,16 @@ int main(void) {
 		printf("%i\n", adc_direction_joy());
 		
 	}
+	*/
 	
+	oled_reset();
+
+	oled_print("Hello!");
+	oled_update();
+
+	while(1)
+	{
+	}
 	//SRAM_test();
 	
 	return 0;
