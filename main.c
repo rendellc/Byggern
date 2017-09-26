@@ -80,11 +80,13 @@ int main(void) {
 	}
 	*/
 	
-	oled_reset();
-
-	oled_print("Hello!");
-	oled_update();
-
+	oled_init();
+	//oled_update();
+	//oled_printchar('a');
+	//oled_update();
+	oled_fill_screen(0);
+	printf("\nEntering loop!");
+	
 	while(1)
 	{
 	}

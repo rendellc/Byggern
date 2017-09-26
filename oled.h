@@ -12,7 +12,7 @@
 
 #define OLED_WIDTH 128
 #define OLED_PAGES 8
-#define OLED_HEIGHT OLED_PAGES*8
+#define OLED_HEIGHT OLED_PAGES*8 // 8 pages tall
 
 #define OLED_C_ADR 0x1000
 #define OLED_D_ADR 0x1001
@@ -22,7 +22,7 @@ void oled_init();
 void oled_reset();
 
 void oled_home();
-void oled_carriagereturn();
+void oled_cartridgereturn();
 void oled_newline();
 
 void oled_goto_line(uint8_t);

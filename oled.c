@@ -1,52 +1,63 @@
 #include "oled.h"
 #include "fonts.h"
 #include "global_declarations.h"
+#include "oled_cmds.h"
 
 #define FONTHEIGHT 6
 #define FONTWIDTH 4
 #define FONTCHARSX OLED_WIDTH/(FONTWIDTH+1)
 #define FONTCHARSY OLED_HEIGHT/FONTHEIGHT
-#define FONTMASK 0xFF<<(8-FONTWIDTH)
+#define FONTMASK ((0xFF<<(8-FONTWIDTH))&0xFF)
+#define SPACE 2
+
 uint8_t* font = font4;
+uint8_t* buffer = OLED_BUFFER_ADR;
 
 uint8_t xpos = 0;
 uint8_t ypos = 0;
 
 void write_c(cmd){
 	_delay_us(1);
-	char* ptr = OLED_C_ADR;
-	*ptr = cmd;
+	*((uint8_t *)OLED_C_ADR) = cmd;
 }
 
 void write_d(data){
-	_delay_us(1);
-	char* ptr = OLED_D_ADR;
-	*ptr = data;
+	_delay_us(10000);
+	*((uint8_t *)OLED_D_ADR) = data;
 }
 
 void oled_init(){
-	write_c(0xae);        // display  off
-	write_c(0xa1);        // segment  remap
-	write_c(0xda);        // common  pads  hardware:  alternative
+	// buffer test
+	for (int i = 0; i<10; ++i){
+		for (int j = 0; j<4; ++j){
+			buffer[i*FONTWIDTH + j] = 1; // !
+		}
+	}
+	
+	uint8_t tilde[] = {0b00001000,0b00000100,0b00001000,0b00000100};
+	
+	write_c(SET_DISP_OFF);
+	write_c(SET_SEG_REMAP);
+	write_c(SET_COM_PINS_HW_CONFIG);
 	write_c(0x12);
-	write_c(0xc8);        // common output scan direction:com63~com0
-	write_c(0xa8);        // multiplex  ration  mode:63
+	write_c(SET_COM_SCAN_REMAP);
+	write_c(SET_MULTPLX_RATIO);
 	write_c(0x3f);
-	write_c(0xd5);        // display divide ratio/osc. freq. mode
+	write_c(SET_DISP_CLK_DIV_FOSC);
 	write_c(0x80);
-	write_c(0x81);        // contrast  control
+	write_c(SET_CONTRAST_CTRL);
 	write_c(0x50);
-	write_c(0xd9);        // set  pre-charge  period
+	write_c(SET_PRE_CHRG_PERIOD);
 	write_c(0x21);
-	write_c(0x20);        // Set  Memory  Addressing  Mode
+	write_c(SET_MEM_ADR_MODE);
 	write_c(0x00);
-	write_c(0xdb);        // VCOM  deselect  level  mode
+	write_c(SET_VCOMH_DES_LEVEL);
 	write_c(0x30);
-	write_c(0xad);        // master  configuration
+	write_c(SET_INTERNAL_IREF);
 	write_c(0x00);
-	write_c(0xa4);        // out  follows  RAM  content
-	write_c(0xa6);        // set  normal  display
-	write_c(0xaf);        // display  on	
+	write_c(SET_FOLLOW_RAM);
+	write_c(SET_NORMAL_DISP);
+	write_c(SET_DISP_ON);
 }
 
 void oled_reset(){
@@ -61,14 +72,14 @@ void oled_home(){
 	ypos = 0;
 }
 
-void oled_carriagereturn(){
+void oled_cartridgereturn(){
 	xpos = 0;
 }
 
 void oled_newline(){
 	if(ypos<(FONTCHARSY-1))
 		ypos++;
-	oled_carriagereturn();
+	oled_cartridgereturn();
 }
 
 void oled_goto_line(uint8_t y){
@@ -109,54 +120,51 @@ void oled_printchar(uint8_t chr){
 	else if (chr == '\n')
 		oled_newline();
 	else if (chr == '\r')
-		oled_carriagereturn();
+		oled_cartridgereturn();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
 
 void oled_putchar(uint8_t x, uint8_t y, uint8_t chr){
-	char* ptr = OLED_BUFFER_ADR;
-	for(int i=0; i<FONTWIDTH; i++)
-	{
-		ptr[y*FONTHEIGHT+x*(FONTWIDTH+1)+i] &= ~(0xFF&FONTMASK);
-		ptr[y*FONTHEIGHT+x*(FONTWIDTH+1)+i] |= font[chr*FONTWIDTH + i];
-	}
-	ptr[y*FONTHEIGHT+x*(FONTWIDTH+1)+FONTWIDTH] &= ~(0xFF&FONTMASK);
+	buffer[y*OLED_WIDTH + x] = chr - 0x20;
 }
 
-void oled_fill_screen(uint8_t val)
-{
-	for(int i = 0; i<OLED_HEIGHT; i++)
-		oled_fill_line(i,val);
+void oled_fill_screen(uint8_t val){
+	write_c(SET_COL_ADR);  write_c(0x00); write_c(OLED_WIDTH-1);
+	write_c(SET_PAGE_ADR); write_c(0x00); write_c(OLED_PAGES-1);
+	
+	for (int page = 0; page<OLED_PAGES; ++page){
+		for (int seg = 0; seg<OLED_WIDTH; ++seg){
+			write_d(val);
+		}
+	}
 }
 
 void oled_fill_line(uint8_t line, uint8_t val){
-	for (int i = 0; i < OLED_WIDTH; i++)
-		oled_write_dot(line, i, val);
+
 }
 
 void oled_fill_page(uint8_t page, uint8_t val){
-	char* ptr = OLED_BUFFER_ADR;
-	for (int i = 0; i < OLED_WIDTH; i++)
-		ptr[i+page*OLED_WIDTH] = val;
+
 }
 
 void oled_write_dot(uint8_t line, uint8_t column, uint8_t val){
-	char* ptr = OLED_BUFFER_ADR;
-	if(val)
-		ptr[column+(line>>3)*OLED_WIDTH] |= 1<<(line&0x07);
-	else
-		ptr[column+(line>>3)*OLED_WIDTH] &= ~(1<<(line&0x07));
 }
 
 void oled_update(){
-	write_c(0x21);
-	write_c(0x00);
-	write_c(OLED_WIDTH-1);
-	write_c(0x22);
-	write_c(0x00);
-	write_c(OLED_HEIGHT-1);
-	char* ptr = OLED_BUFFER_ADR;
-	for(int i=0; i<OLED_WIDTH*OLED_PAGES; i++)
-	write_d(ptr[i]);
+	write_c(SET_COL_ADR); write_c(0x00); write_c(OLED_WIDTH-1);
+	
+	write_c(SET_PAGE_ADR);write_c(0x00); write_c(OLED_PAGES-1);
+	
+	write_c(SET_LOW_COL_ADR  | 0x00);
+	write_c(SET_HIGH_COL_ADR | 0x00);
+	
+	for (int page = 0; page<OLED_PAGES; ++page){
+		for (int seg = 0; seg<OLED_WIDTH; ++seg){
+																_delay_ms(10); // delay for testing
+																printf("hey");
+			
+			write_d(buffer[page*OLED_WIDTH + seg]);
+		}
+	}
 }
