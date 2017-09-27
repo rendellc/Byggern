@@ -56,7 +56,7 @@ void uart_init(){
 	// stop bit to 1
 	UCSR0C &= ~(1 << USBS0);
 	
-	fdevopen(uart_send, uart_recv);
+	
 }
 
 

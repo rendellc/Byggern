@@ -5,7 +5,6 @@
  *  Author: gruppe 43
  */ 
 
-
 #include "global_declarations.h"
 
 
@@ -64,6 +63,8 @@ int main(void) {
 	// ADC init (must be after SRAM init)
 	adc_init();
 	
+	// setup printf
+	fdevopen(uart_send, uart_recv);
 	sei();
 	
 	/*
@@ -84,11 +85,21 @@ int main(void) {
 	//oled_update();
 	//oled_printchar('a');
 	//oled_update();
-	oled_fill_screen(0);
-	printf("\nEntering loop!");
+	//oled_fill(1);
+	oled_printf("Hello\n");
+	oled_printf("Wassup\n");
+	oled_printf("This be wild\n");
+	oled_printf("Hello\n");
+	oled_printf("Wassup\n");
+	oled_printf("This be wild\n");
+	oled_printf("Hello\n");
+	oled_printf("Wassup\n");
+	oled_printf("This be wild\n");
+	//oled_update();
 	
-	while(1)
-	{
+	printf("\nEntering loop!\n");
+	
+	while(1) {
 	}
 	//SRAM_test();
 	
