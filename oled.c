@@ -23,7 +23,7 @@ void write_c(uint8_t cmd){
 }
 
 void write_d(uint8_t data){
-	_delay_us(1000);
+	_delay_us(1000); // delay increased to 1000 to make debug easier
 	*((uint8_t *)OLED_D_ADR) = data;
 }
 
