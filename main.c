@@ -5,15 +5,17 @@
  *  Author: gruppe 43
  */ 
 
-
 #include "global_declarations.h"
-
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
 
 #include "uart.h"
 #include "adc.h"
 #include "oled.h"
 
 #include <stdint.h>
+
 
 void SRAM_test(void){	
 	volatile char *ext_ram = (char *) RAM_ADR; // Start address for the SRAM
@@ -61,9 +63,14 @@ int main(void) {
 	MCUCR |= (1 << SRE);
 	SFIOR |= (1 << XMM2);
 	
-	// ADC init (must be after SRAM init)
-	adc_init();
+	adc_init(); // ADC init (must be after SRAM init)
 	
+	oled_init();
+
+	// setup printf
+	stdout = &uart_out; // printf defaults to oled
+	stdin  = &uart_in;
+
 	sei();
 	
 	/*
@@ -80,13 +87,33 @@ int main(void) {
 	}
 	*/
 	
-	oled_reset();
+	
+	//oled_update();
+	//oled_printchar('a');
+	//oled_update();
+	//oled_fill(1);
 
-	oled_print("Hello!");
-	oled_update();
+	oled_printf("Hello World! ");
+	oled_printf("Is this thing on?\n");
+	oled_printf("\nBananaphone du du-du\n");
 
-	while(1)
-	{
+	/*fprintf(&oled_out, "oled_out 1\n");*/ oled_printf("oled_out 1\n");
+	
+	/*fprintf(&oled_out, "oled_out 2\n");*/ oled_printf("oled_out 2\n");
+	//fprintf(&uart_out, "uart_out 1\n");
+	//fprintf(&uart_out, "uart_out 2\n");
+
+	//oled_printf("oled: Enter loop not after a while!\n");
+	
+	stdout = &uart_out;
+	printf("stdout: printf\n");
+
+	fprintf(stdout, "uart: fprintf with stdout\n"); printf("\n");
+
+	fprintf(&uart_out, "uart: fprintf with &uart_out\n"); printf("\n");
+	
+	
+	while(1) {
 	}
 	//SRAM_test();
 	

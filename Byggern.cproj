@@ -130,6 +130,9 @@
     <Compile Include="oled.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="oled_cmds.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="sram_test.c">
       <SubType>compile</SubType>
     </Compile>

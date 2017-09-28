@@ -15,7 +15,6 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
-
 #define OLED_BUFFER_ADR 0x1400
 #define RAM_ADR 0x1400
 #define RAM_SIZE 0xc00

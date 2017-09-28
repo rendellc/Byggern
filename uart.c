@@ -5,13 +5,21 @@
  *  Author: rendellc
  */ 
 #include "global_declarations.h"
-#include "uart.h"
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "uart.h"
+
+FILE uart_out = FDEV_SETUP_STREAM(uart_send, NULL, _FDEV_SETUP_WRITE);
+FILE uart_in = FDEV_SETUP_STREAM(NULL, uart_recv, _FDEV_SETUP_READ);
 
 #define BAUD 9600UL
-#define BUFFER_MAX 100
+#define BUFFER_MAX 128
 
 volatile char send_buffer[BUFFER_MAX];
 volatile char recv_buffer[BUFFER_MAX];
@@ -23,9 +31,8 @@ volatile int recvtail = 0;
 ISR(USART0_RXC_vect){
 	cli();
 	char input = UDR0;
-	if((recvhead+1)%BUFFER_MAX != recvtail)			// Sjekk at bufferen ikke er full
-	{
-		recv_buffer[recvhead++] = input;			// If so, legg inn byte
+	if((recvhead+1)%BUFFER_MAX != recvtail){			// Sjekk at bufferen ikke er full
+		recv_buffer[recvhead++] = input;				// If so, legg inn byte
 		recvhead = recvhead%BUFFER_MAX;
 	}
 	sei();
@@ -34,9 +41,6 @@ ISR(USART0_RXC_vect){
 ISR(USART0_TXC_vect){
 	
 }
-
-
-
 
 void uart_init(){
 	// set baud rate
@@ -56,9 +60,7 @@ void uart_init(){
 	// stop bit to 1
 	UCSR0C &= ~(1 << USBS0);
 	
-	fdevopen(uart_send, uart_recv);
 }
-
 
 void uart_send(unsigned char msg){
 	while (!(UCSR0A & (1 << UDRE0)));
