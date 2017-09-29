@@ -15,7 +15,7 @@ extern FILE uart_in;
 
 void uart_init();
 
-void uart_send(unsigned char msg);
+int uart_send(unsigned char msg);
 
 unsigned char uart_recv();
 

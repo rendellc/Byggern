@@ -19,7 +19,7 @@
 #define ADC_BUTTON ADC_CH4
 
 #define ANALOG_MID 128
-#define ANALOG_THRESH 18
+#define ANALOG_THRESH 25 // 18 before
 
 volatile uint8_t* adc_adr = (uint8_t*)ADC_ADR;
 
@@ -61,10 +61,12 @@ ISR(INT0_vect){
 
 
 void adc_init(void){
+	cli();
 	GICR = (1 << INT0); // enable interupt
 	EMCUCR |= (1 << SRW00);
 	
 	*adc_adr = ADC_JOY_X;
+	sei();
 }
 
 inline int convert_range(uint8_t data){ // convert from 0->255 to -100->100

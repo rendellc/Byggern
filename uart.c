@@ -62,9 +62,10 @@ void uart_init(){
 	
 }
 
-void uart_send(unsigned char msg){
+int uart_send(unsigned char msg){
 	while (!(UCSR0A & (1 << UDRE0)));
 	UDR0 = msg;
+	return 0;
 }
 
 unsigned char uart_recv(){

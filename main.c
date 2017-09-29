@@ -5,6 +5,7 @@
  *  Author: gruppe 43
  */ 
 
+
 #include "global_declarations.h"
 #include <stdlib.h>
 #include <string.h>
@@ -13,8 +14,10 @@
 #include "uart.h"
 #include "adc.h"
 #include "oled.h"
+#include "menu.h"
 
 #include <stdint.h>
+
 
 
 void SRAM_test(void){	
@@ -56,65 +59,52 @@ void SRAM_test(void){
 
 
 int main(void) {
-	cli();
+	
 	uart_init();
 	
 	// SRAM init
 	MCUCR |= (1 << SRE);
 	SFIOR |= (1 << XMM2);
 	
+	// setup heap
+	__malloc_heap_start = RAM_ADR;
+	__malloc_heap_end   = RAM_ADR + RAM_SIZE;
+	
+	
+	
 	adc_init(); // ADC init (must be after SRAM init)
 	
-	oled_init();
+	oled_reset();
 
 	// setup printf
 	stdout = &uart_out; // printf defaults to oled
 	stdin  = &uart_in;
-
-	sei();
 	
-	/*
+	
+	menu_init();
+	
+	printf("Running\n");
+	
+	
 	printf("Entering loop\n");
 	joystick_t joystick = {0,0};
 	touch_t touch = {0,0};
-	while(1){
-		//joystick = adc_read_joy();
-		//touch = adc_read_touch();
-		//printf("Joystick x: %i\tJoystick y: %i\n", joystick.x, joystick.y);
-		//printf("Slider: %i\tButton: %i\n", touch.slider, touch.button);
-		printf("%i\n", adc_direction_joy());
-		
-	}
-	*/
-	
-	
-	//oled_update();
-	//oled_printchar('a');
-	//oled_update();
-	//oled_fill(1);
-
-	oled_printf("Hello World! ");
-	oled_printf("Is this thing on?\n");
-	oled_printf("\nBananaphone du du-du\n");
-
-	/*fprintf(&oled_out, "oled_out 1\n");*/ oled_printf("oled_out 1\n");
-	
-	/*fprintf(&oled_out, "oled_out 2\n");*/ oled_printf("oled_out 2\n");
-	//fprintf(&uart_out, "uart_out 1\n");
-	//fprintf(&uart_out, "uart_out 2\n");
-
-	//oled_printf("oled: Enter loop not after a while!\n");
-	
 	stdout = &uart_out;
-	printf("stdout: printf\n");
-
-	fprintf(stdout, "uart: fprintf with stdout\n"); printf("\n");
-
-	fprintf(&uart_out, "uart: fprintf with &uart_out\n"); printf("\n");
-	
 	
 	while(1) {
+		menu_update_subchoice();
 	}
+
+	/*
+	stdout = &oled_out;
+	printf("stdout: printf stdout\n");
+	
+	fprintf(stdout, "uart: fprintf with stdout\n");  printf("\n");
+	
+	fprintf(&uart_out, "uart: fprintf with &uart_out\n"); printf("\n");
+	*/
+	
+
 	//SRAM_test();
 	
 	return 0;

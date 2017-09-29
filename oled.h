@@ -16,6 +16,8 @@ extern FILE oled_out;
 #define OLED_C_ADR 0x1000
 #define OLED_D_ADR 0x1001
 
+#define OLED_REFRESH_RATE 60 // Hz
+
 void oled_init();
 void oled_reset();
 
@@ -45,7 +47,7 @@ void oled_goto_nextpos();
 void oled_pos(uint8_t row, uint8_t column);
 
 void oled_printf(const char* msg);
-void oled_putchar(char chr);
+int  oled_putchar(char chr);
 void oled_buffchar(char chr);
 
 void oled_clear_line(uint8_t line);

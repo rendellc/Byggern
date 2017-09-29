@@ -1,4 +1,5 @@
 #include <avr/pgmspace.h>
+#include <avr/interrupt.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -15,18 +16,27 @@
 #define OLED_HEIGHT OLED_PAGES*8 // 8 pages tall
 #define SPACING 1
 
-
-
 const uint8_t* font			= font4;
 const uint8_t  fontheight	= 6;		// buffchr will have bugs if fontwidth changes during execution
 const uint8_t  fontwidth	= 4;
 
-uint8_t* buffer	= (uint8_t*)OLED_BUFFER_ADR;
+volatile uint8_t* buffer	= (uint8_t*)OLED_BUFFER_ADR;
 
 uint8_t xpos = 0;
 uint8_t ypos = 0;
 
 FILE oled_out = FDEV_SETUP_STREAM(oled_putchar, NULL, _FDEV_SETUP_WRITE);
+
+ISR(TIMER0_OVF_vect){
+	oled_update();
+}
+
+void oled_autorefresh_init(){
+	// set up interrupt timer
+	TIMSK=(1<<TOIE0) | (1<<TOIE1);
+	
+	
+}
 
 void write_c(uint8_t cmd){
 	_delay_us(1);
@@ -34,18 +44,12 @@ void write_c(uint8_t cmd){
 }
 
 void write_d(uint8_t data){
-	_delay_us(0); // delay increased to 1000 to make debug easier, works without any delay
+	_delay_us(1); // delay increased to 1000 to make debug easier, works without any delay
 	*((uint8_t *)OLED_D_ADR) = data;
 }
 
 void oled_init(){
-	// init buffer test
-	for (int page = 0; page<OLED_PAGES; ++page){
-		for (int seg = 0; seg<OLED_WIDTH; ++seg){
-			buffer[page*OLED_WIDTH + seg] = 0x00; 
-		}
-	}
-	
+	cli();
 	write_c(SET_DISP_OFF);
 	write_c(SET_SEG_REMAP);
 	write_c(SET_COM_PINS_HW_CONFIG);
@@ -68,7 +72,10 @@ void oled_init(){
 	write_c(SET_FOLLOW_RAM);
 	write_c(SET_NORMAL_DISP);
 	write_c(SET_DISP_ON);
-	oled_update();
+	
+	//oled_autorefresh_init();
+	sei();
+	
 }
 
 void oled_reset(){
@@ -184,9 +191,10 @@ void oled_printf(const char* msg){
 	oled_update();	
 }
 
-void oled_putchar(char chr){
+int oled_putchar(char chr){
 	oled_buffchar(chr);
 	oled_update();
+	return 0;
 }
 
 // *** DRAWING RELATED ***
