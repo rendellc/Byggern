@@ -15,7 +15,10 @@
 typedef struct _menu_t {
 	char   title[MAX_TITLE_LENGTH+1];
 	struct _menu_t*	submenus[MAX_SUBMENUS];
-	struct _menu_t* parent;
+	union{	
+		struct _menu_t* parent;
+		void (*callback)(void);
+	}
 } menu_t;
 
 menu_t* menu_init_menu(char*, menu_t*);
