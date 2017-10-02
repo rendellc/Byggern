@@ -15,6 +15,7 @@
 #include "adc.h"
 #include "oled.h"
 #include "menu.h"
+#include "sram_test.h"
 
 #include <stdint.h>
 

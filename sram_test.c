@@ -5,6 +5,7 @@
  *  Author: rendellc
  */
 
+#include "sram_test.h"
 #include <stdlib.h>
 #include <stdint.h>
 
