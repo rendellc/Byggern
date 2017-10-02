@@ -12,7 +12,7 @@
 #include "uart.h"
 #include "adc.h"
 #include "oled.h"
-
+#include "sram_test.h"
 #include <stdint.h>
 
 void SRAM_test(void){	

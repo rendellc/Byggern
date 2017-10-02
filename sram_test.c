@@ -7,6 +7,8 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include "global_declarations.h"
+#include "sram_test.h"
 
 void SRAM_test_(void)
 {
