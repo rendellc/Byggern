@@ -10,15 +10,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #include "uart.h"
 #include "adc.h"
 #include "oled.h"
+#include "sram_test.h"
 #include "menu.h"
 #include "sram_test.h"
-
-#include <stdint.h>
-
 
 int main(void) {
 

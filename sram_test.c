@@ -8,6 +8,8 @@
 #include "sram_test.h"
 #include <stdlib.h>
 #include <stdint.h>
+#include "global_declarations.h"
+#include "sram_test.h"
 
 void SRAM_test(void){
 	volatile char *ext_ram = (char *) RAM_ADR; // Start address for the SRAM
@@ -43,5 +45,5 @@ void SRAM_test(void){
 			retrieval_errors++;
 		}
 	}
-	printf("SRAM test completed with\n%4d errors in write phase and\n%4d errors in retrieval phase\n\n", write_errors, retrieval_errors);
+	printf("SRAM test completed with\n%4d errors in write phase and\n%4d errorsin retrieval phase\n\n", write_errors, retrieval_errors);
 }
