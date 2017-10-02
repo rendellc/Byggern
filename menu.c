@@ -23,21 +23,11 @@ menu_t* head;
 menu_t* current;
 uint8_t subchoice = 0;
 
-/*
-ISR(INT2_vect){
-	// button clicked
-	current = current->submenus[subchoice];
-	fprintf(&uart_out, "button interrupt\n");
-}
-*/
 
 void menu_click_init(){
-	// initialize interrupt for button.... Kanskje polle istedenfor?
 	//cli();
 	PORTE  |= 1 << PE0;
 	DDRE   &= ~(1 << PE0);
-	//EMCUCR &= ~(1 << ISC2);
-	//GICR   |= (1<<INT2);
 	//sei();
 }
 
