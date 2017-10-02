@@ -5,6 +5,7 @@
  *  Author: rendellc
  */ 
 #include "adc.h"
+#include <stdlib.h>
 #include "global_declarations.h"
 
 #define ADC_CH1 0b0100
@@ -18,18 +19,16 @@
 #define ADC_BUTTON ADC_CH4
 
 #define ANALOG_MID 128
-#define ANALOG_THRESH 18
+#define ANALOG_THRESH 25 // 18 before
 
-volatile char* adc_adr = ADC_ADR;
+volatile uint8_t* adc_adr = (uint8_t*)ADC_ADR;
 
-volatile unsigned char x_read		= 0;
-volatile unsigned char y_read		= 0;
-volatile unsigned char slider_read	= 0;
-volatile unsigned char btn_read		= 0;
+volatile uint8_t x_read		= 0;
+volatile uint8_t y_read		= 0;
+volatile uint8_t slider_read	= 0;
+volatile uint8_t btn_read		= 0;
 
-volatile unsigned char read_state = ADC_JOY_X; 
-
-
+volatile uint8_t read_state = ADC_JOY_X; 
 
 ISR(INT0_vect){
 	switch(read_state){
@@ -54,21 +53,23 @@ ISR(INT0_vect){
 			*adc_adr = ADC_JOY_X;
 			read_state = ADC_JOY_X;
 			break;
-		default:
-			printf("Error in INT0_vect\n");
+// 		default:
+// 			printf("Error in INT0_vect\n");
+// 			pass
 	}
 }
 
 
 void adc_init(void){
-	
+	cli();
 	GICR = (1 << INT0); // enable interupt
 	EMCUCR |= (1 << SRW00);
 	
 	*adc_adr = ADC_JOY_X;
+	sei();
 }
 
-inline int convert_range(unsigned char data){ // convert from 0->255 to -100->100
+inline int convert_range(uint8_t data){ // convert from 0->255 to -100->100
 	return (float)data*0.784314 - 100;
 }
 

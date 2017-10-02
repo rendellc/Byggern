@@ -1,57 +1,86 @@
+#include <avr/pgmspace.h>
+#include <avr/interrupt.h>
+
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+
 #include "oled.h"
 #include "fonts.h"
 #include "global_declarations.h"
+#include "oled_cmds.h"
 
-#define FONTHEIGHT 6
-#define FONTWIDTH 4
-#define FONTCHARSX OLED_WIDTH/(FONTWIDTH+1)
-#define FONTCHARSY OLED_HEIGHT/FONTHEIGHT
-#define FONTMASK 0xFF<<(8-FONTWIDTH)
-uint8_t* font = font4;
+
+#define OLED_WIDTH 128
+#define OLED_PAGES 8
+#define OLED_HEIGHT OLED_PAGES*8 // 8 pages tall
+#define SPACING 1
+
+const uint8_t* font			= font4;
+const uint8_t  fontheight	= 6;		// buffchr will have bugs if fontwidth changes during execution
+const uint8_t  fontwidth	= 4;
+
+volatile uint8_t* buffer	= (uint8_t*)OLED_BUFFER_ADR;
 
 uint8_t xpos = 0;
 uint8_t ypos = 0;
 
-void write_c(cmd){
-	_delay_us(1);
-	char* ptr = OLED_C_ADR;
-	*ptr = cmd;
+FILE oled_out = FDEV_SETUP_STREAM(oled_putchar, NULL, _FDEV_SETUP_WRITE);
+
+ISR(TIMER0_OVF_vect){
+	oled_update();
 }
 
-void write_d(data){
+void oled_autorefresh_init(){
+	// set up interrupt timer
+	TIMSK=(1<<TOIE0) | (1<<TOIE1);
+	
+	
+}
+
+void write_c(uint8_t cmd){
 	_delay_us(1);
-	char* ptr = OLED_D_ADR;
-	*ptr = data;
+	*((uint8_t *)OLED_C_ADR) = cmd;
+}
+
+void write_d(uint8_t data){
+	_delay_us(1); // delay increased to 1000 to make debug easier, works without any delay
+	*((uint8_t *)OLED_D_ADR) = data;
 }
 
 void oled_init(){
-	write_c(0xae);        // display  off
-	write_c(0xa1);        // segment  remap
-	write_c(0xda);        // common  pads  hardware:  alternative
+	cli();
+	write_c(SET_DISP_OFF);
+	write_c(SET_SEG_REMAP);
+	write_c(SET_COM_PINS_HW_CONFIG);
 	write_c(0x12);
-	write_c(0xc8);        // common output scan direction:com63~com0
-	write_c(0xa8);        // multiplex  ration  mode:63
+	write_c(SET_COM_SCAN_REMAP);
+	write_c(SET_MULTPLX_RATIO);
 	write_c(0x3f);
-	write_c(0xd5);        // display divide ratio/osc. freq. mode
+	write_c(SET_DISP_CLK_DIV_FOSC);
 	write_c(0x80);
-	write_c(0x81);        // contrast  control
+	write_c(SET_CONTRAST_CTRL);
 	write_c(0x50);
-	write_c(0xd9);        // set  pre-charge  period
+	write_c(SET_PRE_CHRG_PERIOD);
 	write_c(0x21);
-	write_c(0x20);        // Set  Memory  Addressing  Mode
+	write_c(SET_MEM_ADR_MODE);
 	write_c(0x00);
-	write_c(0xdb);        // VCOM  deselect  level  mode
+	write_c(SET_VCOMH_DES_LEVEL);
 	write_c(0x30);
-	write_c(0xad);        // master  configuration
+	write_c(SET_INTERNAL_IREF);
 	write_c(0x00);
-	write_c(0xa4);        // out  follows  RAM  content
-	write_c(0xa6);        // set  normal  display
-	write_c(0xaf);        // display  on	
+	write_c(SET_FOLLOW_RAM);
+	write_c(SET_NORMAL_DISP);
+	write_c(SET_DISP_ON);
+	
+	//oled_autorefresh_init();
+	sei();
+	
 }
 
 void oled_reset(){
 	oled_init();
-	oled_fill_screen(0);
+	oled_fill(0);
 	oled_home();
 	oled_update();
 }
@@ -61,28 +90,31 @@ void oled_home(){
 	ypos = 0;
 }
 
-void oled_carriagereturn(){
+void oled_cartridgereturn(){
 	xpos = 0;
 }
 
 void oled_newline(){
-	if(ypos<(FONTCHARSY-1))
-		ypos++;
-	oled_carriagereturn();
+	oled_cartridgereturn();
+	oled_goto_line((ypos+1) % OLED_PAGES);
 }
 
 void oled_goto_line(uint8_t y){
-	if(y<FONTCHARSY)
-		ypos = y;
-	else
-		ypos = FONTCHARSY;
+	ypos = y;
 }
 
 void oled_goto_column(uint8_t x){
-	if(x<FONTCHARSX)
-		xpos = x;
-	else
-		xpos = FONTCHARSX;
+	xpos = x;
+}
+
+void oled_goto_nextpos(){
+	// wrap around is applied to both xpos and ypos
+	
+	// increment xpos and ypos
+	xpos = (xpos + 1) % OLED_WIDTH;
+	
+	ypos = (ypos + (xpos==0)) % OLED_PAGES; // increments ypos if xpos wrapped around to zero
+	
 }
 
 void oled_pos(uint8_t row, uint8_t column){
@@ -90,73 +122,107 @@ void oled_pos(uint8_t row, uint8_t column){
 	oled_goto_column(column);
 }
 
-void oled_clear_line(uint8_t line){
-	oled_fill_page(line, 0);
-	oled_cartridgereturn();
-}
 
-void oled_print(char* msg){
-	for(int i=0; msg[i]!='\0'; i++)
-		oled_printchar(msg[i]);
-}
+// *** TEXT OUTPUT RELATED ***
 
-void oled_printchar(uint8_t chr){
-	if(chr >= 0x20)
-	{
-		oled_putchar(xpos, ypos, chr-32);
-		oled_goto_column(++xpos);
-	}
-	else if (chr == '\n')
+// Place chr in buffer with correct numbering according to font indices
+void oled_buffchar(char chr){
+	if(chr >= 0x20 && xpos < OLED_WIDTH && ypos < OLED_PAGES) {
+		
+		if (xpos + fontwidth >= OLED_WIDTH){
+			oled_newline();	
+			
+			/*
+			// --- works for font4 but not font8 ---
+			// - purpose: prevent word crossover between lines
+			// - how: writes last word to next line before placing chr in buffer
+			// - bugs: extra gets added
+			
+			int8_t x = (int8_t)xpos - SPACING - (int8_t)fontwidth; // need signed values for error checking
+
+			uint8_t zeroCounter = 0;
+			while (zeroCounter != fontwidth && x >= 0){
+				for (uint8_t i = 0; i<fontwidth; ++i){
+					zeroCounter = zeroCounter + (buffer[ypos*OLED_WIDTH + x + i] == 0x00);
+				}
+				
+				if (zeroCounter == fontwidth){ // chr consisting only of zeroes, ie a space ' '
+					// push contents from this line of the buffer to the next line
+					for (int seg = x+1, i=-fontwidth; seg < OLED_WIDTH; ++seg, ++i){
+						buffer[((ypos + 1)%OLED_PAGES)*OLED_WIDTH + i] = buffer[ypos*OLED_WIDTH + seg];
+						buffer[ypos*OLED_WIDTH + seg] = 0x00;
+						xpos = i;
+					}
+					ypos = (ypos + 1)%OLED_PAGES;
+					++xpos;
+				} else {
+					zeroCounter = 0;
+					x =  x - SPACING - fontwidth;
+				}
+			}
+			if (x < 0){
+				oled_cartridgereturn();
+			}
+			*/		
+		}
+
+		// write char
+		for (uint8_t seg = 0; seg < fontwidth; ++seg){
+			buffer[ypos*OLED_WIDTH + xpos] = pgm_read_word(&font[(chr - 0x20)*fontwidth + seg]);
+			oled_goto_nextpos();
+		}
+		
+		// write spacing
+		for (uint8_t _ = 0; _ < SPACING; ++_){
+			buffer[ypos*OLED_WIDTH + xpos] = 0x00;
+			oled_goto_nextpos();
+		}
+	} else if (chr == '\n'){
 		oled_newline();
-	else if (chr == '\r')
-		oled_carriagereturn();
-}
-
-//////////////////////////////////////////////////////////////////////////////////////
-
-void oled_putchar(uint8_t x, uint8_t y, uint8_t chr){
-	char* ptr = OLED_BUFFER_ADR;
-	for(int i=0; i<FONTWIDTH; i++)
-	{
-		ptr[y*FONTHEIGHT+x*(FONTWIDTH+1)+i] &= ~(0xFF&FONTMASK);
-		ptr[y*FONTHEIGHT+x*(FONTWIDTH+1)+i] |= font[chr*FONTWIDTH + i];
+	} else if (chr == '\r'){
+		oled_cartridgereturn();
 	}
-	ptr[y*FONTHEIGHT+x*(FONTWIDTH+1)+FONTWIDTH] &= ~(0xFF&FONTMASK);
 }
 
-void oled_fill_screen(uint8_t val)
-{
-	for(int i = 0; i<OLED_HEIGHT; i++)
-		oled_fill_line(i,val);
+void oled_printf(const char* msg){
+	for(int i=0; msg[i] != '\0'; i++){
+		oled_buffchar(msg[i]);
+	}
+	oled_update();	
 }
 
-void oled_fill_line(uint8_t line, uint8_t val){
-	for (int i = 0; i < OLED_WIDTH; i++)
-		oled_write_dot(line, i, val);
+int oled_putchar(char chr){
+	oled_buffchar(chr);
+	oled_update();
+	return 0;
 }
 
-void oled_fill_page(uint8_t page, uint8_t val){
-	char* ptr = OLED_BUFFER_ADR;
-	for (int i = 0; i < OLED_WIDTH; i++)
-		ptr[i+page*OLED_WIDTH] = val;
+// *** DRAWING RELATED ***
+void oled_fill(uint8_t val){
+	write_c(SET_COL_ADR);  write_c(0x00); write_c(OLED_WIDTH-1);
+	write_c(SET_PAGE_ADR); write_c(0x00); write_c(OLED_PAGES-1);
+	
+	for (int page = 0; page<OLED_PAGES; ++page){
+		for (int seg = 0; seg<OLED_WIDTH; ++seg){
+			buffer[page*OLED_WIDTH + seg] = val;
+		}
+	}
 }
 
-void oled_write_dot(uint8_t line, uint8_t column, uint8_t val){
-	char* ptr = OLED_BUFFER_ADR;
-	if(val)
-		ptr[column+(line>>3)*OLED_WIDTH] |= 1<<(line&0x07);
-	else
-		ptr[column+(line>>3)*OLED_WIDTH] &= ~(1<<(line&0x07));
-}
-
+//////////////////////////////////////////////////////////////////////////
 void oled_update(){
-	write_c(0x21);
-	write_c(0x00);
-	write_c(OLED_WIDTH-1);
-	write_c(0x22);
-	write_c(0x00);
-	write_c(OLED_HEIGHT-1);
-	char* ptr = OLED_BUFFER_ADR;
-	for(int i=0; i<OLED_WIDTH*OLED_PAGES; i++)
-	write_d(ptr[i]);
+	// write content of buffer to oled
+	
+	write_c(SET_COL_ADR); write_c(0x00); write_c(OLED_WIDTH-1);
+	
+	write_c(SET_PAGE_ADR);write_c(0x00); write_c(OLED_PAGES-1);
+	
+	write_c(SET_LOW_COL_ADR  | 0x00);
+	write_c(SET_HIGH_COL_ADR | 0x00);
+	
+	for (int page = 0; page<OLED_PAGES; ++page){
+		for (int seg = 0; seg<OLED_WIDTH; ++seg){
+			write_d(buffer[page*OLED_WIDTH + seg]);
+		}
+	}
 }

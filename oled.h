@@ -9,37 +9,55 @@
 #ifndef OLED_H_
 #define OLED_H_
 #include <stdint.h>
+#include <stdio.h>
 
-#define OLED_WIDTH 128
-#define OLED_PAGES 8
-#define OLED_HEIGHT OLED_PAGES*8
+extern FILE oled_out;
 
 #define OLED_C_ADR 0x1000
 #define OLED_D_ADR 0x1001
 
-void oled_init();
+#define OLED_REFRESH_RATE 60 // Hz
 
+void oled_init();
 void oled_reset();
 
 void oled_home();
-void oled_carriagereturn();
+void oled_cartridgereturn();
 void oled_newline();
 
-void oled_goto_line(uint8_t);
-
-void oled_goto_column(uint8_t);
-
-void oled_clear_line(uint8_t);
-
-void oled_pos(uint8_t, uint8_t);
-
-void oled_fill_line(uint8_t, uint8_t);
-
-void oled_write_dot(uint8_t, uint8_t, uint8_t);
+void oled_goto_nextpos();
+void oled_goto_line(uint8_t line);
+void oled_goto_column(uint8_t col);
+void oled_clear_line(uint8_t line);
 
 void oled_update();
 
-void oled_print(char*);
+////
+void oled_init();
+void oled_reset();
+
+void oled_home();
+void oled_cartridgereturn();
+void oled_newline();
+
+void oled_goto_line(uint8_t y);
+void oled_goto_column(uint8_t x);
+void oled_goto_nextpos();
+
+void oled_pos(uint8_t row, uint8_t column);
+
+void oled_printf(const char* msg);
+int  oled_putchar(char chr);
+void oled_buffchar(char chr);
+
+void oled_clear_line(uint8_t line);
+void oled_fill(uint8_t val);
+void oled_write_dot(uint8_t line, uint8_t column, uint8_t val);
+
+
+
+void oled_update();
 
 
 #endif /* OLED_H_ */
+
