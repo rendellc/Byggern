@@ -13,7 +13,8 @@
 #define MAX_SUBMENUS		7
 
 typedef struct _menu_t {
-	char   title[MAX_TITLE_LENGTH+1];
+	char   title[MAX_TITLE_LENGTH];
+	const char terminate_title = '\0';
 	union{	
 		struct _menu_t*	submenus[MAX_SUBMENUS];
 		void (*callback)(void);
