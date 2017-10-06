@@ -16,7 +16,7 @@
 #define OLED_HEIGHT OLED_PAGES*8 // 8 pages tall
 #define SPACING 1
 
-const uint8_t* font			= font4;
+const uint8_t* font			= (const uint8_t*) font4;
 const uint8_t  fontheight	= 6;		// buffchr will have bugs if fontwidth changes during execution
 const uint8_t  fontwidth	= 4;
 
@@ -33,9 +33,11 @@ ISR(TIMER0_OVF_vect){
 
 void oled_autorefresh_init(){
 	// set up interrupt timer
-	TIMSK=(1<<TOIE0) | (1<<TOIE1);
+	TIMSK |= (1<<TOIE0);;
 	
-	
+	// set frequency to ca 60 Hz
+	TCCR0 |= (1<<CS02 | 1<<CS00) & ~(1 << CS01);
+	OCR0 = 39;
 }
 
 void write_c(uint8_t cmd){
@@ -49,7 +51,9 @@ void write_d(uint8_t data){
 }
 
 void oled_init(){
+	uint8_t intrpt_status = GICR & (1<<IVSEL);
 	cli();
+	
 	write_c(SET_DISP_OFF);
 	write_c(SET_SEG_REMAP);
 	write_c(SET_COM_PINS_HW_CONFIG);
@@ -73,16 +77,22 @@ void oled_init(){
 	write_c(SET_NORMAL_DISP);
 	write_c(SET_DISP_ON);
 	
-	//oled_autorefresh_init();
-	sei();
+	if (intrpt_status == 1<<IVSEL)
+		sei();
+	else
+		cli();
 	
+	
+	oled_fill(0);
+	oled_home();
+	
+	oled_autorefresh_init();
 }
 
 void oled_reset(){
 	oled_init();
 	oled_fill(0);
 	oled_home();
-	oled_update();
 }
 
 void oled_home(){
@@ -188,12 +198,10 @@ void oled_printf(const char* msg){
 	for(int i=0; msg[i] != '\0'; i++){
 		oled_buffchar(msg[i]);
 	}
-	oled_update();	
 }
 
 int oled_putchar(char chr){
 	oled_buffchar(chr);
-	oled_update();
 	return 0;
 }
 

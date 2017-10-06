@@ -43,6 +43,9 @@ ISR(USART0_TXC_vect){
 }
 
 void uart_init(){
+	uint8_t intrpt_status = GICR & (1<<IVSEL);
+	cli();
+	
 	// set baud rate
 	int timerval = (F_CPU/(16*BAUD) - 1);
 	UBRR0L = timerval&0xFF;
@@ -59,6 +62,12 @@ void uart_init(){
 	
 	// stop bit to 1
 	UCSR0C &= ~(1 << USBS0);
+	
+	
+	if (intrpt_status == 1<<IVSEL)
+		sei();
+	else
+		cli();
 	
 }
 

@@ -14,15 +14,13 @@
 
 typedef struct _menu_t {
 	char   title[MAX_TITLE_LENGTH];
-	const char terminate_title = '\0';
-	union{	
-		struct _menu_t*	submenus[MAX_SUBMENUS];
-		void (*callback)(void);
-	}
+	struct _menu_t*	submenus[MAX_SUBMENUS];
 	struct _menu_t* parent;
+	void (*action)(void);
+	
 } menu_t;
 
-menu_t* menu_init_menu(char*, menu_t*);
+menu_t* menu_init_menu(char* title, menu_t* parent, void (*action)(void));
 void menu_init();
 void menu_print_current();
 void menu_down();

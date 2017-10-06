@@ -11,12 +11,15 @@
 
 #define F_CPU 4915200UL
 
-const void* NULL_PTR;
+//const void* NULL_PTR;
 
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include <stdlib.h>
+#include <stdio.h>
 
+/// ---- MEMORY ----
 #define OLED_BUFFER_ADR 0x1400
 #define RAM_ADR 0x1800
 #define RAM_SIZE 0x800

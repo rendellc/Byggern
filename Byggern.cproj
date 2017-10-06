@@ -115,6 +115,9 @@
     <Compile Include="adc.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="can_driver.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="fonts.h">
       <SubType>compile</SubType>
     </Compile>
@@ -122,6 +125,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MCP2515.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MCP2515.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="menu.c">
@@ -137,6 +146,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="oled_cmds.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="spi_driver.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="spi_driver.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="sram_test.c">

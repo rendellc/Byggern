@@ -61,12 +61,18 @@ ISR(INT0_vect){
 
 
 void adc_init(void){
+	uint8_t intrpt_status = GICR & (1<<IVSEL);
 	cli();
+	
 	GICR = (1 << INT0); // enable interupt
 	EMCUCR |= (1 << SRW00);
 	
 	*adc_adr = ADC_JOY_X;
-	sei();
+	
+	if (intrpt_status == 1<<IVSEL)
+		sei();
+	else
+		cli();
 }
 
 inline int convert_range(uint8_t data){ // convert from 0->255 to -100->100
