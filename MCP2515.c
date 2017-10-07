@@ -12,48 +12,56 @@
 #include "uart.h"
 
 //#define MCP_DEBUG
+#define MCP_LOOPBACK_INIT
 
 
-void cancon_init()
+void mcp_init()
 {
-	uint8_t intrpt_status = GICR & (1<<IVSEL);
-	cli();
+	mcp_reset();
 	
-	cancon_reset();
+/*	--- Set physical layer config ---
+	Fosc		= 16 MHz
+	Bus Speed	= 1/(Total # of TQ)*TQ
+*/
+	const uint8_t BRP		= 1; // TQ = 2*Tosc*(BRP+1)  = 250 ns
+	const uint8_t PrSeg		= 1; // tPropSeg = (PrSeg + 1)
+	const uint8_t PhSeg1	= 2;	// tPS1 = (PhSeg1 + 1)*TQ
+	const uint8_t PhSeg2	= 2;	// tPS2 = (PhSeg2 + 1)*TQ
 	
-	// enable tx
-	cancon_bitmodify(MCP_TXB0SIDL, MCP_SIDLMASK, 0);
-	cancon_bitmodify(MCP_TXB0SIDH, MCP_SIDHMASK, 0);
-	cancon_bitmodify(MCP_TXB0DLC, MCP_DLC_MASK , 8);
+	mcp_write(MCP_CNF1, BRP);
+	mcp_write(MCP_CNF2, PrSeg | (PhSeg1 << 3));
+	mcp_write(MCP_CNF3, PhSeg2);
 	
-	// enable rx
-	cancon_bitmodify(MCP_RXB0CTRL, MCP_RXM1, MCP_RXM1); 
-	
-	
-	if (intrpt_status == 1<<IVSEL)
-		sei();
+/*	--- Initialize in loopback mode */
+#ifdef MCP_LOOPBACK_INIT
+	mcp_write(MCP_CANCTRL, MODE_LOOPBACK);
+	// verify 
+	if ((mcp_read(MCP_CANSTAT) & 0xE0)  == MODE_LOOPBACK)
+		fprintf(&uart_out, "Loopback mode set success\n");
 	else
-		cli();
+		fprintf(&uart_out, "Loopback mode set failed\n\tMCP_CANSTAT: 0x%x\n",mcp_read(MCP_CANSTAT));
+#endif // MCP_LOOPBACK_INIT
+	
 }
 
 
 
-void cancon_reset()
+void mcp_reset()
 {
-	spi_ss_low();	
+	spi_ss_low();
 	spi_transmit(MCP_RESET);
 	spi_ss_high();
 	
+	for (uint8_t _ = 0; _ < 128; ++_);	// Wait for 128 cycles
 	
 	#ifdef MCP_DEBUG
 	fprintf(&uart_out, "MCP_RESET\n");
 	#endif // MCP_DEBUG
 }
 
-uint8_t cancon_read(uint8_t adr)
+uint8_t mcp_read(uint8_t adr)
 {
-	spi_ss_low();	
-	
+	spi_ss_low();
 	spi_transmit(MCP_READ);
 	spi_transmit(adr);
 	uint8_t read = spi_transmit(0);
@@ -66,52 +74,42 @@ uint8_t cancon_read(uint8_t adr)
 	return read;
 }
 
-void cancon_write(uint8_t adr, uint8_t data)
+void mcp_write(uint8_t adr, uint8_t data)
 {
 	spi_ss_low();
-	
 	spi_transmit(MCP_WRITE);
 	spi_transmit(adr);
 	spi_transmit(data);
-	
 	spi_ss_high();
 	
+	
 	#ifdef MCP_DEBUG
-	fprintf(&uart_out, "MCP_WRITE\t%x\t%x\n", adr, data);
+	fprintf(&uart_out, "MCP_WRITE\t%x\t%c\n", adr, data);
 	#endif // MCP_DEBUG
 }
 
-void cancon_rts()
+void mcp_rts()
 {
-	spi_ss_low();
-	uint8_t retval = spi_transmit(MCP_RTS_ALL); // NB: MÅ NOK ENDRES
 	
 	
-	spi_ss_high();
 	
 	#ifdef MCP_DEBUG
-	fprintf(&uart_out, "MCP_RTS_ALL\t%x\n", retval);
+	fprintf(&uart_out, "MCP_RTS_ALL\t%x\n", (int)0);
 	#endif // MCP_DEBUG
 }
 
-uint8_t cancon_readstatus()
+uint8_t mcp_readstatus()
 {
-	spi_ss_low();
-	spi_transmit(MCP_READ_STATUS);
-	uint8_t read = spi_transmit(0);
-	spi_ss_high();
-	return read;
+	return 0;
 }
 
-void cancon_bitmodify(uint8_t adr, uint8_t mask, uint8_t data)
+void mcp_bitmodify(uint8_t adr, uint8_t mask, uint8_t data)
 {
 	spi_ss_low();
-	
 	spi_transmit(MCP_BITMOD);
 	spi_transmit(adr);
 	spi_transmit(mask);
 	spi_transmit(data);
-	
 	spi_ss_high();
 	
 	#ifdef MCP_DEBUG
@@ -121,35 +119,20 @@ void cancon_bitmodify(uint8_t adr, uint8_t mask, uint8_t data)
 }
 
 
-uint8_t cancon_loopback(uint8_t data)
+void mcp_loopback_set()
 {
-	cancon_bitmodify(MCP_CANCTRL, MODE_MASK, MODE_LOOPBACK);
 	
-	cancon_rts();
-	
-	
-	cancon_write(MCP_LOAD_TX0, data);
-	
-	cancon_bitmodify(MCP_TXRTSCTRL, 0x3F, 0x08); // send
-	
-	
-	
-	return cancon_read(MCP_READ_RX0);
 }
 
 
 
-void cancon_send(uint8_t data)
+void mcp_send(uint8_t data)
 {
-	cancon_rts();
-	
 	spi_ss_low();
 	spi_transmit(MCP_LOAD_TX0);
 	spi_transmit(data);
+	
 	spi_ss_high();
-	
-	
-	
 	
 	#ifdef MCP_DEBUG
 	fprintf(&uart_out, "MCP_LOAD_TX0\t%x\n", data);

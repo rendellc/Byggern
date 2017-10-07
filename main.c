@@ -32,33 +32,42 @@ int main(void)
 	uart_init();
 	
 	// setup heap
-	__malloc_heap_start = RAM_ADR;
-	__malloc_heap_end   = RAM_ADR + RAM_SIZE;
+	__malloc_heap_start = (char*)RAM_ADR;
+	__malloc_heap_end   = (char*)(RAM_ADR + RAM_SIZE);
 	
 	adc_init(); // adc init (must be after SRAM init)
 	oled_init();
 	menu_init(); // after oled
 	spi_init();
-	cancon_init(); // after spi
+	mcp_init(); // after spi
 	
 	// setup printf
 	stdout = &uart_out; // printf defaults to oled
 	stdin  = &uart_in;
 	
-	// enable clkout
-	spi_ss_low();
-	cancon_bitmodify(MCP_CANCTRL, CLKOUT_ENABLE,CLKOUT_ENABLE);
-	spi_ss_high();
 	
-	uint8_t data;
+	
+	//char data = 'a';
 	
 	while(1) {
 		menu_update_subchoice();
 		
-		//data = cancon_loopback(0xC5);
-			
-		fprintf(&uart_out, "Data read %x\n", data);
-		_delay_ms(1000);
+		// enable clkout
+		//mcp_bitmodify(0b01101010, CLKOUT_ENABLE,CLKOUT_ENABLE);
+		
+		
+		for (uint8_t i = 0; ; ++i)
+		{
+			spi_ss_low();
+			spi_transmit(i);
+			spi_ss_high();
+			_delay_ms(250);
+		}
+		
+		//fprintf(&uart_out, "Data write %c\t =>\t", data);
+		//data = mcp_loopback(data);
+		//fprintf(&uart_out, "Data read %c\n", data);
+		//_delay_ms(100);
 	}
 	
 	

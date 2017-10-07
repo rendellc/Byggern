@@ -8,11 +8,14 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|AVR = Debug|AVR
+		DebugMore|AVR = DebugMore|AVR
 		Release|AVR = Release|AVR
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{11491A47-F882-4A0C-B06D-E47811FC9DF6}.Debug|AVR.ActiveCfg = Debug|AVR
 		{11491A47-F882-4A0C-B06D-E47811FC9DF6}.Debug|AVR.Build.0 = Debug|AVR
+		{11491A47-F882-4A0C-B06D-E47811FC9DF6}.DebugMore|AVR.ActiveCfg = DebugExtreme|AVR
+		{11491A47-F882-4A0C-B06D-E47811FC9DF6}.DebugMore|AVR.Build.0 = DebugExtreme|AVR
 		{11491A47-F882-4A0C-B06D-E47811FC9DF6}.Release|AVR.ActiveCfg = Release|AVR
 		{11491A47-F882-4A0C-B06D-E47811FC9DF6}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection

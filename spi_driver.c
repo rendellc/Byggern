@@ -10,6 +10,8 @@
 #include "avr/io.h"
 #include <stdio.h>
 
+#define SPI_DEBUG
+
 /*
 ISR(SPI_STC_vect){
 }
@@ -23,7 +25,7 @@ void spi_ss_high(){
 	PORTB |= (1 << PB4);
 }
 
-/// Initalize Atmega162 as SPI master
+/// Initialize Atmega162 as SPI master
 void spi_init()
 {
 	// setup IO pins
@@ -31,10 +33,14 @@ void spi_init()
 	//DDRB &= ~(1<<DDB6); // not necessary
 	
 	// setup SPI
-	SPCR = (1<<SPE | 1<<MSTR | 1<<SPR0 | 1<<DORD) & ~(1<<CPOL | 1<<CPHA);
+	SPCR = (1<<SPE | 1<<MSTR | 1<<SPR0 ) & ~(1<<CPOL | 1<<CPHA | 1<<DORD);
 	// spi mode 0 in 162s datasheet
-	// LSB transmitted first and MSB last
+	// MSB transmitted first and LSB last
 	
+	
+	#ifdef SPI_DEBUG
+	fprintf(&uart_out, "SPCR: %x\n", SPCR);
+	#endif
 	
 }
 

@@ -171,22 +171,21 @@ Copyright 2003 Kimberly Otten Software Consulting
 #define MCP_DLC_MASK	0x0F
 
 
-void cancon_init();
+void mcp_init();
 
-void cancon_reset();
+void mcp_reset();
 
-uint8_t cancon_read(uint8_t adr);
+uint8_t mcp_read(uint8_t adr);
 
-void cancon_write(uint8_t adr, uint8_t data);
+void mcp_write(uint8_t adr, uint8_t data);
 
-void cancon_rts(); //Request To Send
+void mcp_rts(); //Request To Send
 
-uint8_t cancon_readstatus();
+uint8_t mcp_readstatus();
 
-void cancon_bitmodify(uint8_t adr, uint8_t mask, uint8_t data);
+void mcp_bitmodify(uint8_t adr, uint8_t mask, uint8_t data);
 
-
-uint8_t cancon_loopback(uint8_t data);
+uint8_t mcp_loopback(uint8_t data);
 
 #endif
 
