@@ -20,7 +20,20 @@
 #include "menu.h"
 #include "sram_test.h"
 #include "spi_driver.h"
+#include "can.h"
 #include "MCP2515.h"
+
+
+void can_print_msg(can_msg_t msg)
+{
+	fprintf(&uart_out, "SID:%i\n", msg.sid);
+	for (uint8_t i = 0; i < msg.length; ++i)
+	{
+		fprintf(&uart_out, "%x ", msg.data[i]);
+	}
+	fprintf(&uart_out, "\n");
+}
+
 
 int main(void) 
 {
@@ -39,7 +52,10 @@ int main(void)
 	oled_init();
 	menu_init(); // after oled
 	spi_init();
-	mcp_init(); // after spi
+	can_init(); // after spi
+	mcp_loopback_set();
+	
+	sei();
 	
 	// setup printf
 	stdout = &uart_out; // printf defaults to oled
@@ -47,23 +63,39 @@ int main(void)
 	
 	
 	
-	//char data = 'a';
 	
+	//char data = 'a';
+	can_msg_t read;
 	while(1) {
-		menu_update_subchoice();
+		//menu_print_current();
+		//menu_update_subchoice();
 		
 		// enable clkout
 		//mcp_bitmodify(0b01101010, CLKOUT_ENABLE,CLKOUT_ENABLE);
 		
+		can_msg_t send = {};
 		
+		send.length = 8;
+
 		for (uint8_t i = 0; ; ++i)
 		{
-			spi_ss_low();
-			spi_transmit(i);
-			spi_ss_high();
-			_delay_ms(250);
+			send.data[0] = i;
+			send.data[1] = 2*i;
+			send.data[2] = 3*i;
+			send.sid = i;
+			
+
+			
+			can_send(send, 2);
+			
+			read = can_read_buffer(0);
+			
+			_delay_ms(500);
+			
+			fprintf(&uart_out, "send msg: "); can_print_msg(send);
+			fprintf(&uart_out, "read msg: "); can_print_msg(read);
+			
 		}
-		
 		//fprintf(&uart_out, "Data write %c\t =>\t", data);
 		//data = mcp_loopback(data);
 		//fprintf(&uart_out, "Data read %c\n", data);

@@ -18,16 +18,16 @@ extern FILE oled_out;
 
 #define OLED_REFRESH_RATE 60 // Hz
 
-void oled_init();
-void oled_reset();
+//void oled_init();
+//void oled_reset();
 
-void oled_home();
-void oled_cartridgereturn();
-void oled_newline();
+//void oled_home();
+//void oled_cartridgereturn();
+//void oled_newline();
 
 void oled_goto_nextpos();
-void oled_goto_line(uint8_t line);
-void oled_goto_column(uint8_t col);
+//void oled_goto_line(uint8_t line);
+//void oled_goto_column(uint8_t col);
 void oled_clear_line(uint8_t line);
 
 void oled_update();

@@ -66,10 +66,9 @@ void menu_init(){
 	head = menu_init_menu("Mainaaa", NULL, NULL);
 	
 	menu_init_menu("Under 1", head, menu_action_nothing);
+	menu_init_menu("Under 2", head, menu_action_nothing);
 
 	current = head;
-	
-	menu_print_current();
 }
 
 

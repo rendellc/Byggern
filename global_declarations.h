@@ -12,12 +12,12 @@
 #define F_CPU 4915200UL
 
 //const void* NULL_PTR;
-
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
 #include <stdio.h>
+
 
 /// ---- MEMORY ----
 #define OLED_BUFFER_ADR 0x1400
@@ -25,6 +25,7 @@
 #define RAM_SIZE 0x800
 
 
+// --- Joystick / ADC ---
 typedef struct {
 	int x;
 	int y;
@@ -41,5 +42,15 @@ typedef enum {	LEFT = 0,
 				DOWN = 3, 
 				NEUTRAL = 4
 } direction_t;
+
+
+
+// --- Can Bus ---
+#define CAN_MAX_BYTES 8
+typedef struct {
+	uint8_t  data[CAN_MAX_BYTES];
+	uint8_t sid;
+	uint8_t  length;
+} can_msg_t;
 
 #endif /* GLOBAL_DECLARATIONS_H_ */

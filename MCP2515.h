@@ -31,9 +31,21 @@ Copyright 2003 Kimberly Otten Software Consulting
 #define MCP_RXF2EID0	0x0B
 
 #define MCP_TXRTSCTRL	0x0D
-#define MCP_TXB0SIDH	0x13
-#define MCP_TXB0SIDL	0x23
-#define MCP_TXB0DLC		0x53
+
+#define MCP_TXB0		0x30
+#define MCP_TXB1		0x40
+#define MCP_TXB2		0x50
+#define MCP_TXBnSIDH	0x01
+#define MCP_TXBnSIDL	0x02
+#define MCP_TXBnDLC		0x05
+#define MCP_TXBnD0		0x06
+
+#define MCP_RXB0		0x60
+#define MCP_RXB1		0x70
+#define MCP_RXBnSIDH	0x61
+#define MCP_RXBnSIDL	0x62
+#define MCP_RXBnDLC		0x65
+#define MCP_RXBnD0		0x66
 
 #define MCP_CANSTAT		0x0E
 #define MCP_CANCTRL		0x0F
@@ -93,11 +105,13 @@ Copyright 2003 Kimberly Otten Software Consulting
 #define MCP_LOAD_TX1	0x42
 #define MCP_LOAD_TX2	0x44
 
+#define MCP_RTS			0x80			
 #define MCP_RTS_TX0		0x81
 #define MCP_RTS_TX1		0x82
 #define MCP_RTS_TX2		0x84
 #define MCP_RTS_ALL		0x87
 
+#define MCP_READ_RX		0x90
 #define MCP_READ_RX0	0x90
 #define MCP_READ_RX1	0x94
 
@@ -170,6 +184,15 @@ Copyright 2003 Kimberly Otten Software Consulting
 // TXBnDLC Register datalength mask
 #define MCP_DLC_MASK	0x0F
 
+//  Status Bits
+#define MCP_STAT_RX0IF	0x01
+#define MCP_STAT_RX1IF	0x02
+#define MCP_STAT_TX0REQ	0x04
+#define MCP_STAT_TX0IF	0x08
+#define MCP_STAT_TX1REQ	0x10	
+#define MCP_STAT_TX1IF	0x20
+#define MCP_STAT_TX2REQ	0x40
+#define MCP_STAT_TX2IF	0x80
 
 void mcp_init();
 
@@ -177,15 +200,19 @@ void mcp_reset();
 
 uint8_t mcp_read(uint8_t adr);
 
+uint8_t mcp_read_buffer(uint8_t rx_select, uint8_t data_select);
+
 void mcp_write(uint8_t adr, uint8_t data);
 
-void mcp_rts(); //Request To Send
+void mcp_rts(uint8_t tx_buffer_select); //Request To Send
 
 uint8_t mcp_readstatus();
 
 void mcp_bitmodify(uint8_t adr, uint8_t mask, uint8_t data);
 
 uint8_t mcp_loopback(uint8_t data);
+
+void mcp_loopback_set();
 
 #endif
 

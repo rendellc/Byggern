@@ -10,7 +10,7 @@
 #include "avr/io.h"
 #include <stdio.h>
 
-#define SPI_DEBUG
+//#define SPI_DEBUG
 
 /*
 ISR(SPI_STC_vect){
@@ -30,10 +30,10 @@ void spi_init()
 {
 	// setup IO pins
 	DDRB |= (1<<DDB4 | 1<<DDB5 | 1<<DDB7);
-	//DDRB &= ~(1<<DDB6); // not necessary
+	DDRB &= ~(1<<DDB6); // not necessary
 	
 	// setup SPI
-	SPCR = (1<<SPE | 1<<MSTR | 1<<SPR0 ) & ~(1<<CPOL | 1<<CPHA | 1<<DORD);
+	SPCR = (1<<SPE | 1<<MSTR | 1<<SPR0 | 1<<CPOL | 1<<CPHA) & ~(/*1<<CPOL | 1<<CPHA |*/ 1<<DORD);
 	// spi mode 0 in 162s datasheet
 	// MSB transmitted first and LSB last
 	
