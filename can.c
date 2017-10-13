@@ -15,9 +15,18 @@ void can_init()
 }
 
 
-void can_send(can_msg_t msg, uint8_t tx_buffer_select)
+void can_send(const can_msg_t msg, const uint8_t tx_buffer_select)
 {
-	uint8_t MCP_TXBn = MCP_TXB0;
+	const uint8_t MCP_TXBn = MCP_TXB0 * (tx_buffer_select==0)
+			+  MCP_TXB1 * (tx_buffer_select==1)
+			+  MCP_TXB2 * (tx_buffer_select==2);
+	const uint8_t MCP_LOAD_TXn =  MCP_LOAD_TX0 * (tx_buffer_select==0)
+			+  MCP_LOAD_TX1 * (tx_buffer_select==1)
+			+  MCP_LOAD_TX2 * (tx_buffer_select==2);
+	
+	//TODO(rendellc): find out which option (above or below) is best
+	/*
+	uint8_t MCP_TXBn = MCP_TXB0
 	uint8_t MCP_LOAD_TXn = MCP_LOAD_TX0;
 	switch (tx_buffer_select)
 	{
@@ -34,7 +43,7 @@ void can_send(can_msg_t msg, uint8_t tx_buffer_select)
 		MCP_LOAD_TXn = MCP_LOAD_TX2;
 		break;
 	}
-	
+	*/
 	//fprintf(&uart_out, "MCP_TXBn=%x\tMCP_LOAD_TXn=%x\n", MCP_TXBn, MCP_LOAD_TXn);
 	
 	// set tx length
@@ -63,6 +72,7 @@ void can_send(can_msg_t msg, uint8_t tx_buffer_select)
 can_msg_t can_read_buffer(uint8_t rx_buffer_select)
 {
 	can_msg_t msg = {};
+	
 	uint8_t MCP_RXBn = MCP_RXB0;
 	uint8_t MCP_READ_RXn = MCP_READ_RX0;
 	uint8_t MCP_RXnIF = MCP_RX0IF;
