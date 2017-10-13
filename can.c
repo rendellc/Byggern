@@ -73,6 +73,14 @@ can_msg_t can_read_buffer(uint8_t rx_buffer_select)
 {
 	can_msg_t msg = {};
 	
+    const uint8_t MCP_RXBn = MCP_RXB0 * (rx_buffer_select==0)
+                           + MCP_RXB1 * (rx_buffer_select==1);
+    const uint8_t MCP_READ_RXn = MCP_READ_RX0 * (rx_buffer_select==0)
+                               + MCP_READ_RX1 * (rx_buffer_select==1);
+    const uint8_t MCP_MCP_RXnIF = MCP_RX0IF * (rx_buffer_select==0)
+                                + MCP_RX1IF * (rx_buffer_select==1);
+    /*
+     * TODO(rendellc): find out what is more efficient
 	uint8_t MCP_RXBn = MCP_RXB0;
 	uint8_t MCP_READ_RXn = MCP_READ_RX0;
 	uint8_t MCP_RXnIF = MCP_RX0IF;
@@ -88,8 +96,9 @@ can_msg_t can_read_buffer(uint8_t rx_buffer_select)
 		MCP_RXnIF = MCP_RX1IF;
 		break;
 	}
+    */
 	
-	msg.length = mcp_read(MCP_RXBn | MCP_RXBnDLC) & MCP_DLC_MASK;    //mcp_read(MCP_RXB0DLC) & MCP_DLC_MASK;
+	msg.length = mcp_read(MCP_RXBn | MCP_RXBnDLC) & MCP_DLC_MASK;  
 	
 	spi_ss_low();
 	spi_transmit(MCP_READ_RXn | 0x00); // sid
