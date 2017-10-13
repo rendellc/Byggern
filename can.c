@@ -69,7 +69,7 @@ void can_send(const can_msg_t msg, const uint8_t tx_buffer_select)
 	#endif // MCP_DEBUG
 }
 
-can_msg_t can_read_buffer(uint8_t rx_buffer_select)
+can_msg_t can_read_buffer(const uint8_t rx_buffer_select)
 {
 	can_msg_t msg = {};
 	
