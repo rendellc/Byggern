@@ -29,7 +29,6 @@ void spi_ss_high(){
 /// Initialize Atmega162 as SPI master
 void spi_init(void)
 {
-		
 	// setup IO pins
 	DDRB |= (1<<DDB1 | 1<<DDB2 | 1<<DDB7 | 1<<DDB0);
 	DDRB &= ~(1<<DDB3); // not necessary

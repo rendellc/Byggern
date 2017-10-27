@@ -11,7 +11,7 @@
 #include "spi_driver.h"
 #include "uart.h"
 
-#define RX_BUFFER_MAX 8 // hva er en god størrelse?
+#define RX_BUFFER_MAX 16 // hva er en god størrelse?
 
 volatile can_msg_t rx_buffer[2][RX_BUFFER_MAX] = {};
 volatile uint8_t rx_head[2] = {};
@@ -28,42 +28,38 @@ ISR(INT2_vect)
 	volatile uint8_t MCP_RXnIF    = MCP_RX0IF;
 	if (mcp_readstatus() & 0x02)
 	{	
-		n = 1;
+		n			 = 1;
 		MCP_RXBn	 = MCP_RXB1;
 		MCP_READ_RXn = MCP_READ_RX1;
-		MCP_RXnIF     = MCP_RX1IF;
+		MCP_RXnIF    = MCP_RX1IF;
 			
 	}
 	
-	// if there is room in buffer first
-	if ((rx_head[n]+1)%RX_BUFFER_MAX == rx_tail[n]){
-		sei();
-		return;
-	}
-	
-	volatile can_msg_t msg = {};
-	
-	msg.length = mcp_read(MCP_RXBn | MCP_RXBnDLC) & MCP_DLC_MASK;
-	
-	spi_ss_low();
-	spi_transmit(MCP_READ_RXn | 0x00); // sid
-	msg.sid = spi_transmit(0);
-	spi_ss_high();
-	
-	spi_ss_low();
-	spi_transmit(MCP_READ_RXn | 0x02);
-	
-	for (uint8_t i = 0; i < msg.length; ++i)
-	{
-		msg.data[i] = spi_transmit(0);
-	}
-	spi_ss_high();
+	// check if there is room in buffer first
+	if ((rx_head[n]+1)%RX_BUFFER_MAX != rx_tail[n]){
+		volatile can_msg_t msg = {};
 		
-	mcp_bitmodify(MCP_CANINTF, MCP_RXnIF, 0); 
+		msg.length = mcp_read(MCP_RXBn | MCP_RXBnDLC) & MCP_DLC_MASK;
+		
+		spi_ss_low();
+		spi_transmit(MCP_READ_RXn | 0x00); // sid
+		msg.sid = spi_transmit(0);
+		spi_ss_high();
 	
-	rx_buffer[n][rx_head[n]] = msg;
-	rx_head[n] = (rx_head[n]+1) % RX_BUFFER_MAX;
+		spi_ss_low();
+		spi_transmit(MCP_READ_RXn | 0x02);
 	
+		for (uint8_t i = 0; i < msg.length; ++i)
+		{
+			msg.data[i] = spi_transmit(0);
+		}
+		spi_ss_high();
+		
+		mcp_bitmodify(MCP_CANINTF, MCP_RXnIF, 0); 
+	
+		rx_buffer[n][rx_head[n]] = msg;
+		rx_head[n] = (rx_head[n]+1) % RX_BUFFER_MAX;
+	}
 	sei();
 }
 
@@ -78,7 +74,7 @@ void can_init()
 	
 	
 	EIMSK |= (1 << INT2);
-	DDRD &= ~(1<<DDB0);
+	DDRD &= ~( 1<< DDB0);
 	//EMCUCR |= (1 << SRW01);
 }
 
@@ -158,6 +154,8 @@ can_msg_t can_read_buffer(uint8_t rx_buffer_select)
 	{
 		msg = rx_buffer[n][rx_tail[n]];
 		rx_tail[n] = (rx_tail[n] + 1)%RX_BUFFER_MAX;
+	} else{
+		msg.sid = MSG_INVALID;
 	}
 		
 	return msg;

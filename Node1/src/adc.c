@@ -12,10 +12,8 @@
 volatile uint8_t* adc_adr = (uint8_t*)ADC_ADR;
 
 void adc_init(void){
-	cli();
 	DDRD  &= ~(1 << DDD2);
 	PORTD |= (1 << PD2);
-	sei();
 }
 
 uint8_t adc_read_channel(uint8_t ch)
