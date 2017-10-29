@@ -35,34 +35,30 @@ ISR(INT1_vect){
 	}
 	
 	// if there is room in buffer first
-	if ((rx_head[n]+1)%RX_BUFFER_MAX == rx_tail[n]){
-		sei();
-		return;
+	if ((rx_head[n]+1)%RX_BUFFER_MAX != rx_tail[n]){
+    	volatile can_msg_t msg = {};
+    	
+    	msg.length = mcp_read(MCP_RXBn | MCP_RXBnDLC) & MCP_DLC_MASK;
+    	
+    	spi_ss_low();
+    	spi_transmit(MCP_READ_RXn | 0x00); // sid
+    	msg.sid = spi_transmit(0);
+    	spi_ss_high();
+    	
+    	spi_ss_low();
+    	spi_transmit(MCP_READ_RXn | 0x02);
+    	
+    	for (uint8_t i = 0; i < msg.length; ++i)
+    	{
+    		msg.data[i] = spi_transmit(0);
+    	}
+    	spi_ss_high();
+        
+    	rx_buffer[n][rx_head[n]] = msg;
+    	rx_head[n] = (rx_head[n]+1) % RX_BUFFER_MAX;
 	}
-	
-	volatile can_msg_t msg = {};
-	
-	msg.length = mcp_read(MCP_RXBn | MCP_RXBnDLC) & MCP_DLC_MASK;
-	
-	spi_ss_low();
-	spi_transmit(MCP_READ_RXn | 0x00); // sid
-	msg.sid = spi_transmit(0);
-	spi_ss_high();
-	
-	spi_ss_low();
-	spi_transmit(MCP_READ_RXn | 0x02);
-	
-	for (uint8_t i = 0; i < msg.length; ++i)
-	{
-		msg.data[i] = spi_transmit(0);
-	}
-	spi_ss_high();
-		
-	mcp_bitmodify(MCP_CANINTF, MCP_RXnIF, 0); 
-	
-	rx_buffer[n][rx_head[n]] = msg;
-	rx_head[n] = (rx_head[n]+1) % RX_BUFFER_MAX;
-	
+
+    mcp_bitmodify(MCP_CANINTF, MCP_RXnIF, 0);
 	sei();
 }
 
