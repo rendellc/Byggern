@@ -11,7 +11,7 @@
 #include "spi_driver.h"
 #include "uart.h"
 
-#define RX_BUFFER_MAX 16 // hva er en god størrelse?
+#define RX_BUFFER_MAX 16 // hva er en god stÃ¸rrelse?
 
 volatile can_msg_t rx_buffer[2][RX_BUFFER_MAX] = {};
 volatile uint8_t rx_head[2] = {};
@@ -55,11 +55,13 @@ ISR(INT2_vect)
 		}
 		spi_ss_high();
 		
-		mcp_bitmodify(MCP_CANINTF, MCP_RXnIF, 0); 
+		
 	
 		rx_buffer[n][rx_head[n]] = msg;
 		rx_head[n] = (rx_head[n]+1) % RX_BUFFER_MAX;
 	}
+	mcp_bitmodify(MCP_CANINTF, MCP_RXnIF, 0); 
+	
 	sei();
 }
 
