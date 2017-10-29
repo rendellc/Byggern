@@ -2,7 +2,7 @@
 Term project for TTK4155 Embedded and Industrial Computers Design.
 
 ## Documentation
-This project is set up with doxygen. To open most recently generated documentation, open [docs/html/index.html](html/index.html).
+This project is set up with doxygen. To open most recently generated documentation, open [docs/html/index.html](docs/html/index.html).
 To generate new documentation, type ```doxygen Doxyfile``` in the terminal from the main folder. 
 
 
