@@ -1,0 +1,64 @@
+\hypertarget{adc_8h}{}\section{Node1/src/adc.h File Reference}
+\label{adc_8h}\index{Node1/src/adc.\+h@{Node1/src/adc.\+h}}
+{\ttfamily \#include \char`\"{}global\+\_\+declarations.\+h\char`\"{}}\\*
+Include dependency graph for adc.\+h\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{adc_8h__incl}
+\end{center}
+\end{figure}
+This graph shows which files directly or indirectly include this file\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=169pt]{adc_8h__dep__incl}
+\end{center}
+\end{figure}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{adc_8h_a26ab0faabfa984748917473e0caffa4d}{A\+D\+C\+\_\+\+A\+DR}~0x1100
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{adc_8h_a2b815e6730e8723a6d1d06d9ef8f31c0}{adc\+\_\+init} (void)
+\item 
+uint8\+\_\+t \hyperlink{adc_8h_ac223c2e32d5703cfb23a4f8b3e3e3b3e}{adc\+\_\+read\+\_\+channel} (uint8\+\_\+t)
+\end{DoxyCompactItemize}
+
+
+\subsection{Macro Definition Documentation}
+\index{adc.\+h@{adc.\+h}!A\+D\+C\+\_\+\+A\+DR@{A\+D\+C\+\_\+\+A\+DR}}
+\index{A\+D\+C\+\_\+\+A\+DR@{A\+D\+C\+\_\+\+A\+DR}!adc.\+h@{adc.\+h}}
+\subsubsection[{\texorpdfstring{A\+D\+C\+\_\+\+A\+DR}{ADC_ADR}}]{\setlength{\rightskip}{0pt plus 5cm}\#define A\+D\+C\+\_\+\+A\+DR~0x1100}\hypertarget{adc_8h_a26ab0faabfa984748917473e0caffa4d}{}\label{adc_8h_a26ab0faabfa984748917473e0caffa4d}
+Defines an interface for external AD converter using memory mapped IO. NB\+: AD conversion is only initated when requested, and this is a blocking process. 
+
+\subsection{Function Documentation}
+\index{adc.\+h@{adc.\+h}!adc\+\_\+init@{adc\+\_\+init}}
+\index{adc\+\_\+init@{adc\+\_\+init}!adc.\+h@{adc.\+h}}
+\subsubsection[{\texorpdfstring{adc\+\_\+init(void)}{adc_init(void)}}]{\setlength{\rightskip}{0pt plus 5cm}void adc\+\_\+init (
+\begin{DoxyParamCaption}
+\item[{void}]{}
+\end{DoxyParamCaption}
+)}\hypertarget{adc_8h_a2b815e6730e8723a6d1d06d9ef8f31c0}{}\label{adc_8h_a2b815e6730e8723a6d1d06d9ef8f31c0}
+Initialize mcu to interface with adc with Port D pin 2. \index{adc.\+h@{adc.\+h}!adc\+\_\+read\+\_\+channel@{adc\+\_\+read\+\_\+channel}}
+\index{adc\+\_\+read\+\_\+channel@{adc\+\_\+read\+\_\+channel}!adc.\+h@{adc.\+h}}
+\subsubsection[{\texorpdfstring{adc\+\_\+read\+\_\+channel(uint8\+\_\+t)}{adc_read_channel(uint8_t)}}]{\setlength{\rightskip}{0pt plus 5cm}uint8\+\_\+t adc\+\_\+read\+\_\+channel (
+\begin{DoxyParamCaption}
+\item[{uint8\+\_\+t}]{}
+\end{DoxyParamCaption}
+)}\hypertarget{adc_8h_ac223c2e32d5703cfb23a4f8b3e3e3b3e}{}\label{adc_8h_ac223c2e32d5703cfb23a4f8b3e3e3b3e}
+Read analog signal at specified channel. No input validation is performed, 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em ch} & uint8 in range 0 through 3. Channel that adc will perform conversion on. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyRetVals}{Return values}
+{\em result} & of AD conversion \\
+\hline
+\end{DoxyRetVals}

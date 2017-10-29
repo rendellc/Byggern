@@ -12,7 +12,7 @@
 #define MAX_TITLE_LENGTH	23
 #define MAX_SUBMENUS		7
 
-typedef struct _menu_t {
+typedef struct {
 	char   title[MAX_TITLE_LENGTH];
 	struct _menu_t*	submenus[MAX_SUBMENUS];
 	struct _menu_t* parent;

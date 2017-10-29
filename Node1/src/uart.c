@@ -1,3 +1,4 @@
+///@file
 /*
  * uart.c
  *
@@ -11,23 +12,24 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-
+#include <string.h> // \todo find out why this is included
 #include "uart.h"
 
+
+
+/// Enable use of fprintf(&uart_out,...) for 
 FILE uart_out = FDEV_SETUP_STREAM(uart_send, NULL, _FDEV_SETUP_WRITE);
+/// Create input stream for uart. Unused. 
 FILE uart_in = FDEV_SETUP_STREAM(NULL, uart_recv, _FDEV_SETUP_READ);
 
-#define BAUD 9600UL
-#define BUFFER_MAX 128
+#define BAUD 9600UL 	/*! BAUD rate of UART*/
+#define BUFFER_MAX 128 	/*! Size of Rx buffer*/
 
-volatile char send_buffer[BUFFER_MAX];
-volatile char recv_buffer[BUFFER_MAX];
-volatile int sendhead = 0;
-volatile int sendtail = 0;
-volatile int recvhead = 0;
-volatile int recvtail = 0;
+volatile char recv_buffer[BUFFER_MAX]; /*! Buffer for storing recieved data*/
+volatile int recvhead = 0; /*! Head of buffer. Where next recieved byte will be placed. */
+volatile int recvtail = 0; /*! Tail of buffer. Where next read will occour. */
 
+/// Interrupt vector for Rx. Place recieved data into buffer.
 ISR(USART0_RXC_vect){
 	cli();
 	char input = UDR0;
@@ -38,20 +40,19 @@ ISR(USART0_RXC_vect){
 	sei();
 }
 
+///\todo remove interrupt from Tx
 ISR(USART0_TXC_vect){
 	
 }
 
+///Initialize uart
 void uart_init(){
-	uint8_t intrpt_status = GICR & (1<<IVSEL);
-	cli();
-	
 	// set baud rate
 	int timerval = (F_CPU/(16*BAUD) - 1);
 	UBRR0L = timerval&0xFF;
 	UBRR0H = (timerval>>8)&0x0F;
 	
-	// enable interupts on Rx & Tx, and enable Rx & Tx
+	// enable interupts on Rx & Tx, and enable Rx & Tx 
 	UCSR0B |= (1 << RXCIE0) | (1 << TXCIE0) | (1 << RXEN0) | (1 << TXEN0);
 	
 	// enable async mode
@@ -62,21 +63,18 @@ void uart_init(){
 	
 	// stop bit to 1
 	UCSR0C &= ~(1 << USBS0);
-	
-	
-	if (intrpt_status == 1<<IVSEL)
-		sei();
-	else
-		cli();
-	
+
 }
 
+/// Busy wait transmission of msg
 int uart_send(unsigned char msg){
 	while (!(UCSR0A & (1 << UDRE0)));
 	UDR0 = msg;
 	return 0;
 }
 
+
+/// Read data from buffer
 unsigned char uart_recv(){
 	char returnval = 0;
 	if(recvhead != recvtail)
