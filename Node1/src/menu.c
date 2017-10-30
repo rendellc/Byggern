@@ -1,41 +1,40 @@
-/*
- * menu.c
- *
- * Created: 29.09.2017 09:36:40
- *  Author: rendellc
- */ 
+///@file 
 
-#include <avr/interrupt.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdlib.h>
+#include <avr/interrupt.h> ///\todo {why is this included?}
+#include <stdint.h>		
+#include <string.h>		///\todo {why is this included?} 
+#include <stdlib.h>	
 
 #include "oled.h"
 #include "menu.h"
 #include "joystick.h"
 #include "global_declarations.h"
-#include "uart.h"
+#include "uart.h" ///\todo {remove, included only for debug purposes}
 
-menu_t* head;
-menu_t* current;
-uint8_t subchoice = 0;
+menu_t* head; 			/*! root of menu system */
+menu_t* current; 		/*! menu currently displayed on screen */
+uint8_t subchoice = 0;  /*! submenus currently pointed to on screen*/ 
 
+/// implement an empty action that submenus can have.
 void menu_action_nothing(){};
 
-
+/// Setup atmega162 IO to interface with clicker on joystick.
 void menu_click_init(){
-	//cli();
 	PORTE  |= 1 << PE0;
 	DDRE   &= ~(1 << PE0);
-	//sei();
 }
 
+/*!
+ * Allocate a submenu on the heap and make parent->submenu[i] point there
+ * Give submenu specified title and callback.
+ */
 menu_t* menu_init_menu(char* title, menu_t* parent, void (*action)(void)){
 	menu_t* menu = (menu_t*) malloc(sizeof(menu_t));	
 	
 	for (uint8_t i = 0; i <= MAX_TITLE_LENGTH ; i++){
 		menu->title[i] = '\0';
 	}
+	/// \todo {check if using MAX_TITLE_LENGTH1 gives problems. Guarantees terminating '\0'}
 	strncpy(menu->title, title, MAX_TITLE_LENGTH);	// Huske å ha plass til null i slutten
 	
 	for (uint8_t i = 0; i < MAX_SUBMENUS ; i++){
@@ -53,14 +52,23 @@ menu_t* menu_init_menu(char* title, menu_t* parent, void (*action)(void)){
 				return menu;
 			}
 		}
+
+		/** \todo 
+			this is wrong. Should only return NULL when there is no more
+			room in parent menu. Should also free heap allocated memory in this case.
+		*/
 		return NULL; // return NULL if no more room
 	}
 	
+	///\todo {must also be added when the else{...} statement excecutes}
 	menu->action = action;
 	
 	return menu;
 }
 
+/*!
+ * Initialize menu system 
+ */
 void menu_init(){
 	//menu_click_init();
 	
@@ -89,6 +97,8 @@ void menu_print_current(){
 	}
 }
 
+/// \todo {deprecate this}
+/// deprecated
 void menu_update_subchoice()
 {	
 	direction_t adc_joy = adc_direction_joy();
@@ -130,7 +140,17 @@ void menu_update_subchoice()
 	menu_print_current();
 }
 
-/// Delete all menus from heap
+/// Move cursos specified step. Wrap around at both ends.
+void menu_move_cursor(int8_t step){
+	///\test this has not been tested
+	subchoice = (uint8_t)(((int8_t)subchoice + step)%MAX_SUBMENUS)
+}
+
+
+/*!
+ * Clear all created menus and free memory allocated
+ * \todo {implement this}
+ */
 void menu_exit(menu_t* head)
 {
 	menu_t* curr = head;
@@ -142,10 +162,13 @@ void menu_exit(menu_t* head)
 
 }
 
+/// remove all submenus of parent from heap
 void menu_free_submenus(menu_t* parent)
 {
 	for (uint8_t i = 0; i<MAX_SUBMENUS; ++i)
 	{
+		///\todo this can't be right?
+		// should probably check for parent->submenu[i] != NULL
 		if (1)
 			free(&parent->submenus[i]);
 	}
