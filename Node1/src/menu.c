@@ -1,19 +1,19 @@
 ///@file 
 
-#include <avr/interrupt.h> ///\todo {why is this included?}
+#include <avr/interrupt.h> /*!< \todo remove? why is this included?*/
 #include <stdint.h>		
-#include <string.h>		///\todo {why is this included?} 
+#include <string.h>	
 #include <stdlib.h>	
 
 #include "oled.h"
 #include "menu.h"
-#include "joystick.h"
+#include "joystick.h" /*!< \tode remove
 #include "global_declarations.h"
-#include "uart.h" ///\todo {remove, included only for debug purposes}
+#include "uart.h" /*!< \todo remove, included only for debug purposes */
 
-menu_t* head; 			/*! root of menu system */
-menu_t* current; 		/*! menu currently displayed on screen */
-uint8_t subchoice = 0;  /*! submenus currently pointed to on screen*/ 
+menu_t* head; 			/*!< root of menu system */
+menu_t* current; 		/*!< menu currently displayed on screen */
+uint8_t subchoice = 0;  /*!< submenus currently pointed to on screen*/ 
 
 /// implement an empty action that submenus can have.
 void menu_action_nothing(){};
@@ -34,8 +34,8 @@ menu_t* menu_init_menu(char* title, menu_t* parent, void (*action)(void)){
 	for (uint8_t i = 0; i <= MAX_TITLE_LENGTH ; i++){
 		menu->title[i] = '\0';
 	}
-	/// \todo {check if using MAX_TITLE_LENGTH1 gives problems. Guarantees terminating '\0'}
-	strncpy(menu->title, title, MAX_TITLE_LENGTH);	// Huske å ha plass til null i slutten
+	
+	strncpy(menu->title, title, MAX_TITLE_LENGTH);	// Need to guarantee terminating '\0'
 	
 	for (uint8_t i = 0; i < MAX_SUBMENUS ; i++){
 		menu->submenus[i] = (menu_t*)NULL;
@@ -98,7 +98,7 @@ void menu_print_current(){
 }
 
 /// \todo {deprecate this}
-/// deprecated
+/// \deprecated
 void menu_update_subchoice()
 {	
 	direction_t adc_joy = adc_direction_joy();

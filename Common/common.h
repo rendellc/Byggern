@@ -39,8 +39,8 @@ typedef struct {
 } can_msg_t;
 
 // --- CAN message SIDs ---
-#define MSG_INVALID	0 /*! invalid CAN message SID 	*/
-#define MSG_JOY		1 /*! joystick CAN message SID 	*/
+#define MSG_INVALID	0 /*!< invalid CAN message SID */
+#define MSG_JOY		1 /*!< joystick CAN message SID */
 
 
 #endif // TYPES_H

@@ -13,8 +13,9 @@
 #define UART_H_
 #include <stdio.h>
 
-extern FILE uart_out;
-extern FILE uart_in;
+
+extern FILE uart_out; /*!< enable use of uart_out stream */
+extern FILE uart_in;  /*!< enable use of uart_in stream */
 
 /**
  * Initialize UART.
@@ -30,8 +31,7 @@ int uart_send(unsigned char msg);
 
 /**
  * Read one byte from the Rx buffer. 
- * Return zero if buffer is empty.
- * @retval
+ * \retval data or zero if buffer is empty.
  */
 /// \test {has this been tested yet?}
 /// \todo {implement a better way to detect if buffer is empty}
