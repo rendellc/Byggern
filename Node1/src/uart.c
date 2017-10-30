@@ -1,18 +1,16 @@
-///@file
-/*
- * uart.c
- *
- * Created: 01.09.2017 10:33:35
- *  Author: rendellc
+/*!@file
+ * Implement uart on atmega162. \n
+ * Uses interrupt for recieving and busy wait for sending. 
+ * \todo Convert to use uint8_t
  */ 
 #include "global_declarations.h"
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h> // \todo find out why this is included
+#include <stdio.h>  
+#include <stdlib.h> /// \todo find out why this is included 
+#include <string.h> /// \todo find out why this is included
 #include "uart.h"
 
 

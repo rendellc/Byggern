@@ -1,5 +1,4 @@
-///@file
-/*!
+/*!@file
  * Implements a menu system.
  * All menus must have 
  * - title 

@@ -1,5 +1,6 @@
-///@file 
-
+/*!@file 
+ * Implementation of menu system. 
+ */
 #include <avr/interrupt.h> /*!< \todo remove? why is this included?*/
 #include <stdint.h>		
 #include <string.h>	
@@ -7,13 +8,13 @@
 
 #include "oled.h"
 #include "menu.h"
-#include "joystick.h" /*!< \tode remove
+#include "joystick.h" /*!< \tode remove */
 #include "global_declarations.h"
 #include "uart.h" /*!< \todo remove, included only for debug purposes */
 
-menu_t* head; 			/*!< root of menu system */
-menu_t* current; 		/*!< menu currently displayed on screen */
-uint8_t subchoice = 0;  /*!< submenus currently pointed to on screen*/ 
+static menu_t* head; 			/*!< root of menu system */
+static menu_t* current; 		/*!< menu currently displayed on screen */
+static uint8_t subchoice = 0;  /*!< submenus currently pointed to on screen*/ 
 
 /// implement an empty action that submenus can have.
 void menu_action_nothing(){};

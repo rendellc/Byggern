@@ -1,4 +1,4 @@
-/*
+/*! @file
  * global_declarations.h
  *
  * Created: 01.09.2017 12:53:09
@@ -20,9 +20,11 @@
 #include "common.h"
 
 /// ---- MEMORY ----
+#define ADC_ADR         0x1100
 #define OLED_BUFFER_ADR 0x1400
-#define RAM_ADR 0x1800
-#define RAM_SIZE 0x800
+#define RAM_ADR         0x1800
+
+#define RAM_SIZE        0x800
 
 
 #endif /* GLOBAL_DECLARATIONS_H_ */

@@ -1,13 +1,12 @@
-///@file
-/**
+/*!@file
  * UART implementation for atmega162
  * Hardcoded to use 9600 buad
  * 8n1 = 8 data-bits, no parity, 1 stop bit
  * Uses interrupts for recieving and busy wait for sending. 
  * Recieved messages go into an internal buffer untill mcu request them.
+ * \todo {change to use uint8_t where it makes sense}
+ * \todo {implement "buffer full" function}
  */
-///\todo {change to use uint8_t where it makes sense}
-///\todo {implement "buffer full" function}
 
 #ifndef UART_H_
 #define UART_H_
@@ -32,9 +31,9 @@ int uart_send(unsigned char msg);
 /**
  * Read one byte from the Rx buffer. 
  * \retval data or zero if buffer is empty.
+ * \todo {implement a better way to detect if buffer is empty}
+ * \test {has this been tested yet?}
  */
-/// \test {has this been tested yet?}
-/// \todo {implement a better way to detect if buffer is empty}
 unsigned char uart_recv();
 
 #endif /* UART_H_ */

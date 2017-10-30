@@ -1,3 +1,6 @@
+/*!@file
+ * Fonts for use on OLED display.
+ */
 /*
  * fonts.h
  *
@@ -7,7 +10,7 @@
 #ifndef FONTS_H_
 #define FONTS_H_
 
-#define ASCII_OFFSET 32 // font8['a' - ASCII_OFFSET] corresponds to 'a'
+#define ASCII_OFFSET 32 /*!< font8['a' - ASCII_OFFSET] corresponds to 'a' */
 
 #include <avr/pgmspace.h>
 #include <stdint.h>
