@@ -143,7 +143,7 @@ Functions</h2></td></tr>
 <li>title maximum length is 23</li>
 <li>list of submenus maximum number is 7</li>
 <li>parent</li>
-<li>action callback to be excecuted when this submenu is clicked. If no action is wanted, then menu_action_nothing should be supplied.<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000009">Todo:</a></b></dt><dd>{remove dependency between menu and adc} </dd></dl>
+<li>action callback to be excecuted when this submenu is clicked. If no action is wanted, then menu_action_nothing should be supplied.<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000008">Todo:</a></b></dt><dd>{remove dependency between menu and adc} </dd></dl>
 </li>
 </ul>
 
@@ -206,9 +206,8 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>pointer to menu allocated on heap. Returns NULL if there was no room in parent.</dd></dl>
 <p>Allocate a submenu on the heap and make parent-&gt;submenu[i] point there Give submenu specified title and callback. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>{check if using MAX_TITLE_LENGTH1 gives problems. Guarantees terminating '\0'} </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd>this is wrong. Should only return NULL when there is no more room in parent menu. Should also free heap allocated memory in this case. </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo:</a></b></dt><dd>{must also be added when the else{...} statement excecutes} </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>this is wrong. Should only return NULL when there is no more room in parent menu. Should also free heap allocated memory in this case. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd>{must also be added when the else{...} statement excecutes} </dd></dl>
 
 </div>
 </div>
@@ -241,8 +240,8 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000002">Deprecated:</a></b></dt><dd>Read direction of joystick from ADC and update active submenu </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000010">Todo:</a></b></dt><dd>{deprecate this function and replace with menu_move_curor} </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo:</a></b></dt><dd>{deprecate this} </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000009">Todo:</a></b></dt><dd>{deprecate this function and replace with menu_move_curor} </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo:</a></b></dt><dd>{deprecate this} </dd></dl>
 <dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated:</a></b></dt><dd></dd></dl>
 
 </div>

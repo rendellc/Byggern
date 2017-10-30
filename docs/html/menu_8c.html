@@ -99,18 +99,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <code>#include &quot;oled.h&quot;</code><br />
 <code>#include &quot;<a class="el" href="menu_8h_source.html">menu.h</a>&quot;</code><br />
 <code>#include &quot;joystick.h&quot;</code><br />
-<code>#include &quot;global_declarations.h&quot;</code><br />
-<code>#include &quot;<a class="el" href="Node1_2src_2uart_8h_source.html">uart.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for menu.c:</div>
 <div class="dyncontent">
 <div class="center"><img src="menu_8c__incl.png" border="0" usemap="#Node1_2src_2menu_8c" alt=""/></div>
 <map name="Node1_2src_2menu_8c" id="Node1_2src_2menu_8c">
-<area shape="rect" id="node6" href="oled_8h_source.html" title="oled.h" alt="" coords="497,80,555,107"/>
-<area shape="rect" id="node8" href="menu_8h.html" title="menu.h" alt="" coords="720,80,785,107"/>
-<area shape="rect" id="node9" href="joystick_8h_source.html" title="joystick.h" alt="" coords="292,80,371,107"/>
-<area shape="rect" id="node10" href="Node1_2src_2global__declarations_8h_source.html" title="global_declarations.h" alt="" coords="262,155,406,181"/>
-<area shape="rect" id="node14" href="Node1_2src_2uart_8h.html" title="uart.h" alt="" coords="433,155,488,181"/>
+<area shape="rect" id="node6" href="oled_8h_source.html" title="oled.h" alt="" coords="349,80,407,107"/>
+<area shape="rect" id="node8" href="menu_8h.html" title="menu.h" alt="" coords="572,80,637,107"/>
+<area shape="rect" id="node9" href="joystick_8h_source.html" title="joystick.h" alt="" coords="243,80,321,107"/>
+<area shape="rect" id="node10" href="Node1_2src_2global__declarations_8h_source.html" title="global_declarations.h" alt="" coords="202,155,346,181"/>
 <area shape="rect" id="node13" href="common_8h.html" title="common.h" alt="" coords="421,229,503,256"/>
 </map>
 </div>
@@ -165,7 +162,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Clear all created menus and free memory allocated </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000007">Todo:</a></b></dt><dd>{implement this} </dd></dl>
+<p>Clear all created menus and free memory allocated </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo:</a></b></dt><dd>{implement this} </dd></dl>
 
 </div>
 </div>
@@ -184,7 +181,7 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>remove all submenus of parent from heap </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000008">Todo:</a></b></dt><dd>this can't be right? </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000007">Todo:</a></b></dt><dd>this can't be right? </dd></dl>
 
 </div>
 </div>
@@ -234,9 +231,8 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Allocate a submenu on the heap and make parent-&gt;submenu[i] point there Give submenu specified title and callback. </p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>{check if using MAX_TITLE_LENGTH1 gives problems. Guarantees terminating '\0'} </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd>this is wrong. Should only return NULL when there is no more room in parent menu. Should also free heap allocated memory in this case. </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo:</a></b></dt><dd>{must also be added when the else{...} statement excecutes} </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>this is wrong. Should only return NULL when there is no more room in parent menu. Should also free heap allocated memory in this case. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd>{must also be added when the else{...} statement excecutes} </dd></dl>
 
 </div>
 </div>
@@ -287,7 +283,7 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo:</a></b></dt><dd>{deprecate this} </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo:</a></b></dt><dd>{deprecate this} </dd></dl>
 <dl class="deprecated"><dt><b><a class="el" href="deprecated.html#_deprecated000001">Deprecated:</a></b></dt><dd></dd></dl>
 
 </div>
@@ -315,8 +311,9 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>{remove? why is this included?} </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd>{remove, included only for debug purposes} </dd></dl>
+<p>&lt;</p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000001">Todo:</a></b></dt><dd>remove? why is this included? </dd></dl>
+<pre class="fragment">&lt; \tode remove
+</pre><p> #include "global_declarations.h" #include "uart.h" /*!&lt;</p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd>remove, included only for debug purposes </dd></dl>
 <p>root of menu system </p>
 
 </div>
