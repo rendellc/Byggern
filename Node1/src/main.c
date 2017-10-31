@@ -20,7 +20,7 @@
 #include "sram_test.h"
 #include "spi_driver.h"
 #include "can.h"
-#include "MCP2515.h"
+//#include "MCP2515.h"
 #include "joystick.h"
 
 int main(void) 

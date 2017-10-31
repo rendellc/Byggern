@@ -6,7 +6,7 @@
  */ 
 #include "global_declarations.h"
 #include "spi_driver.h"
-#include "uart.h"
+//#include "uart.h"
 #include "avr/io.h"
 #include <stdio.h>
 
@@ -39,7 +39,7 @@ void spi_init()
 	
 	
 	#ifdef SPI_DEBUG
-	fprintf(&uart_out, "SPCR: %x\n", SPCR);
+	//fprintf(&uart_out, "SPCR: %x\n", SPCR);
 	#endif
 	
 }

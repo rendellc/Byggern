@@ -13,11 +13,11 @@
 
 //const void* NULL_PTR;
 #include <avr/io.h>
-#include <util/delay.h>
+//#include <util/delay.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "common.h"
+#include "../../Common/common.h"
 
 /// ---- MEMORY ----
 #define ADC_ADR         0x1100
