@@ -11,8 +11,9 @@
 
 #include "global_declarations.h"
 
-int8_t convert_range(uint8_t);
-direction_t joy_direction(uint8_t, uint8_t);
+int8_t convert_range(uint8_t data);
+
+direction_t joy_direction(uint8_t joy_x, uint8_t joy_y);
 
 void send_joy(void);
 

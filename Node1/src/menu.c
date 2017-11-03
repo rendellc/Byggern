@@ -71,7 +71,7 @@ menu_t* menu_init_menu(char* title, menu_t* parent, void (*action)(void)){
  * Initialize menu system 
  */
 void menu_init(){
-	//menu_click_init();
+	menu_click_init();
 	
 	head = menu_init_menu("Mainaaa", NULL, NULL);
 	
@@ -144,7 +144,7 @@ void menu_update_subchoice()
 /// Move cursos specified step. Wrap around at both ends.
 void menu_move_cursor(int8_t step){
 	///\test this has not been tested
-	subchoice = (uint8_t)(((int8_t)subchoice + step)%MAX_SUBMENUS)
+	subchoice = (uint8_t)(((int8_t)subchoice + step)%MAX_SUBMENUS);
 }
 
 

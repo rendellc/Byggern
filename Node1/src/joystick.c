@@ -52,7 +52,7 @@ void send_joy(void)
 	msg.data[2] = joy_dir; // casting?
 	msg.length = 3;
 	
-	fprintf(&uart_out, "joy sent: %i\t%i\t%i\n",   joy_xs, joy_ys, joy_dir);
+	//fprintf(&uart_out, "joy sent: %i\t%i\t%i\n",   joy_xs, joy_ys, joy_dir);
 	
 	can_send(msg, 0);
 }

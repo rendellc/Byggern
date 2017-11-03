@@ -41,9 +41,9 @@ C_SRCS +=  \
 ../src/adc.c \
 ../src/can.c \
 ../src/joystick.c \
+../src/main.c \
 ../src/MCP2515.c \
 ../src/menu.c \
-../src/Node1.c \
 ../src/oled.c \
 ../src/spi_driver.c \
 ../src/sram_test.c \
@@ -60,9 +60,9 @@ OBJS +=  \
 src/adc.o \
 src/can.o \
 src/joystick.o \
+src/main.o \
 src/MCP2515.o \
 src/menu.o \
-src/Node1.o \
 src/oled.o \
 src/spi_driver.o \
 src/sram_test.o \
@@ -72,9 +72,9 @@ OBJS_AS_ARGS +=  \
 src/adc.o \
 src/can.o \
 src/joystick.o \
+src/main.o \
 src/MCP2515.o \
 src/menu.o \
-src/Node1.o \
 src/oled.o \
 src/spi_driver.o \
 src/sram_test.o \
@@ -84,9 +84,9 @@ C_DEPS +=  \
 src/adc.d \
 src/can.d \
 src/joystick.d \
+src/main.d \
 src/MCP2515.d \
 src/menu.d \
-src/Node1.d \
 src/oled.d \
 src/spi_driver.d \
 src/sram_test.d \
@@ -96,9 +96,9 @@ C_DEPS_AS_ARGS +=  \
 src/adc.d \
 src/can.d \
 src/joystick.d \
+src/main.d \
 src/MCP2515.d \
 src/menu.d \
-src/Node1.d \
 src/oled.d \
 src/spi_driver.d \
 src/sram_test.d \

@@ -21,7 +21,7 @@
 #define MAX_SUBMENUS		7  /*! Max number of submenus */
 
 /// Struct for holding submenu
-typedef struct {
+typedef struct _menu_t{
 	char   title[MAX_TITLE_LENGTH]; /*! \todo check if using MAX_TITLE_LENGTH+1 cause problems*/
 	struct _menu_t*	submenus[MAX_SUBMENUS];
 	struct _menu_t* parent;
@@ -62,7 +62,7 @@ void menu_update_subchoice();
  * @param[in] {step -1 to move up, 1 to move down. 
                other values are also valud and will cause bigger step}
  */
-void menu_move_cursor(int8_t step)
+void menu_move_cursor(int8_t step);
 
 /*
  * Remove all submenus of parent

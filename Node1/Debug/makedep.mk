@@ -8,11 +8,11 @@ src\can.c
 
 src\joystick.c
 
+src\main.c
+
 src\MCP2515.c
 
 src\menu.c
-
-src\Node1.c
 
 src\oled.c
 

@@ -10,7 +10,7 @@
 #define SPI_DRIVER_H_
 #include <stdio.h>
 
-extern FILE spi_out;
+//extern FILE spi_out;
 
 void spi_ss_low();
 

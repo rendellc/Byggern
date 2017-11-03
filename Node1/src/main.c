@@ -16,7 +16,7 @@
 #include "adc.h"
 #include "oled.h"
 #include "sram_test.h"
-#include "menu.h"
+//#include "menu.h"
 #include "sram_test.h"
 #include "spi_driver.h"
 #include "can.h"

@@ -9,7 +9,7 @@
 #include "fonts.h"
 #include "global_declarations.h"
 #include "oled_cmds.h"
-
+#include <util/delay.h>
 
 #define OLED_WIDTH 128
 #define OLED_PAGES 8
