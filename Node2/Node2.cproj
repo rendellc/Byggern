@@ -122,6 +122,12 @@
     <Compile Include="src\can.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\dac.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\dac.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\global_declarations.h">
       <SubType>compile</SubType>
     </Compile>
@@ -137,7 +143,13 @@
     <Compile Include="src\MCP2515.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="src\Node2.c">
+    <Compile Include="src\main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\motor.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\motor.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\pwm.c">
@@ -150,6 +162,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\spi_driver.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\TWI_Master.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\TWI_Master.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\uart.c">

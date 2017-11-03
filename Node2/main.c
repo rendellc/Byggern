@@ -15,7 +15,6 @@
 #include "can.h"
 #include "pwm.h"
 #include "ir.h"
-#include "dac.h"
 
 uint16_t negativescore = 0;
 uint16_t adc_read;
@@ -34,16 +33,10 @@ int main(void)
 	fprintf(&uart_out, "ir init starting...");
 	ir_init();
 	fprintf(&uart_out, "done\n");
-	fprintf(&uart_out, "motor init starting...");
-	motor_init();
-	fprintf(&uart_out, "done\n");
 	sei();
 	
 	
 	int8_t joy_x = 0;
-	
-	
-	
     while(1)
     {
 		can_msg_t read = can_read_buffer(0);
@@ -59,13 +52,13 @@ int main(void)
 				break;
 		}
 		
-		motor_set_speed(joy_x/2);
+
 		//uint16_t adc_read = ir_read(); // changed to global variable instead
 		adc_read = ir_read();
 		//scorekeeping();
-		//fprintf(&uart_out, "adc value: %i\t", adc_read);
-		//fprintf(&uart_out, "pwm duty: %i\n",  32 + joy_x/2);
-		//pwm_set_duty(32 + joy_x/2);
+		fprintf(&uart_out, "adc value: %i\n", adc_read);
+		fprintf(&uart_out, "pwm duty: %i\n",  32 + joy_x/2);
+		pwm_set_duty(32 + joy_x/2);
 		
     }
 	

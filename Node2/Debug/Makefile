@@ -39,11 +39,14 @@ SUBDIRS :=  \
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
 ../src/can.c \
+../src/dac.c \
 ../src/ir.c \
 ../src/MCP2515.c \
-../src/Node2.c \
+../src/main.c \
+../src/motor.c \
 ../src/pwm.c \
 ../src/spi_driver.c \
+../src/TWI_Master.c \
 ../src/uart.c
 
 
@@ -55,38 +58,50 @@ ASM_SRCS +=
 
 OBJS +=  \
 src/can.o \
+src/dac.o \
 src/ir.o \
 src/MCP2515.o \
-src/Node2.o \
+src/main.o \
+src/motor.o \
 src/pwm.o \
 src/spi_driver.o \
+src/TWI_Master.o \
 src/uart.o
 
 OBJS_AS_ARGS +=  \
 src/can.o \
+src/dac.o \
 src/ir.o \
 src/MCP2515.o \
-src/Node2.o \
+src/main.o \
+src/motor.o \
 src/pwm.o \
 src/spi_driver.o \
+src/TWI_Master.o \
 src/uart.o
 
 C_DEPS +=  \
 src/can.d \
+src/dac.d \
 src/ir.d \
 src/MCP2515.d \
-src/Node2.d \
+src/main.d \
+src/motor.d \
 src/pwm.d \
 src/spi_driver.d \
+src/TWI_Master.d \
 src/uart.d
 
 C_DEPS_AS_ARGS +=  \
 src/can.d \
+src/dac.d \
 src/ir.d \
 src/MCP2515.d \
-src/Node2.d \
+src/main.d \
+src/motor.d \
 src/pwm.d \
 src/spi_driver.d \
+src/TWI_Master.d \
 src/uart.d
 
 OUTPUT_FILE_PATH +=Node2.elf
@@ -103,6 +118,12 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
+
+
+
+
 
 
 

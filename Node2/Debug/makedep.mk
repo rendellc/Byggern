@@ -4,15 +4,21 @@
 
 src\can.c
 
+src\dac.c
+
 src\ir.c
 
 src\MCP2515.c
 
-src\Node2.c
+src\main.c
+
+src\motor.c
 
 src\pwm.c
 
 src\spi_driver.c
+
+src\TWI_Master.c
 
 src\uart.c
 
