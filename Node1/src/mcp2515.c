@@ -9,13 +9,9 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#include "MCP2515.h"
+#include "mcp2515.h"
 #include "spi_driver.h"
 #include "uart.h"
-
-
-//#define MCP_DEBUG
-#define MCP_LOOPBACK_INIT
 
 
 void mcp_init()

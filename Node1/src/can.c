@@ -4,7 +4,7 @@
 #include "global_declarations.h"
 #include <avr/interrupt.h>
 #include "can.h"
-#include "MCP2515.h"
+#include "mcp2515.h"
 #include "spi_driver.h"
 #include "uart.h"
 
@@ -19,7 +19,7 @@ static volatile uint8_t rx_tail[2] = {};
  * Takes the message, and places it in the corresponding recieve buffer, and clears
  * the interrupt. \n
  * If there is no room in the buffer, then the interrupt is cleared and message
- * is cleared. 
+ * is ignored. 
  */
 ISR(INT1_vect){
 	cli();	

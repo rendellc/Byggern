@@ -100,6 +100,7 @@ void menu_print_current(){
 
 /// \todo {deprecate this}
 /// \deprecated
+/*
 void menu_update_subchoice()
 {	
 	direction_t adc_joy = adc_direction_joy();
@@ -140,6 +141,8 @@ void menu_update_subchoice()
 	
 	menu_print_current();
 }
+*/
+
 
 /// Move cursos specified step. Wrap around at both ends.
 void menu_move_cursor(int8_t step){
