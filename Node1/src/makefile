@@ -1,7 +1,7 @@
 CC=avr-gcc
 CFLAGS=-g -Os -mmcu=atmega162 -std=c99 -Wall
 OBJS=uart.o adc.o oled.o spi_driver.o can.o joystick.o main.o mcp2515.o menu.o
-outname=main.out
+outname=node1.out
 
 
 all: $(OBJS)
@@ -40,4 +40,5 @@ sram_test.o:
 
 .PHONY:
 clean:
-	rm -f *.o *.out
+	rm -f *.o outname
+

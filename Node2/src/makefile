@@ -1,7 +1,7 @@
 CC=avr-gcc
 CFLAGS=-g -Os -mmcu=atmega2560 -std=c99 -Wall
 OBJS=TWI_Master.o can.o dac.o ir.o main.o mcp2515.o motor.o pwm.o spi_driver.o uart.o
-outname=main.out
+outname=node2.out
 
 
 all: $(OBJS)
@@ -39,4 +39,4 @@ TWI_Master.o:
 
 .PHONY:
 clean:
-	rm -f *.o *.out
+	rm -f *.o outname
