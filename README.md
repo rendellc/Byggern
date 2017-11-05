@@ -1,5 +1,5 @@
 # TTK4155 - Term Project
-travis: ![](https://api.travis-ci.org/rendellc/Byggern.svg?branch=master)
+![](https://api.travis-ci.org/rendellc/Byggern.svg?branch=master)
 
 Term project for TTK4155 Embedded and Industrial Computers Design.
 
