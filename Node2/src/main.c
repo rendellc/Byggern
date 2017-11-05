@@ -11,7 +11,7 @@
 #include <util/delay.h>
 #include "spi_driver.h"
 #include "uart.h"
-#include "MCP2515.h"
+#include "mcp2515.h"
 #include "can.h"
 #include "pwm.h"
 #include "ir.h"

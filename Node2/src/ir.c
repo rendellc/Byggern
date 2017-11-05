@@ -6,7 +6,6 @@
  */ 
 #include "global_declarations.h"
 #include <avr/io.h>
-#include "uart.h"
 
 // make separate adc module?
 void ir_init(void)

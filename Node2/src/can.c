@@ -7,7 +7,7 @@
 #include "global_declarations.h"
 #include <avr/interrupt.h>
 #include "can.h"
-#include "MCP2515.h"
+#include "mcp2515.h"
 #include "spi_driver.h"
 #include "uart.h"
 
