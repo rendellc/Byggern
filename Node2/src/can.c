@@ -13,9 +13,9 @@
 
 #define RX_BUFFER_MAX 16 // hva er en god størrelse?
 
-volatile can_msg_t rx_buffer[2][RX_BUFFER_MAX] = {};
-volatile uint8_t rx_head[2] = {};
-volatile uint8_t rx_tail[2] = {};
+static volatile can_msg_t rx_buffer[2][RX_BUFFER_MAX] = {};
+static volatile uint8_t rx_head[2] = {};
+static volatile uint8_t rx_tail[2] = {};
 
 
 ISR(INT2_vect)
@@ -36,30 +36,30 @@ ISR(INT2_vect)
 	}
 	
 	// check if there is room in buffer first
-	if ((rx_head[n]+1)%RX_BUFFER_MAX != rx_tail[n]){
-		volatile can_msg_t msg = {};
-		
-		msg.length = mcp_read(MCP_RXBn | MCP_RXBnDLC) & MCP_DLC_MASK;
-		
-		spi_ss_low();
-		spi_transmit(MCP_READ_RXn | 0x00); // sid
-		msg.sid = spi_transmit(0);
-		spi_ss_high();
+	//if ((rx_head[n]+1)%RX_BUFFER_MAX != rx_tail[n]){
+	volatile can_msg_t msg = {};
 	
-		spi_ss_low();
-		spi_transmit(MCP_READ_RXn | 0x02);
+	msg.length = mcp_read(MCP_RXBn | MCP_RXBnDLC) & MCP_DLC_MASK;
 	
-		for (uint8_t i = 0; i < msg.length; ++i)
-		{
-			msg.data[i] = spi_transmit(0);
-		}
-		spi_ss_high();
-		
-		
-	
-		rx_buffer[n][rx_head[n]] = msg;
-		rx_head[n] = (rx_head[n]+1) % RX_BUFFER_MAX;
+	spi_ss_low();
+	spi_transmit(MCP_READ_RXn | 0x00); // sid
+	msg.sid = spi_transmit(0);
+	spi_ss_high();
+
+	spi_ss_low();
+	spi_transmit(MCP_READ_RXn | 0x02);
+
+	for (uint8_t i = 0; i < msg.length; ++i)
+	{
+		msg.data[i] = spi_transmit(0);
 	}
+	spi_ss_high();
+	
+	
+
+	rx_buffer[n][rx_head[n]] = msg; // overwrites oldest message if buffer is full
+	rx_head[n] = (rx_head[n]+1) % RX_BUFFER_MAX;
+	//}
 	mcp_bitmodify(MCP_CANINTF, MCP_RXnIF, 0); 
 	
 	sei();
