@@ -4,7 +4,6 @@
 
 #include "global_declarations.h"
 #include "adc.h"
-//#include <stdlib.h> ///\todo why was this inlcuded?
 #include <stdint.h>
 
 

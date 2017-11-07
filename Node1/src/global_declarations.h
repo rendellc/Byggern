@@ -1,8 +1,6 @@
-/*! @file
- * global_declarations.h
- *
- * Created: 01.09.2017 12:53:09
- *  Author: gr 43
+/*!@file
+ * Declrations and includes that are usesful in most of Node1.
+ * Defines F_CPU and should be the first include.
  */ 
 
 
@@ -11,10 +9,9 @@
 
 #define F_CPU 4915200UL
 
-//const void* NULL_PTR;
+
 #include <avr/io.h>
-//#include <util/delay.h>
-#include <avr/interrupt.h>
+//#include <avr/interrupt.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "../../Common/common.h"

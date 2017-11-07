@@ -1,12 +1,8 @@
 /*!@file
- * Fonts for use on OLED display.
- */
-/*
- * fonts.h
- *
- * Library of fonts
+ * Library of fonts.
  * Large: 8x8, normal: 5x7 and small: 4x7
  */
+
 #ifndef FONTS_H_
 #define FONTS_H_
 
@@ -15,7 +11,7 @@
 #include <avr/pgmspace.h>
 #include <stdint.h>
 
-// Font 8x8 - Large
+/// Font 8x8 - Large
 const uint8_t PROGMEM font8[95][8] = {
 	{0b00000000,0b00000000,0b00000000,0b00000000,0b00000000,0b00000000,0b00000000,0b00000000}, //
 	{0b00000000,0b00000110,0b01011111,0b01011111,0b00000110,0b00000000,0b00000000,0b00000000}, // !
@@ -115,7 +111,7 @@ const uint8_t PROGMEM font8[95][8] = {
 };
 
 
-// Font 5x7 - normal
+/// Font 5x7 - normal
 const uint8_t PROGMEM font5[95][5] = {
 	{0b00000000,0b00000000,0b00000000,0b00000000,0b00000000}, //
 	{0b00000000,0b00000000,0b01011111,0b00000000,0b00000000}, // !
@@ -214,7 +210,7 @@ const uint8_t PROGMEM font5[95][5] = {
 	{0b00000010,0b00000001,0b00000011,0b00000010,0b00000001}, // ~
 	};
 
-// Font 4x6 - Small
+/// Font 4x6 - Small
 const uint8_t PROGMEM font4[95][4] = {
 		{0b00000000,0b00000000,0b00000000,0b00000000}, //
 		{0b00000000,0b01011100,0b00000000,0b00000000}, // !

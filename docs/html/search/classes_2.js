@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['menu_5ft',['menu_t',['../structmenu__t.html',1,'']]]
+  ['joystick_5ft',['joystick_t',['../structjoystick__t.html',1,'']]]
 ];

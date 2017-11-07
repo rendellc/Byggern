@@ -1,5 +1,5 @@
 /*! @file
- * High level CAN bus controller.
+ * Implementation of high level CAN bus controller.
  */
 #include "global_declarations.h"
 #include <avr/interrupt.h>
@@ -10,9 +10,9 @@
 
 #define RX_BUFFER_MAX 8 ///\todo determine good size
 
-static volatile can_msg_t rx_buffer[2][RX_BUFFER_MAX] = {};
-static volatile uint8_t rx_head[2] = {};
-static volatile uint8_t rx_tail[2] = {};
+static volatile can_msg_t rx_buffer[2][RX_BUFFER_MAX] = {};	/*!< Recieption buffer for can bus*/
+static volatile uint8_t rx_head[2] = {};					/*!< */
+static volatile uint8_t rx_tail[2] = {};					/*!< */
 
 /*!
  * Interrupt vector for can message reception. \n
@@ -20,6 +20,7 @@ static volatile uint8_t rx_tail[2] = {};
  * the interrupt. \n
  * If there is no room in the buffer, then the interrupt is cleared and message
  * is ignored. 
+   \todo Implement better overflow handling? Maybe oldest values should be discardeded. Can be as easy as doing head++, tail++
  */
 ISR(INT1_vect){
 	cli();	
@@ -99,10 +100,12 @@ void can_print_msg(can_msg_t msg)
 
 /*!
  * Send message on can bus using the specified tx hardware buffer.
+ * @param msg Msg to send on bus
+ * @param tx_buffer_select Tx buffer to put the message into. 
  */
 void can_send(can_msg_t msg, uint8_t tx_buffer_select)
 {
-	/// \todo check for buffer full
+	/// \todo check for buffer full, can return false if buffer is full
 	
 	
 	uint8_t MCP_TXBn = MCP_TXB0;
@@ -164,34 +167,3 @@ can_msg_t can_read_buffer(uint8_t rx_buffer_select)
 		
 	return msg;
 }
-
-/*
-can_msg_t can_read_buffer_backup(uint8_t rx_buffer_select)
-{
-	can_msg_t msg = {};
-	
-	const uint8_t MCP_RXBn	   = (rx_buffer_select==0) ? MCP_RXB0 : MCP_RXB1;
-	const uint8_t MCP_READ_RXn = (rx_buffer_select==0) ? MCP_READ_RX0 : MCP_READ_RX1;
-	const uint8_t MCP_RXnIF    = (rx_buffer_select==0) ? MCP_RX0IF : MCP_RX1IF;
-	
-	msg.length = mcp_read(MCP_RXBn | MCP_RXBnDLC) & MCP_DLC_MASK;  
-	
-	spi_ss_low();
-	spi_transmit(MCP_READ_RXn | 0x00); // sid
-	msg.sid = spi_transmit(0);
-	spi_ss_high();
-	
-	spi_ss_low();
-	spi_transmit(MCP_READ_RXn | 0x02);
-	
-	for (uint8_t i = 0; i < msg.length; ++i)
-	{
-		msg.data[i] = spi_transmit(0);
-	}
-	spi_ss_high();
-	
-	mcp_bitmodify(MCP_CANINTF, MCP_RXnIF, 0);
-	
-	return msg;
-}
-*/

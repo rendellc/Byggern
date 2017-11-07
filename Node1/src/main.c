@@ -7,6 +7,8 @@
 
 
 #include "global_declarations.h"
+#include <avr/interrupt.h>
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -25,6 +27,7 @@
 
 int main() 
 {
+	cli();
 	// SRAM init
 	MCUCR |= (1 << SRE);
 	SFIOR |= (1 << XMM2);

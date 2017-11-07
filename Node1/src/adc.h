@@ -20,6 +20,6 @@ void adc_init(void);
  * @param[in] ch uint8 in range 0 through 3. Channel that adc will perform conversion on.
  * @return result of AD conversion
  */
-uint8_t adc_read_channel(uint8_t);
+uint8_t adc_read_channel(uint8_t ch);
 
 #endif /* ADC_H_ */

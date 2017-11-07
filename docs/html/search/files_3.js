@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['uart_2ec',['uart.c',['../Node1_2src_2uart_8c.html',1,'']]],
-  ['uart_2eh',['uart.h',['../Node1_2src_2uart_8h.html',1,'']]]
+  ['global_5fdeclarations_2eh',['global_declarations.h',['../Node1_2src_2global__declarations_8h.html',1,'']]]
 ];

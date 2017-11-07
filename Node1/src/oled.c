@@ -131,7 +131,7 @@ void oled_pos(uint8_t row, uint8_t column){
 
 // Place chr in buffer with correct numbering according to font indices
 void oled_buffchar(char chr){
-	if(chr >= 0x20 && xpos < OLED_WIDTH && ypos < OLED_PAGES) {
+	if(chr >= ASCII_OFFSET && xpos < OLED_WIDTH && ypos < OLED_PAGES) {
 		
 		if (xpos + fontwidth >= OLED_WIDTH){
 			oled_newline();	
@@ -172,7 +172,7 @@ void oled_buffchar(char chr){
 
 		// write char
 		for (uint8_t seg = 0; seg < fontwidth; ++seg){
-			buffer[ypos*OLED_WIDTH + xpos] = pgm_read_word(&font[(chr - 0x20)*fontwidth + seg]);
+			buffer[ypos*OLED_WIDTH + xpos] = pgm_read_word(&font[(chr - ASCII_OFFSET)*fontwidth + seg]);
 			oled_goto_nextpos();
 		}
 		
