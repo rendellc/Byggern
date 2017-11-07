@@ -6,7 +6,6 @@
  */ 
 #include "global_declarations.h"
 #include "spi_driver.h"
-#include "uart.h"
 #include "avr/io.h"
 #include <stdio.h>
 
