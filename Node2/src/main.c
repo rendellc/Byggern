@@ -18,9 +18,11 @@
 #include "ir.h"
 #include "dac.h"
 #include "motor.h"
+#include "game.h"
 
 uint16_t negativescore = 0;
 uint16_t adc_read;
+
 
 int main(void)
 {
@@ -45,10 +47,15 @@ int main(void)
 	int8_t joy_x = 0;
 	int8_t joy_y = 0;
 	uint8_t joy_click = 0;
+	uint8_t slider_pos = 0;
 	
 	
 	
 	DDRE |= (1 << PE4);
+	
+	motor_enable();
+	motor_encoder_calibrate();
+	
 	
 	
 	
@@ -60,11 +67,12 @@ int main(void)
 		
 		switch (read.sid)
 		{
+			
 			case MSG_JOY:
 				joy_x = read.data[0];
 				joy_y = read.data[1];
 				joy_click = read.data[3];
-				
+				/*
 				if (joy_click){
 					fprintf(&uart_out, "click\n");
 					PORTE &= ~(1 << PE4);
@@ -73,6 +81,15 @@ int main(void)
 					fprintf(&uart_out, "no click\n");
 					PORTE |= (1 << PE4);
 				}
+				*/
+				break;
+				
+			case MSG_SLIDER:
+				slider_pos = read.data[0];
+				motor_set_position(slider_pos);
+				//fprintf(&uart_out, "slider: %i\n", (slider_pos/5)*2);
+				//motor_set_position(50);
+				
 				break;
 				
 			case MSG_INVALID:
@@ -80,33 +97,21 @@ int main(void)
 				break;
 		}
 		
-		int16_t enc_read = motor_read_encoder();
+		//int16_t enc_read = motor_read_encoder();
 		//fprintf(&uart_out, "encoder read %i\n", enc_read);
 		//fprintf(&uart_out, "joy_y read %i\n", joy_y);
 		//fprintf(&uart_out, "click: %i\n", joy_click);
-		motor_set_speed(joy_y/2);
+		//motor_set_speed(joy_y/2);
 		//uint16_t adc_read = ir_read(); // changed to global variable instead
-		//adc_read = ir_read();
+		uint8_t adc_read = ir_read();
+		
 		//scorekeeping();
-		//fprintf(&uart_out, "adc value: %i\n", adc_read);
+		
+		fprintf(&uart_out, "adc value: %i\t\n", adc_read);
+		//fprintf(&uart_out, "lives: %u\n", scorekeeping());
+		
 		//fprintf(&uart_out, "pwm duty: %i\n",  32 + joy_x/2);
+		
 		pwm_set_duty(34 + joy_x/2);
     }
 }
-
-/*
-void scorekeeping(){
-	if (adc_read < 30)
-	{
-		negativescore++;
-		fprintf(&uart_out, "LOSER: %i\n", negativescore);
-		//adc_read = ir_read();
-		while (adc_read < 30)
-		{
-			adc_read = ir_read();
-		}
-		
-	}
-	
-}
-*/

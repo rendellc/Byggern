@@ -25,8 +25,8 @@
 
 
 // calibration
-static uint16_t calibrate_min = 0;
-static uint16_t calibrate_max = 0;
+static int16_t calibrate_min = 0;
+static int16_t calibrate_max = 0;
 
 /// signal processing
 const int16_t F_filter = 2;		 // 
@@ -34,13 +34,16 @@ const int16_t lowpass_coeff = 4; //
 
 
 // regulator
+static uint8_t position_regulator_enabled = 0;
+
+
 pi_t regulator = {};
 
-/// velocity reference
-static int16_t vel_setpoint = 0;
+/// position set point
+static int16_t encoder_setpoint = 0;
 
 static volatile int16_t raw_encoder[2] = {};
-static volatile int16_t velocity[2] = {}; 
+static volatile int16_t force[2] = {}; 
 
 
 ISR(TIMER0_OVF_vect){
@@ -50,52 +53,73 @@ ISR(TIMER0_OVF_vect){
 	raw_encoder[1] = raw_encoder[0];
 	raw_encoder[0] = motor_read_encoder();
 	
-	velocity[0] = velocity[1]/lowpass_coeff + F_filter*(raw_encoder[0] - raw_encoder[1]);
 	
+	//velocity[0] = velocity[1]/lowpass_coeff + F_filter*(raw_encoder[0] - raw_encoder[1]);
+	//velocity[1] = velocity[0];
 	
 	// set motor speed
-	pi_regulator(&regulator, vel_setpoint, velocity[0]);
+	// pi_regulator(&regulator, vel_setpoint, velocity[0]);
+	
+	if (position_regulator_enabled){
+		force[1] = force[0];
+		force[0] = pi_regulator(&regulator, encoder_setpoint, raw_encoder[0]);
+		//fprintf(&uart_out, "output %i\n", force[0]/128);
+		motor_set_speed(force[0]/128);
+	}
+	
+	
 	
 	TIFR0  |= (1 << TOV0); // clear overflow flag
 	sei();
 }
 
 
-/**
- * Manually calibrate the encoder.
- * 
+/*!
+ * Calibrate motor encoder
  */
-void motor_encoder_calibrate(){
-	uint16_t encoder_raw = motor_read_encoder();
-	uint16_t encoder_minvalue = encoder_raw;
-	uint16_t encoder_maxvalue = encoder_raw;
+void motor_encoder_calibrate()
+{
+	motor_set_speed(40);
+	int16_t old_value = motor_read_encoder();
+	_delay_ms(100);
+	int16_t new_value = motor_read_encoder();
+	//find min value
 	
-	
-	/// \todo this is heavily dependent on processor performance. Isolate more
-	uint16_t i = -1;
-	while (i--){
-		encoder_raw = motor_read_encoder();
-
-		encoder_minvalue = (encoder_raw < encoder_minvalue) ? encoder_raw : encoder_minvalue;
-		encoder_maxvalue = (encoder_raw > encoder_maxvalue) ? encoder_raw : encoder_maxvalue;
+	while(new_value < old_value)
+	{
+		old_value = motor_read_encoder();
+		_delay_ms(100);
+		new_value = motor_read_encoder();
 	}
-
-	// save
-	calibrate_min = encoder_minvalue;
-	calibrate_max = encoder_maxvalue;
-
-
+	calibrate_max = new_value;
+	fprintf(&uart_out, "encoder min %i\n", calibrate_min);
+	
+	
+	motor_set_speed(-40);
+	old_value = motor_read_encoder();
+	_delay_ms(100);
+	new_value = motor_read_encoder();
+	//find max value
+	
+	while(new_value > old_value)
+	{
+		old_value = motor_read_encoder();
+		_delay_ms(100);
+		new_value = motor_read_encoder();
+	}
+	calibrate_min = new_value;
+	fprintf(&uart_out, "encoder max %i\n", calibrate_max);
 }
 
-/**
+
+/*!
  * Convert data fra encoder using the calibration constants.
- * Undefined behviour if motor_encoder_calibrate has not been executed first.
+ * Undefined behaviour if motor_encoder_calibrate has not been executed first.
  */
 int8_t motor_encoder_convert_range(uint16_t raw_data){
 	/// \test this need to be tested for overflow errors
 	return (int8_t)((uint32_t)((raw_data - calibrate_min)*100L)/calibrate_max);
 }
-
 
 int16_t motor_read_encoder(){
 	
@@ -120,9 +144,9 @@ int16_t motor_read_encoder(){
 	// read lsb
 	read |= PINK;
 	
-	// toggle !RST
-	PORTH &= ~(1 << PIN_RST);
-	_delay_us(1);
+	// toggle !RST comment out PORTH &= ~(1 << PIN_RST); if you wan position encoder
+	//PORTH &= ~(1 << PIN_RST);
+	_delay_us(10);
 	PORTH |= (1 << PIN_RST);
 	
 	
@@ -146,6 +170,8 @@ void motor_init(void){
 	TIFR0  |= (1 << TOV0);   // clear overflow flag
 	TIMSK0 |= (1 << TOIE0);  // enable
 	
+	pi_regulator_init(&regulator, 1, 16);
+	
 	motor_enable();
 }
 
@@ -162,7 +188,20 @@ void motor_set_speed(int8_t speed){
 		PORTH |= (1 << PIN_DIR);
 		dac_output(speed);
 		//fprintf(&uart_out, "right\t");
+	}	
+}
+
+
+void motor_set_position(uint8_t position){
+	/*
+	if (position > 100){
+		position = 100;
 	}
+	*/
 	
+	encoder_setpoint = calibrate_min + ((calibrate_max - calibrate_min)*(int32_t)position)/256;
 	
+	//pi_regulator(&regulator, encoder_setpoint, raw_encoder[0]);
+	
+	position_regulator_enabled = 1;
 }

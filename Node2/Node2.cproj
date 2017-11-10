@@ -42,15 +42,15 @@
     <com_atmel_avrdbg_tool_atmelice>
       <ToolOptions>
         <InterfaceProperties>
-          <JtagDbgClock>200000</JtagDbgClock>
+          <IspClock>125000</IspClock>
         </InterfaceProperties>
-        <InterfaceName>JTAG</InterfaceName>
+        <InterfaceName>ISP</InterfaceName>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.atmelice</ToolType>
       <ToolNumber>J41800007503</ToolNumber>
       <ToolName>Atmel-ICE</ToolName>
     </com_atmel_avrdbg_tool_atmelice>
-    <avrtoolinterface>JTAG</avrtoolinterface>
+    <avrtoolinterface>ISP</avrtoolinterface>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
@@ -126,6 +126,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\dac.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\game.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\game.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\global_declarations.h">

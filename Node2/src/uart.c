@@ -36,7 +36,6 @@ ISR(USART0_TX_vect){
 
 
 void uart_init(void){
-	cli();
 	
 	// set baud rate
 	int timerval = (F_CPU/(16*BAUD) - 1);
@@ -54,8 +53,6 @@ void uart_init(void){
 	
 	// stop bit to 1
 	UCSR0C &= ~(1 << USBS0);
-
-	sei();
 }
 
 int uart_send(unsigned char msg){

@@ -20,7 +20,7 @@ src/main.d src/main.o: ../src/main.c ../src/global_declarations.h \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\avr\fuse.h \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\avr\lock.h \
  ../src/spi_driver.h ../src/uart.h ../src/mcp2515.h ../src/can.h \
- ../src/pwm.h ../src/ir.h ../src/dac.h ../src/motor.h
+ ../src/pwm.h ../src/ir.h ../src/dac.h ../src/motor.h ../src/game.h
 
 ../src/global_declarations.h:
 
@@ -79,3 +79,5 @@ c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-g
 ../src/dac.h:
 
 ../src/motor.h:
+
+../src/game.h:

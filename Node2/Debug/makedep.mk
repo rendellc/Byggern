@@ -6,6 +6,8 @@ src\can.c
 
 src\dac.c
 
+src\game.c
+
 src\ir.c
 
 src\MCP2515.c

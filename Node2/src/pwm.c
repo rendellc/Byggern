@@ -8,8 +8,8 @@
 #include <avr/interrupt.h>
 
 #define PWM_TOP 40000
-#define PWM_MAX 4200
-#define PWM_MIN 1800
+#define PWM_MAX 3900
+#define PWM_MIN 2000
 #define PWM_MID ((PWM_MAX+PWM_MIN)/2)
 #define PWM_RES ((PWM_MAX-PWM_MIN)/100)
 
@@ -32,13 +32,14 @@ void pwm_init(void)
 }
 
 
-void pwm_set_duty(uint8_t duty){
+void pwm_set_duty(int8_t duty){
 	if (duty > 100){
-		return;
+		duty = 100;
+	} else if (duty < 0){
+		duty = 0;
 	}
 	
-	
-	OCR1A = PWM_MIN + 24*duty;
+	OCR1A = PWM_MIN + PWM_RES*duty;
 	
 }
 

@@ -21,12 +21,12 @@ void dac_init(void){
 }
 
 
-void dac_output(uint8_t voltagePercent){
+void dac_output(uint8_t voltage){
 	uint8_t msg[3] = {};
 	
 	msg[0] = 0b01010000;
 	msg[1] = DAC_CMD_OUTPUT;
-	msg[2] = (voltagePercent*5)/2; // convert range from 0-100 to 0-250 (almost 0-255)
+	msg[2] = 2*voltage; // convert range from 0-100 to 0-250 (almost 0-255)
 	
 	//fprintf(&uart_out, "speed: %i\n", msg[2]);
 	

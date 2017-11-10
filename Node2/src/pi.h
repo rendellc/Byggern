@@ -17,10 +17,10 @@ typedef struct pi_t_ {
 } pi_t;
 
 
-void pi_regulator_init(pi_t* regulator_p, int16_t Kp, int16_t Ki, int16_t);
+void pi_regulator_init(struct pi_t_* regulator_p, int16_t Kp, int16_t Ki);
 
 
-int16_t pi_regulator(pi_t* regulator_p, int16_t setpoint, int16_t measurement);
+int16_t pi_regulator(struct pi_t_* regulator_p, int16_t setpoint, int16_t measurement);
 
 
 #endif
