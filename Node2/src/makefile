@@ -6,6 +6,8 @@ outname=node2.out
 
 all: $(OBJS)
 	$(CC) -o $(outname) $(CFLAGS) $(OBJS)
+	mv $(outname) ../../$(outname)
+
 
 main.o: spi_driver.o uart.o mcp2515.o can.o pwm.o ir.o dac.o
 	$(CC) $(CFLAGS) -c main.c

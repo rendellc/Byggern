@@ -6,6 +6,7 @@ outname=node1.out
 
 all: $(OBJS)
 	$(CC) -o $(outname) $(CFLAGS) $(OBJS)
+	mv $(outname) ../../$(outname)
 
 main.o: uart.o adc.o oled.o menu.o spi_driver.o can.o joystick.o mcp2515.o
 	$(CC) $(CFLAGS) -c main.c

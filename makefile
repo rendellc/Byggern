@@ -10,6 +10,11 @@ node2:
 
 .PHONY:
 clean:
-	rm -f Node1/src/*.o Node1/src/*.out
-	rm -f Node2/src/*.o Node2/src/*.out
+	make cleanup
+	rm *.out
+
+.PHONY:
+cleanup:
+	rm -f Node1/src/*.o
+	rm -f Node2/src/*.o
 
