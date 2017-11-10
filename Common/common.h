@@ -8,8 +8,9 @@
 // --- Joystick / ADC ---
 /// struct for holding joystick state
 typedef struct {
-	int x;
-	int y;
+	int8_t x;
+	int8_t y;
+	uint8_t click;
 } joystick_t;
 
 /// struct for holding slider and button state

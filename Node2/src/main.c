@@ -25,9 +25,9 @@ uint16_t adc_read;
 int main(void)
 {
 	cli();
-	spi_init();
 	uart_init();
 	fprintf(&uart_out, "can init starting...");
+	spi_init();
 	can_init();
 	fprintf(&uart_out, "done\n");
 	fprintf(&uart_out, "pwm init starting...");
@@ -44,6 +44,12 @@ int main(void)
 	
 	int8_t joy_x = 0;
 	int8_t joy_y = 0;
+	uint8_t joy_click = 0;
+	
+	
+	
+	DDRE |= (1 << PE4);
+	
 	
 	
     while(1)
@@ -57,6 +63,16 @@ int main(void)
 			case MSG_JOY:
 				joy_x = read.data[0];
 				joy_y = read.data[1];
+				joy_click = read.data[3];
+				
+				if (joy_click){
+					fprintf(&uart_out, "click\n");
+					PORTE &= ~(1 << PE4);
+				}
+				else{
+					fprintf(&uart_out, "no click\n");
+					PORTE |= (1 << PE4);
+				}
 				break;
 				
 			case MSG_INVALID:
@@ -65,20 +81,16 @@ int main(void)
 		}
 		
 		int16_t enc_read = motor_read_encoder();
-		
 		//fprintf(&uart_out, "encoder read %i\n", enc_read);
 		//fprintf(&uart_out, "joy_y read %i\n", joy_y);
-		
+		//fprintf(&uart_out, "click: %i\n", joy_click);
 		motor_set_speed(joy_y/2);
 		//uint16_t adc_read = ir_read(); // changed to global variable instead
 		//adc_read = ir_read();
 		//scorekeeping();
 		//fprintf(&uart_out, "adc value: %i\n", adc_read);
 		//fprintf(&uart_out, "pwm duty: %i\n",  32 + joy_x/2);
-		pwm_set_duty(32 + joy_x/2);
-		
-		fprintf(&uart_out, "PORTH %x\n", PINH);
-		
+		pwm_set_duty(34 + joy_x/2);
     }
 }
 
