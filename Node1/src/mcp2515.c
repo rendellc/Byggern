@@ -13,7 +13,9 @@
 #include "spi_driver.h"
 #include "uart.h"
 
-
+/*!
+ * Initialize MCP2515 and set to normal operating mode. 
+ */
 void mcp_init()
 {
 	mcp_reset();
@@ -49,7 +51,10 @@ void mcp_init()
 }
 
 
-
+/*!
+ * Reset MCP2515.
+ * Sends reset signal and waits for atleast 128 clock cycles to give MCP2515 time to reset. 
+ */
 void mcp_reset()
 {
 	spi_ss_low();
@@ -63,6 +68,11 @@ void mcp_reset()
 	#endif // MCP_DEBUG
 }
 
+/*!
+ * Reads data from the register at the specified address
+ * @param adr Address to read from
+ * @return Data in the specified register
+ */
 uint8_t mcp_read(uint8_t adr)
 {
 	spi_ss_low();
@@ -78,6 +88,12 @@ uint8_t mcp_read(uint8_t adr)
 	return read;
 }
 
+/*!
+ * Read data in buffer
+ * @param rx_select Which buffer to read from. Values can be 0 or 1. \todo not implemented
+ * @param data_select Read  data register if 1. Read  SIDH if 0. \todo not implemented
+ * @return Data read from buffer
+ */
 uint8_t mcp_read_buffer(uint8_t rx_select, uint8_t data_select)
 {
 	spi_ss_low();
@@ -95,7 +111,11 @@ uint8_t mcp_read_buffer(uint8_t rx_select, uint8_t data_select)
 	return data;
 }
 
-
+/*!
+ * Write data to specified buffer.
+ * @param adr Register address to write data to
+ * @param data Data to write
+ */
 void mcp_write(uint8_t adr, uint8_t data)
 {
 	spi_ss_low();
@@ -110,6 +130,10 @@ void mcp_write(uint8_t adr, uint8_t data)
 	#endif // MCP_DEBUG
 }
 
+/*!
+ * Request to send
+ * @param tx_buffer_select The buffer to request transmission on
+ */
 void mcp_rts(uint8_t tx_buffer_select)
 {
 	spi_ss_low();
@@ -121,6 +145,10 @@ void mcp_rts(uint8_t tx_buffer_select)
 	#endif // MCP_DEBUG
 }
 
+/*!
+ * Read status.
+ * @return 8 flags that indicate the current status of the controller. 
+ */
 uint8_t mcp_readstatus()
 {
 	spi_ss_low();
@@ -136,6 +164,12 @@ uint8_t mcp_readstatus()
 	return status;
 }
 
+/*!
+ * Modify single bit in register. Note that this doesn't work on all registers.
+ * @param adr Address to modify
+ * @param mask Mask: 1 on all the bits that should be affacted.
+ * @param data Value that masked bits will be updated to.
+ */
 void mcp_bitmodify(uint8_t adr, uint8_t mask, uint8_t data)
 {
 	spi_ss_low();
@@ -150,7 +184,9 @@ void mcp_bitmodify(uint8_t adr, uint8_t mask, uint8_t data)
 	#endif // MCP_DEBUG
 }
 
-
+/*!
+ * Set to controller into loopback mode. Used for debugging.
+ */
 void mcp_loopback_set()
 {
 	mcp_write(MCP_CANCTRL, MODE_CONFIG);

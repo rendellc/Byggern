@@ -11,8 +11,8 @@
 #define RX_BUFFER_MAX 8 ///\todo determine good size
 
 static volatile can_msg_t rx_buffer[2][RX_BUFFER_MAX] = {};	/*!< Recieption buffer for can bus*/
-static volatile uint8_t rx_head[2] = {};					/*!< */
-static volatile uint8_t rx_tail[2] = {};					/*!< */
+static volatile uint8_t rx_head[2] = {};			/*!< Index for where next recieved message will be placed*/
+static volatile uint8_t rx_tail[2] = {};			/*!< Index for where next read will occour*/
 
 /*!
  * Interrupt vector for can message reception. \n
@@ -24,7 +24,6 @@ static volatile uint8_t rx_tail[2] = {};					/*!< */
  */
 ISR(INT1_vect){
 	cli();	
-	///\todo implement overflow such that new data replaces old?
 	// pick correct buffer, RXB1 has highest priority now
 	volatile uint8_t n			  = 0;
 	volatile uint8_t MCP_RXBn	  = MCP_RXB0;
@@ -40,7 +39,7 @@ ISR(INT1_vect){
 	}
 	
 	// if there is room in buffer first
-	if ((rx_head[n]+1)%RX_BUFFER_MAX != rx_tail[n]){
+	//if ((rx_head[n]+1)%RX_BUFFER_MAX != rx_tail[n]){
     	volatile can_msg_t msg = {};
     	
     	msg.length = mcp_read(MCP_RXBn | MCP_RXBnDLC) & MCP_DLC_MASK;
@@ -61,7 +60,7 @@ ISR(INT1_vect){
         
     	rx_buffer[n][rx_head[n]] = msg;
     	rx_head[n] = (rx_head[n]+1) % RX_BUFFER_MAX;
-	}
+	//}
 
     mcp_bitmodify(MCP_CANINTF, MCP_RXnIF, 0);
 	sei();

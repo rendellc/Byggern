@@ -16,21 +16,25 @@
 #define OLED_HEIGHT OLED_PAGES*8 // 8 pages tall
 #define SPACING 1
 
-const uint8_t* font			= (const uint8_t*) font4;
-const uint8_t  fontheight	= 6;		// buffchr will have bugs if fontwidth changes during execution
+const uint8_t* font			= (const uint8_t*) font4; /*!< Which font to use */
+const uint8_t  fontheight	= 6;		/// \note buffchr will have bugs if fontwidth changes during execution
 const uint8_t  fontwidth	= 4;
 
 volatile uint8_t* buffer	= (uint8_t*)OLED_BUFFER_ADR;
 
-uint8_t xpos = 0;
-uint8_t ypos = 0;
+uint8_t xpos = 0; /*!< Cursor x position  */
+uint8_t ypos = 0; /*!< Cursor y position  */
 
+/// Create oled as an output stream
 FILE oled_out = FDEV_SETUP_STREAM(oled_putchar, NULL, _FDEV_SETUP_WRITE);
 
+
+/// Oled refresh interrupt
 ISR(TIMER0_OVF_vect){
 	oled_update();
 }
 
+/// Initialize oled to automatically refresh from buffer
 void oled_autorefresh_init(){
 	// set up interrupt timer
 	TIMSK |= (1<<TOIE0);
@@ -40,16 +44,25 @@ void oled_autorefresh_init(){
 	OCR0 = 39;
 }
 
+/*! Write command to oled
+ * @param cmd Command to write to oled
+ */
 void write_c(uint8_t cmd){
 	_delay_us(1);
 	*((uint8_t *)OLED_C_ADR) = cmd;
 }
 
+/*! Write data to oled
+ * @param data Data to write to oled
+ */
 void write_d(uint8_t data){
 	_delay_us(1); // delay may be increased to 1000 to make debug easier, works without any delay
 	*((uint8_t *)OLED_D_ADR) = data;
 }
 
+/*!
+ * Initialize oled with cursor top left and enable autorefreshing. 
+ */
 void oled_init(){
 	cli();
 	
@@ -83,34 +96,61 @@ void oled_init(){
 	oled_autorefresh_init();
 }
 
+
+/*!
+ * Clear oled screen and set cursor to home.
+ */
 void oled_reset(){
 	oled_init();
 	oled_fill(0);
 	oled_home();
 }
 
+/*!
+ * Set cursor to top left of display.
+ */
 void oled_home(){
 	xpos = 0;
 	ypos = 0;
 }
 
+
+/*!
+ * Set cursor to the start of this line.
+ */
 void oled_cartridgereturn(){
 	xpos = 0;
 }
 
+
+/*!
+ * Go to start of next line. Wrap around to top home if at last line. 
+ */
 void oled_newline(){
 	oled_cartridgereturn();
 	oled_goto_line((ypos+1) % OLED_PAGES);
 }
 
+/*!
+ * Set cursor to specified line. Does not affect the horizontal position of cursor.  
+ * @param y The line that will be moved to. 
+ */
 void oled_goto_line(uint8_t y){
 	ypos = y;
 }
 
+/*!
+ * Set cursor to specified column. Does not affect the vertical position of cursor. 
+ * @param x The column that will be moved to. 
+ */
 void oled_goto_column(uint8_t x){
 	xpos = x;
 }
 
+
+/*!
+ * Increment cursor position by one step. Wraps around on both axes if at edge of screen. 
+ */
 void oled_goto_nextpos(){
 	// wrap around is applied to both xpos and ypos
 	
@@ -121,6 +161,9 @@ void oled_goto_nextpos(){
 	
 }
 
+/*!
+ * Set position of cursor. 
+ */
 void oled_pos(uint8_t row, uint8_t column){
 	oled_goto_line(row);
 	oled_goto_column(column);
@@ -130,6 +173,9 @@ void oled_pos(uint8_t row, uint8_t column){
 // *** TEXT OUTPUT RELATED ***
 
 // Place chr in buffer with correct numbering according to font indices
+/*!
+ * 
+ */
 void oled_buffchar(char chr){
 	if(chr >= ASCII_OFFSET && xpos < OLED_WIDTH && ypos < OLED_PAGES) {
 		

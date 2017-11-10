@@ -17,11 +17,10 @@
 #include "../../Common/common.h"
 
 /// ---- MEMORY ----
-#define ADC_ADR         0x1100
-#define OLED_BUFFER_ADR 0x1400
-#define RAM_ADR         0x1800
+#define ADC_ADR         0x1100 /*!< IO-memory for analog to digital converter*/
+#define OLED_BUFFER_ADR 0x1400 /*!< Memory address for OLED buffer*/
+#define RAM_ADR         0x1800 /*!< Address of external RAM*/
 
-#define RAM_SIZE        0x800
-
+#define RAM_SIZE        0x800  /*!< Size of available external RAM */
 
 #endif /* GLOBAL_DECLARATIONS_H_ */
