@@ -8,21 +8,22 @@
 
 #include "oled.h"
 #include "menu.h"
-#include "joystick.h" /*!< \tode remove */
+#include "joystick.h"
 #include "global_declarations.h"
-#include "uart.h" /*!< \todo remove, included only for debug purposes */
+#include "uart.h"				/*!< \todo remove, included only for debug purposes */
 
 static menu_t* head; 			/*!< root of menu system */
 static menu_t* current; 		/*!< menu currently displayed on screen */
-static uint8_t subchoice = 0;  /*!< submenus currently pointed to on screen*/ 
+static uint8_t subchoice = 0;	/*!< submenus currently pointed to on screen*/ 
 
 /// implement an empty action that submenus can have.
 void menu_action_nothing(){};
 
 /// Setup atmega162 IO to interface with clicker on joystick.
 void menu_click_init(){
-	PORTE  |= 1 << PE0;
-	DDRE   &= ~(1 << PE0);
+	joystick_init();
+	//PORTE  |= 1 << PE0;
+	//DDRE   &= ~(1 << PE0);
 }
 
 /*!

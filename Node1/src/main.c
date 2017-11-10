@@ -9,10 +9,13 @@
 #include "global_declarations.h"
 #include <avr/interrupt.h>
 
+#include <util/delay.h>
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
+
 
 #include "uart.h"
 #include "adc.h"
@@ -25,7 +28,8 @@
 //#include "mcp2515.h"
 #include "joystick.h"
 
-int main() 
+
+int main()
 {
 	cli();
 	// SRAM init
@@ -49,22 +53,38 @@ int main()
 	// setup printf
 	stdout = &uart_out; // printf defaults to oled
 	stdin  = &uart_in;
+	can_msg_t click_msg = {};
+	can_msg_t noclick_msg = {};
+		
+	click_msg.sid = MSG_JOY;
+	click_msg.data[3] = 1;
+	click_msg.length = 4;
 	
-	
-	can_msg_t msg = {};
-	msg.data[0] = 1;
-	msg.data[1] = 1;
-	msg.data[2] = 2;
-	msg.data[3] = 3;
-	msg.data[4] = 5; 
-	msg.length = 5;
-	msg.sid = 123;
-	
+	noclick_msg.sid = MSG_JOY;
+	noclick_msg.data[3] = 0;
+	click_msg.length = 4;
 	
 	while (1)
 	{	
-		
 		send_joy();
+		
+		/*
+		if (!(PINE & (1 << PE0)))
+		{
+			can_send(click_msg,0);
+			fprintf(&uart_out, "click sent\n");
+			_delay_ms(10);
+		}
+		
+		
+		else
+		{
+			can_send(noclick_msg,0);
+			fprintf(&uart_out, "no click sent\n");
+		}
+		*/
+		
+		//send_joy();
 		//can_send(msg,0);
 		//can_print_msg(msg);
 
