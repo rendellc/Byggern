@@ -152,6 +152,12 @@
     <Compile Include="src\motor.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\pi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\pi.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\pwm.c">
       <SubType>compile</SubType>
     </Compile>

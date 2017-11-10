@@ -33,7 +33,7 @@ ISR(TIMER0_OVF_vect){
 
 void oled_autorefresh_init(){
 	// set up interrupt timer
-	TIMSK |= (1<<TOIE0);;
+	TIMSK |= (1<<TOIE0);
 	
 	// set frequency to ca 60 Hz
 	TCCR0 |= (1<<CS02 | 1<<CS00) & ~(1 << CS01);

@@ -44,6 +44,7 @@ C_SRCS +=  \
 ../src/MCP2515.c \
 ../src/main.c \
 ../src/motor.c \
+../src/pi.c \
 ../src/pwm.c \
 ../src/spi_driver.c \
 ../src/TWI_Master.c \
@@ -63,6 +64,7 @@ src/ir.o \
 src/MCP2515.o \
 src/main.o \
 src/motor.o \
+src/pi.o \
 src/pwm.o \
 src/spi_driver.o \
 src/TWI_Master.o \
@@ -75,6 +77,7 @@ src/ir.o \
 src/MCP2515.o \
 src/main.o \
 src/motor.o \
+src/pi.o \
 src/pwm.o \
 src/spi_driver.o \
 src/TWI_Master.o \
@@ -87,6 +90,7 @@ src/ir.d \
 src/MCP2515.d \
 src/main.d \
 src/motor.d \
+src/pi.d \
 src/pwm.d \
 src/spi_driver.d \
 src/TWI_Master.d \
@@ -99,6 +103,7 @@ src/ir.d \
 src/MCP2515.d \
 src/main.d \
 src/motor.d \
+src/pi.d \
 src/pwm.d \
 src/spi_driver.d \
 src/TWI_Master.d \
@@ -118,6 +123,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 

@@ -9,6 +9,7 @@
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <util/delay.h>
+
 #include "spi_driver.h"
 #include "uart.h"
 #include "mcp2515.h"
@@ -16,6 +17,7 @@
 #include "pwm.h"
 #include "ir.h"
 #include "dac.h"
+#include "motor.h"
 
 uint16_t negativescore = 0;
 uint16_t adc_read;
@@ -41,17 +43,20 @@ int main(void)
 	
 	
 	int8_t joy_x = 0;
-	
+	int8_t joy_y = 0;
 	
 	
     while(1)
     {
+		motor_enable();
+		
 		can_msg_t read = can_read_buffer(0);
 		
 		switch (read.sid)
 		{
 			case MSG_JOY:
 				joy_x = read.data[0];
+				joy_y = read.data[1];
 				break;
 				
 			case MSG_INVALID:
@@ -59,17 +64,22 @@ int main(void)
 				break;
 		}
 		
-		motor_set_speed(joy_x/2);
+		int16_t enc_read = motor_read_encoder();
+		
+		//fprintf(&uart_out, "encoder read %i\n", enc_read);
+		//fprintf(&uart_out, "joy_y read %i\n", joy_y);
+		
+		motor_set_speed(joy_y/2);
 		//uint16_t adc_read = ir_read(); // changed to global variable instead
-		adc_read = ir_read();
+		//adc_read = ir_read();
 		//scorekeeping();
-		//fprintf(&uart_out, "adc value: %i\t", adc_read);
+		//fprintf(&uart_out, "adc value: %i\n", adc_read);
 		//fprintf(&uart_out, "pwm duty: %i\n",  32 + joy_x/2);
-		//pwm_set_duty(32 + joy_x/2);
+		pwm_set_duty(32 + joy_x/2);
+		
+		fprintf(&uart_out, "PORTH %x\n", PINH);
 		
     }
-	
-	
 }
 
 /*

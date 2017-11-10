@@ -22,50 +22,44 @@
 #define PIN_OE	PH5
 #define PIN_RST PH6
 
-/// velocity reference
-static int8_t vel_setpoint = 0;
+
 
 // calibration
 static uint16_t calibrate_min = 0;
 static uint16_t calibrate_max = 0;
 
+/// signal processing
+const int16_t F_filter = 2;		 // 
+const int16_t lowpass_coeff = 4; // 
+
+
 // regulator
 pi_t regulator = {};
 
+/// velocity reference
+static int16_t vel_setpoint = 0;
 
-static volatile uint8_t position[2] = {};
-static volatile int8_t velocity[2] = {};
+static volatile int16_t raw_encoder[2] = {};
+static volatile int16_t velocity[2] = {}; 
 
 
 ISR(TIMER0_OVF_vect){
 	cli();
 	// sample encoder
-	//fprintf(&uart_out, "encoder: %i\n", motor_read_encoder()/32);
-	uint8_t  read_position = motor_read_encoder();
+	//fprintf(&uart_out, "encoder: %i\n", motor_read_encoder()/32);	
+	raw_encoder[1] = raw_encoder[0];
+	raw_encoder[0] = motor_read_encoder();
 	
-	velocity[1] = position[0]   - position[1];
-	velocity[0] = read_position - position[0];
-	position[1] = position[0];
-	position[0] = read_position;
-
-
-	// PI-regulator
-	PI_regulator()
+	velocity[0] = velocity[1]/lowpass_coeff + F_filter*(raw_encoder[0] - raw_encoder[1]);
+	
 	
 	// set motor speed
-	
+	pi_regulator(&regulator, vel_setpoint, velocity[0]);
 	
 	TIFR0  |= (1 << TOV0); // clear overflow flag
 	sei();
 }
 
-
-int8_t PI_regulator(int8_t setpoint){
-	error = (velocity[0] - setpoint);
-	errorSum += error;
-
-	return Kp*error + Ki*errorSum;
-}
 
 /**
  * Manually calibrate the encoder.
@@ -82,8 +76,8 @@ void motor_encoder_calibrate(){
 	while (i--){
 		encoder_raw = motor_read_encoder();
 
-		encoder_minvalue = (encoder_raw < encoder_minvalue) ? encoder_raw : encoder_minvalue
-		encoder_maxvalue = (encoder_raw > encoder_maxvalue) ? encoder_raw : encoder_maxvalue
+		encoder_minvalue = (encoder_raw < encoder_minvalue) ? encoder_raw : encoder_minvalue;
+		encoder_maxvalue = (encoder_raw > encoder_maxvalue) ? encoder_raw : encoder_maxvalue;
 	}
 
 	// save
@@ -127,7 +121,7 @@ int16_t motor_read_encoder(){
 	read |= PINK;
 	
 	// toggle !RST
-	PORTH &= (1 << PIN_RST);
+	PORTH &= ~(1 << PIN_RST);
 	_delay_us(1);
 	PORTH |= (1 << PIN_RST);
 	
@@ -139,25 +133,18 @@ int16_t motor_read_encoder(){
 	return read;
 }
 
-void PI_regulator_tune(float Kp_, float Ki_){
-	Kp = Kp_;
-	Ki = Ki_;
-}
-
-void PI_regulator_set_setpoint(uint8_t new_vel_reference){
-	if (new_vel_reference <= 100)
-		vel_reference = new_vel_reference;
-}
 
 void motor_init(void){
 	dac_init();
+	//pi_regulator_init(&regulator, 0, 1, 1);
 	
 	DDRH |= ( 1 << PIN_DIR | 1 << PIN_SEL | 1 << PIN_EN | 1 << PIN_OE | 1 << PIN_RST );
 	
+	
 	// set sampling rate for encoder 
-	TCCR0B |= (1 << CS02 | 1 << CS00); // prescaler = 256 = crash? \test more
-	TIFR0  |= (1 << TOV0); // clear overflow flag
-	TIMSK0 |= (1<<TOIE0);  // enable
+	TCCR0B |= (1 << CS02 | 1 << CS00); // prescaler 1024 here  but prescaler = 256 => crash? \test more
+	TIFR0  |= (1 << TOV0);   // clear overflow flag
+	TIMSK0 |= (1 << TOIE0);  // enable
 	
 	motor_enable();
 }
@@ -166,14 +153,16 @@ void motor_enable(void){
 	PORTH |= (1 << PIN_EN);
 }
 
-void motor_set_speed(int8_t speed){
-	
+void motor_set_speed(int8_t speed){	
 	if (speed < 0){
-		PORTH &= ~(1 << PIN_DIR);	
+		PORTH &= ~(1 << PIN_DIR);
+		dac_output(-speed);
+		//fprintf(&uart_out, "left\t");
 	} else {
 		PORTH |= (1 << PIN_DIR);
+		dac_output(speed);
+		//fprintf(&uart_out, "right\t");
 	}
-
 	
-	dac_output(abs(speed));
+	
 }

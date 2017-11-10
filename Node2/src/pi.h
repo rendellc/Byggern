@@ -20,9 +20,7 @@ typedef struct pi_t_ {
 void pi_regulator_init(pi_t* regulator_p, int16_t Kp, int16_t Ki, int16_t);
 
 
-int16_t pi_regulator(pi_t* regulator_p, int16_t setpoint, int16_t encoder);
-
-
+int16_t pi_regulator(pi_t* regulator_p, int16_t setpoint, int16_t measurement);
 
 
 #endif

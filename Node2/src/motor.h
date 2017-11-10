@@ -9,9 +9,7 @@
 #ifndef MOTOR_H_
 #define MOTOR_H_
 
-void motor_PIreg_tune(float Kp, float Ti);
-
-void motor_init(void);
+void motor_init();
 
 void motor_enable(void);
 

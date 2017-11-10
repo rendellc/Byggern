@@ -14,6 +14,8 @@ src\main.c
 
 src\motor.c
 
+src\pi.c
+
 src\pwm.c
 
 src\spi_driver.c

@@ -11,7 +11,7 @@
 #include "spi_driver.h"
 #include "uart.h"
 
-#define RX_BUFFER_MAX 16 // hva er en god størrelse?
+#define RX_BUFFER_MAX 8 // hva er en god størrelse?
 
 volatile can_msg_t rx_buffer[2][RX_BUFFER_MAX] = {};
 volatile uint8_t rx_head[2] = {};
