@@ -11,6 +11,7 @@
 #include <util/delay.h>
 #include "dac.h"
 #include "motor.h"
+#include "pi.h"
 
 #include "uart.h" /*!< \todo remove */
 
@@ -21,32 +22,35 @@
 #define PIN_OE	PH5
 #define PIN_RST PH6
 
-/// position reference 0-100 from left-to-right
-uint8_t vel_reference = 50;
-uint8_t PIreg_force = 0;
-
-// 
-
+/// velocity reference
+static int8_t vel_setpoint = 0;
 
 // calibration
+static uint16_t calibrate_min = 0;
+static uint16_t calibrate_max = 0;
 
-uint8_t Ki;
-uint8_t Kp;
+// regulator
+pi_t regulator = {};
 
-volatile uint16_t oldvalue = 0;
-volatile uint16_t currentvalue = 0;
 
+static volatile uint8_t position[2] = {};
+static volatile int8_t velocity[2] = {};
 
 
 ISR(TIMER0_OVF_vect){
 	cli();
 	// sample encoder
-	fprintf(&uart_out, "encoder: %i\n", motor_read_encoder()/32);
+	//fprintf(&uart_out, "encoder: %i\n", motor_read_encoder()/32);
+	uint8_t  read_position = motor_read_encoder();
 	
-	
-	
+	velocity[1] = position[0]   - position[1];
+	velocity[0] = read_position - position[0];
+	position[1] = position[0];
+	position[0] = read_position;
+
+
 	// PI-regulator
-	
+	PI_regulator()
 	
 	// set motor speed
 	
@@ -55,11 +59,49 @@ ISR(TIMER0_OVF_vect){
 	sei();
 }
 
-int8_t PI_regulator(){
-	
-	
-	
+
+int8_t PI_regulator(int8_t setpoint){
+	error = (velocity[0] - setpoint);
+	errorSum += error;
+
+	return Kp*error + Ki*errorSum;
 }
+
+/**
+ * Manually calibrate the encoder.
+ * 
+ */
+void motor_encoder_calibrate(){
+	uint16_t encoder_raw = motor_read_encoder();
+	uint16_t encoder_minvalue = encoder_raw;
+	uint16_t encoder_maxvalue = encoder_raw;
+	
+	
+	/// \todo this is heavily dependent on processor performance. Isolate more
+	uint16_t i = -1;
+	while (i--){
+		encoder_raw = motor_read_encoder();
+
+		encoder_minvalue = (encoder_raw < encoder_minvalue) ? encoder_raw : encoder_minvalue
+		encoder_maxvalue = (encoder_raw > encoder_maxvalue) ? encoder_raw : encoder_maxvalue
+	}
+
+	// save
+	calibrate_min = encoder_minvalue;
+	calibrate_max = encoder_maxvalue;
+
+
+}
+
+/**
+ * Convert data fra encoder using the calibration constants.
+ * Undefined behviour if motor_encoder_calibrate has not been executed first.
+ */
+int8_t motor_encoder_convert_range(uint16_t raw_data){
+	/// \test this need to be tested for overflow errors
+	return (int8_t)((uint32_t)((raw_data - calibrate_min)*100L)/calibrate_max);
+}
+
 
 int16_t motor_read_encoder(){
 	
@@ -97,9 +139,9 @@ int16_t motor_read_encoder(){
 	return read;
 }
 
-void PI_regulator_tune(float Kp, float Ki){
-	
-	
+void PI_regulator_tune(float Kp_, float Ki_){
+	Kp = Kp_;
+	Ki = Ki_;
 }
 
 void PI_regulator_set_setpoint(uint8_t new_vel_reference){
