@@ -37,6 +37,32 @@ direction_t joy_direction(uint8_t joy_x, uint8_t joy_y){
 	
 }
 
+joystick_t joy_get_state(){
+	joystick_t joy_state = {};
+	
+	joy_state.x = adc_read_channel(CH_JOY_X);
+	joy_state.y = adc_read_channel(CH_JOY_Y);
+	joy_state.click = !(PINE & (1 << CLICK_PIN));
+	
+	return joy_state;
+}
+
+
+void send_slider(void)
+{
+	uint8_t slider_pos = adc_read_channel(CH_SLIDER);
+	
+	can_msg_t msg = {};
+	msg.sid = MSG_SLIDER;
+	msg.data[0] = slider_pos;
+	msg.length = 1;
+	
+	fprintf(&uart_out, "slider sent: %i\n",  msg.data[0]);
+	
+	can_send(msg, 0);
+		
+}
+
 void send_joy(void)
 {
 	uint8_t joy_x = adc_read_channel(CH_JOY_X);

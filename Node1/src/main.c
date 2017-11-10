@@ -27,7 +27,7 @@
 #include "can.h"
 //#include "mcp2515.h"
 #include "joystick.h"
-
+#include "game.h"
 
 int main()
 {
@@ -53,43 +53,23 @@ int main()
 	// setup printf
 	stdout = &uart_out; // printf defaults to oled
 	stdin  = &uart_in;
-	can_msg_t click_msg = {};
-	can_msg_t noclick_msg = {};
-		
-	click_msg.sid = MSG_JOY;
-	click_msg.data[3] = 1;
-	click_msg.length = 4;
+
 	
-	noclick_msg.sid = MSG_JOY;
-	noclick_msg.data[3] = 0;
-	click_msg.length = 4;
+	oled_home();
+	
+	game_init(); // after menu_init
+	
+	fprintf(&uart_out, "entering loop\n");
 	
 	while (1)
 	{	
-		send_joy();
+		fprintf(&uart_out, "tick\n");
 		
-		/*
-		if (!(PINE & (1 << PE0)))
-		{
-			can_send(click_msg,0);
-			fprintf(&uart_out, "click sent\n");
-			_delay_ms(10);
-		}
-		
-		
-		else
-		{
-			can_send(noclick_msg,0);
-			fprintf(&uart_out, "no click sent\n");
-		}
-		*/
-		
-		//send_joy();
-		//can_send(msg,0);
-		//can_print_msg(msg);
+		game_tick();
 
-		//fprintf(&uart_out, ".");
+		_delay_ms(250);
 	}
-
+	
+	
 	return 0;
 }

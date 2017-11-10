@@ -17,6 +17,8 @@
 #ifndef MENU_H_
 #define MENU_H_
 
+#include <stdint.h>
+
 #define MAX_TITLE_LENGTH	23 /*! Max length of title string*/
 #define MAX_SUBMENUS		7  /*! Max number of submenus */
 
@@ -28,6 +30,8 @@ typedef struct _menu_t{
 	void (*action)(void); /*! callback function when submenu is clicked */
 } menu_t;
 
+/// Empty callback function for menu
+void menu_action_nothing();
 
 /**
  * Create menu with title as a submenu of parent. 
@@ -49,6 +53,11 @@ void menu_init();
  */
 void menu_print_current();
 
+/**
+ * Print menu and submenu-titles of current menu to oled display. 
+ */
+void menu_print_menu(menu_t* menu_head);
+
 
 /**
  * \deprecated
@@ -60,9 +69,14 @@ void menu_update_subchoice();
 /**
  * Move cursor for active submenus choice.
  * @param[in] {step -1 to move up, 1 to move down. 
-               other values are also valud and will cause bigger step}
+               other values are also valid and will cause bigger step}
  */
 void menu_move_cursor(int8_t step);
+
+/**
+ * Enter current submenu. Executes action before entering.
+ */
+void menu_enter_current(void);
 
 /*
  * Remove all submenus of parent

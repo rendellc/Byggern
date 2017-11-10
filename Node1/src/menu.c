@@ -12,12 +12,16 @@
 #include "global_declarations.h"
 #include "uart.h"				/*!< \todo remove, included only for debug purposes */
 
+#include "game.h"
+
 static menu_t* head; 			/*!< root of menu system */
 static menu_t* current; 		/*!< menu currently displayed on screen */
 static uint8_t subchoice = 0;	/*!< submenus currently pointed to on screen*/ 
 
 /// implement an empty action that submenus can have.
-void menu_action_nothing(){};
+void menu_action_nothing(){
+	fprintf(&uart_out, "nothing\n");
+};
 
 /// Setup atmega162 IO to interface with clicker on joystick.
 void menu_click_init(){
@@ -74,11 +78,17 @@ menu_t* menu_init_menu(char* title, menu_t* parent, void (*action)(void)){
 void menu_init(){
 	menu_click_init();
 	
-	head = menu_init_menu("Mainaaa", NULL, NULL);
 	
-	menu_init_menu("Under 1", head, menu_action_nothing);
-	menu_init_menu("Under 2", head, menu_action_nothing);
-
+	head = menu_init_menu("Main", head, menu_action_nothing);
+	
+	menu_init_menu("Start", head, game_start);
+	menu_init_menu("Difficulty", head, menu_action_nothing);
+	menu_t* menu_legal = menu_init_menu("Legal", head, menu_action_nothing);
+	
+	menu_init_menu("TTK4115 - Byggern", menu_legal, menu_action_nothing);
+	menu_init_menu("Rendell Cale", menu_legal, menu_action_nothing);
+	menu_init_menu("William Ke", menu_legal, menu_action_nothing);
+	menu_init_menu("Frode von Meeren", menu_legal, menu_action_nothing);
 	current = head;
 }
 
@@ -97,6 +107,16 @@ void menu_print_current(){
 			fprintf(&oled_out, "%s\n", current->submenus[i]->title);
 		}
 	}
+}
+
+void menu_print_menu(menu_t* menu_head){
+	menu_t* save = current;
+	
+	current = menu_head;
+	
+	menu_print_current();
+	
+	current = save;
 }
 
 /// \todo {deprecate this}
@@ -145,10 +165,12 @@ void menu_update_subchoice()
 */
 
 
-/// Move cursos specified step. Wrap around at both ends.
+/// Move cursor specified step. Wrap around at both ends.
 void menu_move_cursor(int8_t step){
-	///\test this has not been tested
-	subchoice = (uint8_t)(((int8_t)subchoice + step)%MAX_SUBMENUS);
+	uint8_t new_subchoice = (uint8_t)(((int8_t)subchoice + step)%MAX_SUBMENUS);
+	
+	if (current->submenus[new_subchoice] != NULL)
+		subchoice = new_subchoice;
 }
 
 
@@ -167,6 +189,7 @@ void menu_exit(menu_t* head)
 
 }
 
+
 /// remove all submenus of parent from heap
 void menu_free_submenus(menu_t* parent)
 {
@@ -177,4 +200,13 @@ void menu_free_submenus(menu_t* parent)
 		if (1)
 			free(&parent->submenus[i]);
 	}
+}
+
+
+
+void menu_enter_current(void)
+{
+	current = current->submenus[subchoice];
+	current->action();
+	subchoice = 0;
 }

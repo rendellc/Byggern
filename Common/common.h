@@ -8,8 +8,8 @@
 // --- Joystick / ADC ---
 /// struct for holding joystick state
 typedef struct {
-	int8_t x;
-	int8_t y;
+	uint8_t x;
+	uint8_t y;
 	uint8_t click;
 } joystick_t;
 
@@ -42,6 +42,8 @@ typedef struct {
 // --- CAN message SIDs ---
 #define MSG_INVALID	0 /*!< invalid CAN message SID */
 #define MSG_JOY		1 /*!< joystick CAN message SID */
+#define MSG_SLIDER	2 /*!< slider CAN message SID */
+
 
 
 #endif // TYPES_H

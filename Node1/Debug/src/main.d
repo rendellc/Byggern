@@ -21,7 +21,7 @@ src/main.d src/main.o: ../src/main.c ../src/global_declarations.h \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\math.h \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\string.h \
  ../src/uart.h ../src/adc.h ../src/oled.h ../src/menu.h \
- ../src/spi_driver.h ../src/can.h ../src/joystick.h
+ ../src/spi_driver.h ../src/can.h ../src/joystick.h ../src/game.h
 
 ../src/global_declarations.h:
 
@@ -80,3 +80,5 @@ c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-g
 ../src/can.h:
 
 ../src/joystick.h:
+
+../src/game.h:

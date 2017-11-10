@@ -40,6 +40,7 @@ SUBDIRS :=  \
 C_SRCS +=  \
 ../src/adc.c \
 ../src/can.c \
+../src/game.c \
 ../src/joystick.c \
 ../src/main.c \
 ../src/MCP2515.c \
@@ -59,6 +60,7 @@ ASM_SRCS +=
 OBJS +=  \
 src/adc.o \
 src/can.o \
+src/game.o \
 src/joystick.o \
 src/main.o \
 src/MCP2515.o \
@@ -71,6 +73,7 @@ src/uart.o
 OBJS_AS_ARGS +=  \
 src/adc.o \
 src/can.o \
+src/game.o \
 src/joystick.o \
 src/main.o \
 src/MCP2515.o \
@@ -83,6 +86,7 @@ src/uart.o
 C_DEPS +=  \
 src/adc.d \
 src/can.d \
+src/game.d \
 src/joystick.d \
 src/main.d \
 src/MCP2515.d \
@@ -95,6 +99,7 @@ src/uart.d
 C_DEPS_AS_ARGS +=  \
 src/adc.d \
 src/can.d \
+src/game.d \
 src/joystick.d \
 src/main.d \
 src/MCP2515.d \
@@ -118,6 +123,8 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+
+
 
 
 

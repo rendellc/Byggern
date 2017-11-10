@@ -165,6 +165,12 @@
     <Compile Include="src\fonts.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="src\game.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\game.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\global_declarations.h">
       <SubType>compile</SubType>
     </Compile>

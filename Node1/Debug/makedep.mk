@@ -6,6 +6,8 @@ src\adc.c
 
 src\can.c
 
+src\game.c
+
 src\joystick.c
 
 src\main.c
