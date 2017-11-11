@@ -85,5 +85,9 @@ void menu_enter_current(void);
  */
 //void menu_free_submenus(menu_t* parent);
 
+/**
+ * Go up one level in the menu system.  
+ */
+void menu_enter_parent(void);
 
 #endif /* MENU_H_ */

@@ -80,29 +80,71 @@ void game_tick_menu(){
 	
 	joystick_t joy = joy_get_state();
 	
+	direction_t joy_dir = joy_direction(joy.x, joy.y);
+	
+	
+	switch (joy_dir){
+		case CLICKED:
+			if (click_released){
+				click_released = FALSE;
+				menu_enter_current();
+			} 
+			break;
+			
+		case UP:
+			if (joy_released){
+				joy_released = FALSE;
+				menu_move_cursor(-1);
+			}
+			break;
+		case DOWN:
+			if (joy_released){
+				joy_released = FALSE;
+				menu_move_cursor(1);
+			}
+		case RIGHT:
+			break;
+		
+		case LEFT:
+			if (joy_released){
+				joy_released = FALSE;
+				menu_enter_parent();
+			}
+		
+			break;
+		
+		case NEUTRAL:
+			joy_released = TRUE;
+			click_released = !joy.click;
+			break;
+	}
+	
+	/*
 	
 	if (joy.click && click_released){
 		click_released = FALSE;
 		menu_enter_current();
 	} 
 	else {
-		click_released = TRUE;
+		 // joystick is pressed makes click_released FALSE
 		
-		//fprintf(&uart_out, "\tjoy: %u\tjoy_rel: %u\t", joy.y, joy_released);
+		//fprintf(&uart_out, "\tjoy: %u\tjoy_rel: %u\t", joy.y, joy_released)
+		
+
 		if ((joy.y < (128 - JOY_Y_TRESHOLD)) && joy_released){
 			joy_released = FALSE;
 			menu_move_cursor(1);
 		} 
 		else if ((joy.y > (128 + JOY_Y_TRESHOLD)) && joy_released){
 			joy_released = FALSE;
-			menu_move_cursor(-1);
+			
 		}
 		
 		if (128 - JOY_Y_TRESHOLD < joy.y && joy.y < 128 + JOY_Y_TRESHOLD){
 			joy_released = TRUE;
 		}
 		
-	}
-	
 
+	}
+	*/
 }

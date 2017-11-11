@@ -17,6 +17,7 @@ direction_t joy_direction(uint8_t joy_x, uint8_t joy_y);
 
 void send_slider(void);
 
+void joystick_init(void);
 
 joystick_t joy_get_state();
 

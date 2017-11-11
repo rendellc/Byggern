@@ -61,13 +61,16 @@ int main()
 	
 	fprintf(&uart_out, "entering loop\n");
 	
+	uint8_t i = 0;
+	
 	while (1)
 	{	
-		//fprintf(&uart_out, "tick\n");
+		if (++i == 0)
+			fprintf(&uart_out, "tick x256\n");
 		
 		game_tick();
 
-		_delay_ms(250);
+		_delay_ms(10);
 	}
 	
 	

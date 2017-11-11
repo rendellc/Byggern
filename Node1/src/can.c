@@ -35,8 +35,7 @@ ISR(INT1_vect){
 		n = 1;
 		MCP_RXBn	 = MCP_RXB1;
 		MCP_READ_RXn = MCP_READ_RX1;
-		MCP_RXnIF     = MCP_RX1IF;
-			
+		MCP_RXnIF    = MCP_RX1IF;
 	}
 	
 	// if there is room in buffer first

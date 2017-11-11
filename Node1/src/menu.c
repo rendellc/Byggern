@@ -175,10 +175,19 @@ void menu_update_subchoice()
  */
 void menu_move_cursor(int8_t step)
 {
-	uint8_t new_subchoice = (uint8_t)(((int8_t)subchoice + step)%MAX_SUBMENUS);
+	uint8_t new_subchoice = (uint8_t)((int8_t)subchoice + step);
 	
-	if (current->submenus[new_subchoice] != NULL && new_subchoice < MAX_SUBMENUS)
+	fprintf(&uart_out, "new_subchoice: %u\n", new_subchoice);
+	
+	if (current->submenus[new_subchoice] != NULL && new_subchoice < MAX_SUBMENUS){
 		subchoice = new_subchoice;
+	}
+	/*
+	else if (new_subchoice == (uint8_t)-1){
+		oled_fill(0x00);
+		current = current->parent;	
+	}
+	*/
 }
 
 
@@ -214,10 +223,27 @@ void menu_free_submenus(menu_t* parent)
 
 void menu_enter_current(void)
 {
-	fprintf(&uart_out, "nothing: \t%p\n", menu_action_nothing);
-	fprintf(&uart_out, "action : \t\t%p\n", (*(current->submenus[subchoice]->action)));
+	oled_fill(0x00); // needed if next submenu has fewer menus than current
+	
+	// check if current choice is valid and that current choice has any children
+	if (current->submenus[subchoice] != NULL && current->submenus[subchoice]->submenus[0] != NULL){
+		//fprintf(&uart_out, "current: %p\n", current);
+		//fprintf(&uart_out, "next:    %p\n", current->submenus[subchoice]);
+	
+		fprintf(&uart_out, "nothing: \t%p\n", menu_action_nothing);
+		fprintf(&uart_out, "action : \t\t%p\n", (*(current->submenus[subchoice]->action)));
+		
+		current = current->submenus[subchoice];
+		subchoice = 0;
+	}
 	
 	current->submenus[subchoice]->action();
-	current = current->submenus[subchoice];
-	subchoice = 0;
+}
+
+
+void menu_enter_parent(void){
+	oled_fill(0x00);
+	
+	current = current->parent;
+	
 }

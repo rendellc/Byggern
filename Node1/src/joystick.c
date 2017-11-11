@@ -22,6 +22,9 @@ int8_t convert_range(uint8_t data){ // convert from 0->255 to -100->100
 }
 
 direction_t joy_direction(uint8_t joy_x, uint8_t joy_y){
+	if (!(PINE & (1 << CLICK_PIN)))
+		return CLICKED;
+	
 	if (abs(joy_x-128) < ANALOG_THRESH && abs(joy_y-128) < ANALOG_THRESH){
 		return NEUTRAL;
 	}
@@ -34,6 +37,8 @@ direction_t joy_direction(uint8_t joy_x, uint8_t joy_y){
 		return UP;
 	else
 		return DOWN;
+		
+	
 	
 }
 
