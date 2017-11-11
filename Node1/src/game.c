@@ -5,7 +5,7 @@
  *  Author: rendellc
  */ 
 
-#include "common.h"
+#include "../../Common/common.h"
 #include "game.h"
 #include "menu.h"
 #include "joystick.h"

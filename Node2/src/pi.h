@@ -5,22 +5,22 @@
 
 typedef struct pi_t_ {
     // setpoint
-    //int16_t setpoint;
+    //float setpoint;
 
     // parameters
-    int16_t Kp;
-    int16_t Ki;
+    float Kp;
+    float Ki;
 
     // error tracking
-    int16_t error;
-    int16_t errorSum;
+    float error;
+    float errorSum;
 } pi_t;
 
 
-void pi_regulator_init(struct pi_t_* regulator_p, int16_t Kp, int16_t Ki);
+void pi_regulator_init(struct pi_t_* regulator_p, float Kp, float Ki);
 
 
-int16_t pi_regulator(struct pi_t_* regulator_p, int16_t setpoint, int16_t measurement);
+float pi_regulator(struct pi_t_* regulator_p, float setpoint, float measurement);
 
 
 #endif

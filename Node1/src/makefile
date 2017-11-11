@@ -1,6 +1,6 @@
 CC=avr-gcc
 CFLAGS=-g -Os -mmcu=atmega162 -std=c99 -Wall
-OBJS=uart.o adc.o oled.o spi_driver.o can.o joystick.o main.o mcp2515.o menu.o
+OBJS=uart.o adc.o oled.o spi_driver.o can.o joystick.o main.o mcp2515.o menu.o game.o
 outname=node1.out
 
 
@@ -37,6 +37,10 @@ spi_driver.o:
 
 sram_test.o:
 	$(CC) $(CFLAGS) -c sram_test.c	
+
+
+game.o:
+	$(CC) $(CFLAGS) -c game.c
 
 
 .PHONY:

@@ -1,6 +1,6 @@
 CC=avr-gcc
 CFLAGS=-g -Os -mmcu=atmega2560 -std=c99 -Wall
-OBJS=TWI_Master.o can.o dac.o ir.o main.o mcp2515.o motor.o pwm.o spi_driver.o uart.o
+OBJS=TWI_Master.o can.o dac.o ir.o main.o mcp2515.o motor.o pwm.o spi_driver.o uart.o pi.o
 outname=node2.out
 
 
@@ -21,7 +21,7 @@ spi_driver.o:
 pwm.o:
 	$(CC) $(CFLAGS) -c pwm.c
 
-motor.o: dac.o uart.o
+motor.o: dac.o uart.o pi.o
 	$(CC) $(CFLAGS) -c motor.c
 
 mcp2515.o: uart.o spi_driver.o
@@ -38,6 +38,9 @@ can.o: mcp2515.o spi_driver.o uart.o
 
 TWI_Master.o:
 	$(CC) $(CFLAGS) -c TWI_Master.c
+
+pi.o:
+	$(CC) $(CFLAGS) -c pi.c
 
 .PHONY:
 clean:

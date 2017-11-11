@@ -23,15 +23,14 @@
 #define PIN_RST PH6
 
 
-
 // calibration
 static int16_t calibrate_min = 0;
 static int16_t calibrate_max = 0;
 
-/// signal processing
-const int16_t F_filter = 2;		 // 
-const int16_t lowpass_coeff = 4; // 
-
+/// signal processing 
+/// lowpass the raw encoder data with 1. order AR filter with coefficient lowpass_enable / lowpass_coeff
+const int16_t lowpass_coeff = 4;
+const int16_t lowpass_enable = 1; /*!< set to zero to disable low pass filter */
 
 // regulator
 static uint8_t position_regulator_enabled = 0;
@@ -40,7 +39,7 @@ static uint8_t position_regulator_enabled = 0;
 pi_t regulator = {};
 
 /// position set point
-static int16_t encoder_setpoint = 0;
+static volatile int16_t encoder_setpoint = 0;
 
 static volatile int16_t raw_encoder[2] = {};
 static volatile int16_t force[2] = {}; 
@@ -49,27 +48,19 @@ static volatile int16_t force[2] = {};
 ISR(TIMER0_OVF_vect){
 	cli();
 	// sample encoder
-	//fprintf(&uart_out, "encoder: %i\n", motor_read_encoder()/32);	
 	raw_encoder[1] = raw_encoder[0];
-	raw_encoder[0] = motor_read_encoder();
+	raw_encoder[0] = lowpass_enable * raw_encoder[1]/lowpass_coeff + motor_read_encoder();
 	
-	
-	//velocity[0] = velocity[1]/lowpass_coeff + F_filter*(raw_encoder[0] - raw_encoder[1]);
-	//velocity[1] = velocity[0];
-	
-	// set motor speed
-	// pi_regulator(&regulator, vel_setpoint, velocity[0]);
 	
 	if (position_regulator_enabled){
-		force[1] = force[0];
-		force[0] = pi_regulator(&regulator, encoder_setpoint, raw_encoder[0]);
+		motor_set_speed(pi_regulator(&regulator, encoder_setpoint, raw_encoder[0]));
 		//fprintf(&uart_out, "output %i\n", force[0]/128);
-		motor_set_speed(force[0]/128);
+		
 	}
 	
 	
-	
-	TIFR0  |= (1 << TOV0); // clear overflow flag
+	// clear overflow flag
+	TIFR0  |= (1 << TOV0);
 	sei();
 }
 
@@ -160,17 +151,17 @@ int16_t motor_read_encoder(){
 
 void motor_init(void){
 	dac_init();
-	//pi_regulator_init(&regulator, 0, 1, 1);
 	
 	DDRH |= ( 1 << PIN_DIR | 1 << PIN_SEL | 1 << PIN_EN | 1 << PIN_OE | 1 << PIN_RST );
 	
 	
-	// set sampling rate for encoder 
+	/// set sampling rate for encoder, \todo change to 16-bit timer to get slower refresh rate
 	TCCR0B |= (1 << CS02 | 1 << CS00); // prescaler 1024 here  but prescaler = 256 => crash? \test more
 	TIFR0  |= (1 << TOV0);   // clear overflow flag
 	TIMSK0 |= (1 << TOIE0);  // enable
 	
-	pi_regulator_init(&regulator, 1, 16);
+	// set regulator parameters
+	pi_regulator_init(&regulator, 1, 0.1);
 	
 	motor_enable();
 }
