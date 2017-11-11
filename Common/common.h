@@ -5,6 +5,22 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <stdint.h>
+
+// define boolean
+#define TRUE 1
+#define FALSE (!TRUE)
+typedef uint8_t BOOL;
+
+// game state
+typedef enum {
+	INVALID,
+	IN_MENU,
+	PLAYING,
+	PAUSED
+} game_state_t;
+
+
 // --- Joystick / ADC ---
 /// struct for holding joystick state
 typedef struct {
@@ -25,7 +41,8 @@ typedef enum {
 	RIGHT = 1,
 	UP = 2,
 	DOWN = 3,
-	NEUTRAL = 4
+	NEUTRAL = 4,
+	CLICKED
 } direction_t;
 
 
@@ -43,7 +60,7 @@ typedef struct {
 #define MSG_INVALID	0 /*!< invalid CAN message SID */
 #define MSG_JOY		1 /*!< joystick CAN message SID */
 #define MSG_SLIDER	2 /*!< slider CAN message SID */
-
+#define MSG_GAME	3 /*!< Game CAN message SID */
 
 
 #endif // TYPES_H

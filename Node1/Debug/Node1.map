@@ -108,6 +108,8 @@ Discarded input sections
  .text          0x00000000        0x0 src/game.o
  .data          0x00000000        0x0 src/game.o
  .bss           0x00000000        0x0 src/game.o
+ .text.game_tick_playing
+                0x00000000        0x2 src/game.o
  .text          0x00000000        0x0 src/joystick.o
  .data          0x00000000        0x0 src/joystick.o
  .bss           0x00000000        0x0 src/joystick.o
@@ -605,7 +607,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000     0x1764
+.text           0x00000000     0x177c
  *(.vectors)
  .vectors       0x00000000       0x70 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5/crtm162.o
                 0x00000000                __vector_default
@@ -710,160 +712,160 @@ END GROUP
                 0x000003cc        0xa src/game.o
                 0x000003cc                game_init
  .text.game_start
-                0x000003d6       0x14 src/game.o
+                0x000003d6       0x1a src/game.o
                 0x000003d6                game_start
  .text.game_tick_menu
-                0x000003ea       0x7e src/game.o
-                0x000003ea                game_tick_menu
+                0x000003f0       0x7e src/game.o
+                0x000003f0                game_tick_menu
  .text.game_tick
-                0x00000468        0xc src/game.o
-                0x00000468                game_tick
+                0x0000046e        0xc src/game.o
+                0x0000046e                game_tick
  .text.joy_direction
-                0x00000474       0x78 src/joystick.o
-                0x00000474                joy_direction
+                0x0000047a       0x78 src/joystick.o
+                0x0000047a                joy_direction
  .text.joy_get_state
-                0x000004ec       0x1c src/joystick.o
-                0x000004ec                joy_get_state
+                0x000004f2       0x1c src/joystick.o
+                0x000004f2                joy_get_state
  .text.joystick_init
-                0x00000508        0x6 src/joystick.o
-                0x00000508                joystick_init
- .text.main     0x0000050e       0x8c src/main.o
-                0x0000050e                main
+                0x0000050e        0x6 src/joystick.o
+                0x0000050e                joystick_init
+ .text.main     0x00000514       0x8c src/main.o
+                0x00000514                main
  .text.mcp_reset
-                0x0000059a       0x12 src/MCP2515.o
-                0x0000059a                mcp_reset
+                0x000005a0       0x12 src/MCP2515.o
+                0x000005a0                mcp_reset
  .text.mcp_read
-                0x000005ac       0x1c src/MCP2515.o
-                0x000005ac                mcp_read
+                0x000005b2       0x1c src/MCP2515.o
+                0x000005b2                mcp_read
  .text.mcp_write
-                0x000005c8       0x1e src/MCP2515.o
-                0x000005c8                mcp_write
+                0x000005ce       0x1e src/MCP2515.o
+                0x000005ce                mcp_write
  .text.mcp_readstatus
-                0x000005e6       0x16 src/MCP2515.o
-                0x000005e6                mcp_readstatus
+                0x000005ec       0x16 src/MCP2515.o
+                0x000005ec                mcp_readstatus
  .text.mcp_bitmodify
-                0x000005fc       0x28 src/MCP2515.o
-                0x000005fc                mcp_bitmodify
+                0x00000602       0x28 src/MCP2515.o
+                0x00000602                mcp_bitmodify
  .text.mcp_init
-                0x00000624       0x2e src/MCP2515.o
-                0x00000624                mcp_init
+                0x0000062a       0x2e src/MCP2515.o
+                0x0000062a                mcp_init
  .text.menu_action_nothing
-                0x00000652       0x14 src/menu.o
-                0x00000652                menu_action_nothing
+                0x00000658       0x14 src/menu.o
+                0x00000658                menu_action_nothing
  .text.menu_init_menu
-                0x00000666       0xee src/menu.o
-                0x00000666                menu_init_menu
+                0x0000066c       0xee src/menu.o
+                0x0000066c                menu_init_menu
  .text.menu_init
-                0x00000754       0x98 src/menu.o
-                0x00000754                menu_init
+                0x0000075a       0xaa src/menu.o
+                0x0000075a                menu_init
  .text.menu_print_current
-                0x000007ec       0xe8 src/menu.o
-                0x000007ec                menu_print_current
+                0x00000804       0xe8 src/menu.o
+                0x00000804                menu_print_current
  .text.menu_move_cursor
-                0x000008d4       0x5c src/menu.o
-                0x000008d4                menu_move_cursor
+                0x000008ec       0x5c src/menu.o
+                0x000008ec                menu_move_cursor
  .text.menu_enter_current
-                0x00000930       0xe8 src/menu.o
-                0x00000930                menu_enter_current
+                0x00000948       0xe8 src/menu.o
+                0x00000948                menu_enter_current
  .text.menu_enter_parent
-                0x00000a18       0x1a src/menu.o
-                0x00000a18                menu_enter_parent
+                0x00000a30       0x1a src/menu.o
+                0x00000a30                menu_enter_parent
  .text.oled_autorefresh_init
-                0x00000a32       0x12 src/oled.o
-                0x00000a32                oled_autorefresh_init
+                0x00000a4a       0x12 src/oled.o
+                0x00000a4a                oled_autorefresh_init
  .text.oled_home
-                0x00000a44        0xa src/oled.o
-                0x00000a44                oled_home
+                0x00000a5c        0xa src/oled.o
+                0x00000a5c                oled_home
  .text.oled_newline
-                0x00000a4e       0x16 src/oled.o
-                0x00000a4e                oled_newline
+                0x00000a66       0x16 src/oled.o
+                0x00000a66                oled_newline
  .text.oled_goto_nextpos
-                0x00000a64       0x3e src/oled.o
-                0x00000a64                oled_goto_nextpos
+                0x00000a7c       0x3e src/oled.o
+                0x00000a7c                oled_goto_nextpos
  .text.oled_buffchar
-                0x00000aa2       0xc6 src/oled.o
-                0x00000aa2                oled_buffchar
+                0x00000aba       0xc6 src/oled.o
+                0x00000aba                oled_buffchar
  .text.oled_putchar
-                0x00000b68        0x8 src/oled.o
-                0x00000b68                oled_putchar
+                0x00000b80        0x8 src/oled.o
+                0x00000b80                oled_putchar
  .text.oled_fill
-                0x00000b70       0x80 src/oled.o
-                0x00000b70                oled_fill
+                0x00000b88       0x80 src/oled.o
+                0x00000b88                oled_fill
  .text.oled_init
-                0x00000bf0      0x110 src/oled.o
-                0x00000bf0                oled_init
+                0x00000c08      0x110 src/oled.o
+                0x00000c08                oled_init
  .text.oled_update
-                0x00000d00       0xa0 src/oled.o
-                0x00000d00                oled_update
+                0x00000d18       0xa0 src/oled.o
+                0x00000d18                oled_update
  .text.__vector_17
-                0x00000da0       0x46 src/oled.o
-                0x00000da0                __vector_17
+                0x00000db8       0x46 src/oled.o
+                0x00000db8                __vector_17
  .text.spi_ss_low
-                0x00000de6        0x4 src/spi_driver.o
-                0x00000de6                spi_ss_low
+                0x00000dfe        0x4 src/spi_driver.o
+                0x00000dfe                spi_ss_low
  .text.spi_ss_high
-                0x00000dea        0x4 src/spi_driver.o
-                0x00000dea                spi_ss_high
+                0x00000e02        0x4 src/spi_driver.o
+                0x00000e02                spi_ss_high
  .text.spi_init
-                0x00000dee        0xe src/spi_driver.o
-                0x00000dee                spi_init
+                0x00000e06        0xe src/spi_driver.o
+                0x00000e06                spi_init
  .text.spi_transmit
-                0x00000dfc        0xa src/spi_driver.o
-                0x00000dfc                spi_transmit
+                0x00000e14        0xa src/spi_driver.o
+                0x00000e14                spi_transmit
  .text.uart_send
-                0x00000e06        0xc src/uart.o
-                0x00000e06                uart_send
+                0x00000e1e        0xc src/uart.o
+                0x00000e1e                uart_send
  .text.uart_recv
-                0x00000e12       0x5e src/uart.o
-                0x00000e12                uart_recv
+                0x00000e2a       0x5e src/uart.o
+                0x00000e2a                uart_recv
  .text.__vector_19
-                0x00000e70       0x8e src/uart.o
-                0x00000e70                __vector_19
+                0x00000e88       0x8e src/uart.o
+                0x00000e88                __vector_19
  .text.__vector_23
-                0x00000efe       0x14 src/uart.o
-                0x00000efe                __vector_23
+                0x00000f16       0x14 src/uart.o
+                0x00000f16                __vector_23
  .text.uart_init
-                0x00000f12       0x20 src/uart.o
-                0x00000f12                uart_init
+                0x00000f2a       0x20 src/uart.o
+                0x00000f2a                uart_init
  .text.avr-libc
-                0x00000f32      0x24e c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(malloc.o)
-                0x00000f32                malloc
-                0x00001062                free
+                0x00000f4a      0x24e c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(malloc.o)
+                0x00000f4a                malloc
+                0x0000107a                free
  .text.avr-libc
-                0x00001180       0x1e c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(strncpy.o)
-                0x00001180                strncpy
+                0x00001198       0x1e c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(strncpy.o)
+                0x00001198                strncpy
  .text.avr-libc
-                0x0000119e       0x1e c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(fprintf.o)
-                0x0000119e                fprintf
+                0x000011b6       0x1e c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(fprintf.o)
+                0x000011b6                fprintf
  .text.avr-libc
-                0x000011bc       0x64 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(fputc.o)
-                0x000011bc                fputc
+                0x000011d4       0x64 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(fputc.o)
+                0x000011d4                fputc
  .text.avr-libc
-                0x00001220       0x64 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(fwrite.o)
-                0x00001220                fwrite
+                0x00001238       0x64 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(fwrite.o)
+                0x00001238                fwrite
  .text.avr-libc
-                0x00001284      0x386 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(vfprintf_std.o)
-                0x00001284                vfprintf
+                0x0000129c      0x386 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(vfprintf_std.o)
+                0x0000129c                vfprintf
  .text.avr-libc
-                0x0000160a       0x16 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(strnlen_P.o)
-                0x0000160a                strnlen_P
+                0x00001622       0x16 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(strnlen_P.o)
+                0x00001622                strnlen_P
  .text.avr-libc
-                0x00001620       0x16 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(strnlen.o)
-                0x00001620                strnlen
+                0x00001638       0x16 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(strnlen.o)
+                0x00001638                strnlen
  .text.avr-libc
-                0x00001636       0xbc c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(ultoa_invert.o)
-                0x00001636                __ultoa_invert
+                0x0000164e       0xbc c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(ultoa_invert.o)
+                0x0000164e                __ultoa_invert
  .text.libgcc.prologue
-                0x000016f2       0x38 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr5\libgcc.a(_prologue.o)
-                0x000016f2                __prologue_saves__
+                0x0000170a       0x38 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr5\libgcc.a(_prologue.o)
+                0x0000170a                __prologue_saves__
  .text.libgcc.prologue
-                0x0000172a       0x36 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr5\libgcc.a(_epilogue.o)
-                0x0000172a                __epilogue_restores__
-                0x00001760                . = ALIGN (0x2)
+                0x00001742       0x36 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr5\libgcc.a(_epilogue.o)
+                0x00001742                __epilogue_restores__
+                0x00001778                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00001760        0x0 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr5\libgcc.a(_exit.o)
-                0x00001760                _exit
-                0x00001760                exit
+ .fini9         0x00001778        0x0 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr5\libgcc.a(_exit.o)
+                0x00001778                _exit
+                0x00001778                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -882,11 +884,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00001760        0x4 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr5\libgcc.a(_exit.o)
+ .fini0         0x00001778        0x4 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/avr5\libgcc.a(_exit.o)
  *(.fini0)
-                0x00001764                _etext = .
+                0x0000177c                _etext = .
 
-.data           0x00800100      0x10a load address 0x00001764
+.data           0x00800100      0x118 load address 0x0000177c
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00800100        0x6 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(malloc.o)
@@ -894,9 +896,9 @@ END GROUP
                 0x00800102                __malloc_heap_start
                 0x00800104                __malloc_margin
  *(.data*)
- .data.joy_released.1865
+ .data.joy_released.1868
                 0x00800106        0x1 src/game.o
- .data.click_released.1864
+ .data.click_released.1867
                 0x00800107        0x1 src/game.o
  .data.oled_out
                 0x00800108        0xe src/oled.o
@@ -917,54 +919,54 @@ END GROUP
  .rodata.str1.1
                 0x00800145       0x1a src/main.o
  .rodata.str1.1
-                0x0080015f       0xaa src/menu.o
-                                 0xae (size before relaxing)
+                0x0080015f       0xb8 src/menu.o
+                                 0xbc (size before relaxing)
  *(.gnu.linkonce.d*)
-                0x0080020a                . = ALIGN (0x2)
- *fill*         0x00800209        0x1 
-                0x0080020a                _edata = .
-                0x0080020a                PROVIDE (__data_end, .)
+                0x00800218                . = ALIGN (0x2)
+ *fill*         0x00800217        0x1 
+                0x00800218                _edata = .
+                0x00800218                PROVIDE (__data_end, .)
 
-.bss            0x0080020a      0x13a
-                0x0080020a                PROVIDE (__bss_start, .)
+.bss            0x00800218      0x13a
+                0x00800218                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
- .bss.rx_tail   0x0080020a        0x2 src/can.o
- .bss.rx_head   0x0080020c        0x2 src/can.o
+ .bss.rx_tail   0x00800218        0x2 src/can.o
+ .bss.rx_head   0x0080021a        0x2 src/can.o
  .bss.rx_buffer
-                0x0080020e       0xa0 src/can.o
+                0x0080021c       0xa0 src/can.o
  .bss.game_state
-                0x008002ae        0x1 src/game.o
+                0x008002bc        0x1 src/game.o
  .bss.subchoice
-                0x008002af        0x1 src/menu.o
- .bss.current   0x008002b0        0x2 src/menu.o
- .bss.head      0x008002b2        0x2 src/menu.o
- .bss.ypos      0x008002b4        0x1 src/oled.o
-                0x008002b4                ypos
- .bss.xpos      0x008002b5        0x1 src/oled.o
-                0x008002b5                xpos
- .bss.recvtail  0x008002b6        0x2 src/uart.o
-                0x008002b6                recvtail
- .bss.recvhead  0x008002b8        0x2 src/uart.o
-                0x008002b8                recvhead
+                0x008002bd        0x1 src/menu.o
+ .bss.current   0x008002be        0x2 src/menu.o
+ .bss.head      0x008002c0        0x2 src/menu.o
+ .bss.ypos      0x008002c2        0x1 src/oled.o
+                0x008002c2                ypos
+ .bss.xpos      0x008002c3        0x1 src/oled.o
+                0x008002c3                xpos
+ .bss.recvtail  0x008002c4        0x2 src/uart.o
+                0x008002c4                recvtail
+ .bss.recvhead  0x008002c6        0x2 src/uart.o
+                0x008002c6                recvhead
  *(COMMON)
- COMMON         0x008002ba       0x80 src/uart.o
-                0x008002ba                recv_buffer
- COMMON         0x0080033a        0x4 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(malloc.o)
-                0x0080033a                __brkval
-                0x0080033c                __flp
- COMMON         0x0080033e        0x6 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(iob.o)
-                0x0080033e                __iob
-                0x00800344                PROVIDE (__bss_end, .)
-                0x00001764                __data_load_start = LOADADDR (.data)
-                0x0000186e                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x008002c8       0x80 src/uart.o
+                0x008002c8                recv_buffer
+ COMMON         0x00800348        0x4 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(malloc.o)
+                0x00800348                __brkval
+                0x0080034a                __flp
+ COMMON         0x0080034c        0x6 c:/program files (x86)/atmel/atmel toolchain/avr8 gcc/native/3.4.1061/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.8.1/../../../../avr/lib/avr5\libc.a(iob.o)
+                0x0080034c                __iob
+                0x00800352                PROVIDE (__bss_end, .)
+                0x0000177c                __data_load_start = LOADADDR (.data)
+                0x00001894                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00800344        0x0
-                0x00800344                PROVIDE (__noinit_start, .)
+.noinit         0x00800352        0x0
+                0x00800352                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x00800344                PROVIDE (__noinit_end, .)
-                0x00800344                _end = .
-                0x00800344                PROVIDE (__heap_start, .)
+                0x00800352                PROVIDE (__noinit_end, .)
+                0x00800352                _end = .
+                0x00800352                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
  *(.eeprom*)
@@ -1039,105 +1041,105 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000      0x300
+.debug_aranges  0x00000000      0x308
  *(.debug_aranges)
  .debug_aranges
                 0x00000000       0x28 src/adc.o
  .debug_aranges
                 0x00000028       0x40 src/can.o
  .debug_aranges
-                0x00000068       0x40 src/game.o
+                0x00000068       0x48 src/game.o
  .debug_aranges
-                0x000000a8       0x48 src/joystick.o
+                0x000000b0       0x48 src/joystick.o
  .debug_aranges
-                0x000000f0       0x20 src/main.o
+                0x000000f8       0x20 src/main.o
  .debug_aranges
-                0x00000110       0x60 src/MCP2515.o
+                0x00000118       0x60 src/MCP2515.o
  .debug_aranges
-                0x00000170       0x70 src/menu.o
+                0x00000178       0x70 src/menu.o
  .debug_aranges
-                0x000001e0       0xa8 src/oled.o
+                0x000001e8       0xa8 src/oled.o
  .debug_aranges
-                0x00000288       0x38 src/spi_driver.o
+                0x00000290       0x38 src/spi_driver.o
  .debug_aranges
-                0x000002c0       0x40 src/uart.o
+                0x000002c8       0x40 src/uart.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x36a1
+.debug_info     0x00000000     0x36eb
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000       0xe0 src/adc.o
  .debug_info    0x000000e0      0x605 src/can.o
- .debug_info    0x000006e5      0x405 src/game.o
- .debug_info    0x00000aea      0x4a3 src/joystick.o
- .debug_info    0x00000f8d      0x396 src/main.o
- .debug_info    0x00001323      0x536 src/MCP2515.o
- .debug_info    0x00001859      0x83b src/menu.o
- .debug_info    0x00002094     0x12b7 src/oled.o
- .debug_info    0x0000334b       0xe5 src/spi_driver.o
- .debug_info    0x00003430      0x271 src/uart.o
+ .debug_info    0x000006e5      0x41a src/game.o
+ .debug_info    0x00000aff      0x4a3 src/joystick.o
+ .debug_info    0x00000fa2      0x396 src/main.o
+ .debug_info    0x00001338      0x536 src/MCP2515.o
+ .debug_info    0x0000186e      0x870 src/menu.o
+ .debug_info    0x000020de     0x12b7 src/oled.o
+ .debug_info    0x00003395       0xe5 src/spi_driver.o
+ .debug_info    0x0000347a      0x271 src/uart.o
 
-.debug_abbrev   0x00000000     0x1255
+.debug_abbrev   0x00000000     0x1278
  *(.debug_abbrev)
  .debug_abbrev  0x00000000       0xa4 src/adc.o
  .debug_abbrev  0x000000a4      0x264 src/can.o
- .debug_abbrev  0x00000308      0x1ec src/game.o
- .debug_abbrev  0x000004f4      0x22b src/joystick.o
- .debug_abbrev  0x0000071f      0x1de src/main.o
- .debug_abbrev  0x000008fd      0x17d src/MCP2515.o
- .debug_abbrev  0x00000a7a      0x2c8 src/menu.o
- .debug_abbrev  0x00000d42      0x306 src/oled.o
- .debug_abbrev  0x00001048       0x90 src/spi_driver.o
- .debug_abbrev  0x000010d8      0x17d src/uart.o
+ .debug_abbrev  0x00000308      0x202 src/game.o
+ .debug_abbrev  0x0000050a      0x22b src/joystick.o
+ .debug_abbrev  0x00000735      0x1de src/main.o
+ .debug_abbrev  0x00000913      0x17d src/MCP2515.o
+ .debug_abbrev  0x00000a90      0x2d5 src/menu.o
+ .debug_abbrev  0x00000d65      0x306 src/oled.o
+ .debug_abbrev  0x0000106b       0x90 src/spi_driver.o
+ .debug_abbrev  0x000010fb      0x17d src/uart.o
 
-.debug_line     0x00000000     0x19b8
+.debug_line     0x00000000     0x19db
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000       0xe3 src/adc.o
  .debug_line    0x000000e3      0x2dd src/can.o
- .debug_line    0x000003c0      0x1de src/game.o
- .debug_line    0x0000059e      0x257 src/joystick.o
- .debug_line    0x000007f5      0x21a src/main.o
- .debug_line    0x00000a0f      0x26c src/MCP2515.o
- .debug_line    0x00000c7b      0x406 src/menu.o
- .debug_line    0x00001081      0x69a src/oled.o
- .debug_line    0x0000171b      0x11c src/spi_driver.o
- .debug_line    0x00001837      0x181 src/uart.o
+ .debug_line    0x000003c0      0x1fb src/game.o
+ .debug_line    0x000005bb      0x257 src/joystick.o
+ .debug_line    0x00000812      0x21a src/main.o
+ .debug_line    0x00000a2c      0x26c src/MCP2515.o
+ .debug_line    0x00000c98      0x40c src/menu.o
+ .debug_line    0x000010a4      0x69a src/oled.o
+ .debug_line    0x0000173e      0x11c src/spi_driver.o
+ .debug_line    0x0000185a      0x181 src/uart.o
 
-.debug_frame    0x00000000      0x810
+.debug_frame    0x00000000      0x820
  *(.debug_frame)
  .debug_frame   0x00000000       0x34 src/adc.o
  .debug_frame   0x00000034      0x13c src/can.o
- .debug_frame   0x00000170       0x6c src/game.o
- .debug_frame   0x000001dc       0xc4 src/joystick.o
- .debug_frame   0x000002a0       0x24 src/main.o
- .debug_frame   0x000002c4       0xe0 src/MCP2515.o
- .debug_frame   0x000003a4      0x1dc src/menu.o
- .debug_frame   0x00000580      0x19c src/oled.o
- .debug_frame   0x0000071c       0x54 src/spi_driver.o
- .debug_frame   0x00000770       0xa0 src/uart.o
+ .debug_frame   0x00000170       0x7c src/game.o
+ .debug_frame   0x000001ec       0xc4 src/joystick.o
+ .debug_frame   0x000002b0       0x24 src/main.o
+ .debug_frame   0x000002d4       0xe0 src/MCP2515.o
+ .debug_frame   0x000003b4      0x1dc src/menu.o
+ .debug_frame   0x00000590      0x19c src/oled.o
+ .debug_frame   0x0000072c       0x54 src/spi_driver.o
+ .debug_frame   0x00000780       0xa0 src/uart.o
 
-.debug_str      0x00000000      0x86e
+.debug_str      0x00000000      0x88f
  *(.debug_str)
  .debug_str     0x00000000      0x155 src/adc.o
                                 0x18e (size before relaxing)
  .debug_str     0x00000155      0x16f src/can.o
                                 0x2d9 (size before relaxing)
- .debug_str     0x000002c4      0x158 src/game.o
-                                0x2f2 (size before relaxing)
- .debug_str     0x0000041c       0x7c src/joystick.o
+ .debug_str     0x000002c4      0x16a src/game.o
+                                0x304 (size before relaxing)
+ .debug_str     0x0000042e       0x7c src/joystick.o
                                 0x2a2 (size before relaxing)
- .debug_str     0x00000498       0xc3 src/main.o
+ .debug_str     0x000004aa       0xc3 src/main.o
                                 0x287 (size before relaxing)
- .debug_str     0x0000055b       0x6b src/MCP2515.o
+ .debug_str     0x0000056d       0x6b src/MCP2515.o
                                 0x251 (size before relaxing)
- .debug_str     0x000005c6       0xe3 src/menu.o
-                                0x32e (size before relaxing)
- .debug_str     0x000006a9      0x140 src/oled.o
+ .debug_str     0x000005d8       0xf2 src/menu.o
+                                0x33d (size before relaxing)
+ .debug_str     0x000006ca      0x140 src/oled.o
                                 0x333 (size before relaxing)
- .debug_str     0x000007e9       0x14 src/spi_driver.o
+ .debug_str     0x0000080a       0x14 src/spi_driver.o
                                 0x1a5 (size before relaxing)
- .debug_str     0x000007fd       0x71 src/uart.o
+ .debug_str     0x0000081e       0x71 src/uart.o
                                 0x209 (size before relaxing)
 
 .debug_loc      0x00000000     0x16e2
@@ -1171,18 +1173,18 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000      0x2a8
+.debug_ranges   0x00000000      0x2b0
  *(.debug_ranges)
  .debug_ranges  0x00000000       0x18 src/adc.o
  .debug_ranges  0x00000018       0x30 src/can.o
- .debug_ranges  0x00000048       0x30 src/game.o
- .debug_ranges  0x00000078       0x38 src/joystick.o
- .debug_ranges  0x000000b0       0x10 src/main.o
- .debug_ranges  0x000000c0       0x50 src/MCP2515.o
- .debug_ranges  0x00000110       0x60 src/menu.o
- .debug_ranges  0x00000170       0xe0 src/oled.o
- .debug_ranges  0x00000250       0x28 src/spi_driver.o
- .debug_ranges  0x00000278       0x30 src/uart.o
+ .debug_ranges  0x00000048       0x38 src/game.o
+ .debug_ranges  0x00000080       0x38 src/joystick.o
+ .debug_ranges  0x000000b8       0x10 src/main.o
+ .debug_ranges  0x000000c8       0x50 src/MCP2515.o
+ .debug_ranges  0x00000118       0x60 src/menu.o
+ .debug_ranges  0x00000178       0xe0 src/oled.o
+ .debug_ranges  0x00000258       0x28 src/spi_driver.o
+ .debug_ranges  0x00000280       0x30 src/uart.o
 
 .debug_macro
  *(.debug_macro)

@@ -5,28 +5,19 @@
  *  Author: rendellc
  */ 
 
+#include "common.h"
 #include "game.h"
 #include "menu.h"
 #include "joystick.h"
 #include "uart.h"
 
 
-#define TRUE 1
-#define FALSE (!TRUE)
-typedef uint8_t BOOL;
-
 #define JOY_Y_TRESHOLD 32
 
 void game_start();
 
 
-typedef enum {
-	INVALID,
-	IN_MENU,
-	PLAYING,
-	PAUSED,
-	
-} game_state_t;
+
 
 static game_state_t game_state = INVALID;
 
@@ -45,6 +36,9 @@ void game_init_menu(){
 
 void game_start(){
 	fprintf(&uart_out, "game starting!");
+	
+	game_state = PLAYING;
+	
 }
 
 
@@ -54,13 +48,13 @@ void game_tick(){
 		case INVALID:
 		
 		
-		
 			break;
 		case IN_MENU:
 			game_tick_menu();
 			
 			break;
 		case PLAYING:
+			game_tick_playing();
 		
 			break;
 		case PAUSED:
@@ -70,6 +64,13 @@ void game_tick(){
 		default:
 			break;
 	}
+}
+
+void game_tick_playing(){
+	
+	
+	
+	
 }
 
 void game_tick_menu(){

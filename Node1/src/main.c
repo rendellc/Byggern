@@ -50,10 +50,9 @@ int main()
 	
 	sei();
 	
-	// setup printf
-	stdout = &uart_out; // printf defaults to oled
+	// setup printf, \note remove?
+	stdout = &uart_out; 
 	stdin  = &uart_in;
-
 	
 	oled_home();
 	

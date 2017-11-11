@@ -23,4 +23,6 @@ void game_init_menu();
 
 void game_tick_menu();
 
+void game_tick_playing();
+
 #endif /* GAME_H_ */

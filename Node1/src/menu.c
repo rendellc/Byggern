@@ -88,12 +88,13 @@ void menu_init(){
 	
 	menu_init_menu("Start", head, game_start);
 	menu_init_menu("Difficulty", head, menu_action_nothing);
+	menu_t* menu_highscore = menu_init_menu("Highscore", head, menu_action_nothing);
 	menu_t* menu_legal = menu_init_menu("Legal", head, menu_action_nothing);
 	
 	menu_init_menu("TTK4115 - Byggern", menu_legal, menu_action_nothing);
 	menu_init_menu("Rendell Cale", menu_legal, menu_action_nothing);
 	menu_init_menu("William Ke", menu_legal, menu_action_nothing);
-	menu_init_menu("Frode von Meeren", menu_legal, menu_action_nothing);
+	menu_init_menu("Frode van der Meeren", menu_legal, menu_action_nothing);
 	current = head;
 }
 
