@@ -144,7 +144,7 @@ int16_t motor_read_encoder(){
 	// read lsb
 	read |= PINK;
 	
-	// toggle !RST comment out PORTH &= ~(1 << PIN_RST); if you wan position encoder
+	// toggle !RST comment out PORTH &= ~(1 << PIN_RST); if you want position encoder
 	//PORTH &= ~(1 << PIN_RST);
 	_delay_us(10);
 	PORTH |= (1 << PIN_RST);
