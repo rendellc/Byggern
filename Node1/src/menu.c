@@ -35,15 +35,26 @@ void menu_click_init(){
  * Give submenu specified title and callback.
  */
 menu_t* menu_init_menu(char* title, menu_t* parent, void (*action)(void)){
+	
+	// test if there is more room in parent
+	if (parent != head && parent->submenus[MAX_SUBMENUS - 1] != NULL){
+		fprintf(&uart_out, "no more room in %s\n", parent->title);
+		
+		return NULL;
+	}
+		
 	menu_t* menu = (menu_t*) malloc(sizeof(menu_t));	
 	
-	for (uint8_t i = 0; i <= MAX_TITLE_LENGTH ; i++){
+	/// \note This fills in one extra '\\0' in order to guarantee proper termination
+	for (uint8_t i = 0; i <= MAX_TITLE_LENGTH; i++){
 		menu->title[i] = '\0';
 	}
 	
-	strncpy(menu->title, title, MAX_TITLE_LENGTH);	// Need to guarantee terminating '\0'
+	/// \todo Need to guarantee terminating '\0'
+	strncpy(menu->title, title, MAX_TITLE_LENGTH);	
 	
-	for (uint8_t i = 0; i < MAX_SUBMENUS ; i++){
+	/// make sure all submenus are NULL
+	for (uint8_t i = 0; i < MAX_SUBMENUS ; ++i){
 		menu->submenus[i] = (menu_t*)NULL;
 	}
 	
@@ -52,18 +63,12 @@ menu_t* menu_init_menu(char* title, menu_t* parent, void (*action)(void)){
 	} else {
 		menu->parent = parent;
 		
-		for (int i=0; i < MAX_SUBMENUS; i++){
+		for (uint8_t i = 0; i < MAX_SUBMENUS; ++i){
 			if (parent->submenus[i] == NULL){
 				parent->submenus[i] = menu;
-				return menu;
+				break;
 			}
 		}
-
-		/** \todo 
-			this is wrong. Should only return NULL when there is no more
-			room in parent menu. Should also free heap allocated memory in this case.
-		*/
-		return NULL; // return NULL if no more room
 	}
 	
 	///\todo {must also be added when the else{...} statement excecutes}
@@ -165,11 +170,14 @@ void menu_update_subchoice()
 */
 
 
-/// Move cursor specified step. Wrap around at both ends.
-void menu_move_cursor(int8_t step){
+/* Move cursor up or down by 1 step. Dont wrap around at both ends.
+ * @param[in] step Move down if 1 and move up if -1. 
+ */
+void menu_move_cursor(int8_t step)
+{
 	uint8_t new_subchoice = (uint8_t)(((int8_t)subchoice + step)%MAX_SUBMENUS);
 	
-	if (current->submenus[new_subchoice] != NULL)
+	if (current->submenus[new_subchoice] != NULL && new_subchoice < MAX_SUBMENUS)
 		subchoice = new_subchoice;
 }
 
@@ -206,7 +214,10 @@ void menu_free_submenus(menu_t* parent)
 
 void menu_enter_current(void)
 {
+	fprintf(&uart_out, "nothing: \t%p\n", menu_action_nothing);
+	fprintf(&uart_out, "action : \t\t%p\n", (*(current->submenus[subchoice]->action)));
+	
+	current->submenus[subchoice]->action();
 	current = current->submenus[subchoice];
-	current->action();
 	subchoice = 0;
 }

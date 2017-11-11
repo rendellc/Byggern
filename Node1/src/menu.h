@@ -19,15 +19,15 @@
 
 #include <stdint.h>
 
-#define MAX_TITLE_LENGTH	23 /*! Max length of title string*/
-#define MAX_SUBMENUS		7  /*! Max number of submenus */
+#define MAX_TITLE_LENGTH	23 /*!< Max length of title string*/
+#define MAX_SUBMENUS		7  /*!< Max number of submenus */
 
 /// Struct for holding submenu
 typedef struct _menu_t{
-	char   title[MAX_TITLE_LENGTH]; /*! \todo check if using MAX_TITLE_LENGTH+1 cause problems*/
+	char   title[MAX_TITLE_LENGTH + 1]; /*!< \todo check if using MAX_TITLE_LENGTH+1 cause problems*/
 	struct _menu_t*	submenus[MAX_SUBMENUS];
 	struct _menu_t* parent;
-	void (*action)(void); /*! callback function when submenu is clicked */
+	void (*action)();				/*!< callback function when submenu is clicked */
 } menu_t;
 
 /// Empty callback function for menu

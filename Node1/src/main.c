@@ -63,7 +63,7 @@ int main()
 	
 	while (1)
 	{	
-		fprintf(&uart_out, "tick\n");
+		//fprintf(&uart_out, "tick\n");
 		
 		game_tick();
 

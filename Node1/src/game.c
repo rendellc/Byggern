@@ -81,14 +81,14 @@ void game_tick_menu(){
 	joystick_t joy = joy_get_state();
 	
 	
-	if (joy.click && !!click_released){
+	if (joy.click && click_released){
 		click_released = FALSE;
 		menu_enter_current();
 	} 
 	else {
 		click_released = TRUE;
 		
-		fprintf(&uart_out, "\tjoy: %u\tjoy_rel: %u\t", joy.y, joy_released);
+		//fprintf(&uart_out, "\tjoy: %u\tjoy_rel: %u\t", joy.y, joy_released);
 		if ((joy.y < (128 - JOY_Y_TRESHOLD)) && joy_released){
 			joy_released = FALSE;
 			menu_move_cursor(1);
