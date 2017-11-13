@@ -1,6 +1,7 @@
 /**@file
  * Interface for SPI driver for atmega162
- * with atmega162 as spi master.
+ * with atmega162 as SPI master. Uses SPI mode
+ * 0 in 162s datasheet. 
  */ 
 
 
@@ -23,9 +24,15 @@ void spi_ss_high();
  * in the same transmission. 
  * @param[in] data The byte to transmit.
  * @return Byte read in from slave.
+
+ * \note Transmission is a blocking process. 
  */
 uint8_t spi_transmit(uint8_t data);
 
+/**
+ * Initialize the mcu as SPI master and set
+ * spi mode to 0.
+ */
 void spi_init(void);
 
 #endif /* SPI_DRIVER_H_ */
