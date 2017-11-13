@@ -58,6 +58,8 @@ int main()
 	
 	game_init(); // after menu_init
 	
+	SRAM_test();
+
 	fprintf(&uart_out, "entering loop\n");
 	
 	uint8_t i = 0;
