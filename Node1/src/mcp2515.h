@@ -15,6 +15,8 @@ v1.00       2003/12/11  Initial release
 Copyright 2003 Kimberly Otten Software Consulting
 */
 
+// Note: this file has been modified from the original
+
 // Define MCP2515 register addresses
 
 #define MCP_RXF0SIDH	0x00

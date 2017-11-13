@@ -82,8 +82,7 @@ menu_t* menu_init_menu(char* title, menu_t* parent, void (*action)(void)){
  */
 void menu_init(){
 	menu_click_init();
-	
-	
+		
 	head = menu_init_menu("Main", head, menu_action_nothing);
 	
 	menu_init_menu("Start", head, game_start);

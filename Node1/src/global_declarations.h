@@ -1,5 +1,5 @@
 /*!@file
- * Declrations and includes that are usesful in most of Node1.
+ * Declarations and includes that are usesful in most of Node1.
  * Defines F_CPU and should be the first include.
  */ 
 

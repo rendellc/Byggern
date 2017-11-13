@@ -38,7 +38,6 @@ spi_driver.o:
 sram_test.o:
 	$(CC) $(CFLAGS) -c sram_test.c	
 
-
 game.o:
 	$(CC) $(CFLAGS) -c game.c
 
@@ -46,4 +45,3 @@ game.o:
 .PHONY:
 clean:
 	rm -f *.o outname
-

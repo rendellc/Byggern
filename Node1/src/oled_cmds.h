@@ -1,17 +1,11 @@
-/*
- * oled_cmds.h
- *
- * Created: 26.09.2017 21:31:58
- *  Author: rendellc
- */ 
-
+/* @file    
+ * Commands for OLED as per table 8-1 of 
+ * "OLED SSD1308 (controller).pdf"
+ */
 
 #ifndef OLED_CMDS_H_
 #define OLED_CMDS_H_
 
-/*	Commands for OLED as per table 8-1 of "OLED SSD1308 (controller).pdf"
-	
-*/
 #define SET_LOW_COL_ADR		0x00
 #define SET_HIGH_COL_ADR	0x10
 

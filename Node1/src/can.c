@@ -11,8 +11,8 @@
 #define RX_BUFFER_MAX 8 ///\todo determine good size
 
 static volatile can_msg_t rx_buffer[2][RX_BUFFER_MAX] = {};	/*!< Recieption buffer for can bus*/
-static volatile uint8_t rx_head[2] = {};					/*!< */
-static volatile uint8_t rx_tail[2] = {};					/*!< */
+static volatile uint8_t rx_head[2] = {};					/*!< Head of buffers */
+static volatile uint8_t rx_tail[2] = {};					/*!< Tail of buffers */
 
 /*!
  * Interrupt vector for can message reception. \n
@@ -83,7 +83,7 @@ void can_init()
 #ifdef UART_H_
 /*!
  * Print msg to uart_out stream 
- * Requires inclusion of "uart.h"
+ * Requires inclusion of "uart.h" and will only be included if uart.h is included
  */
 void can_print_msg(can_msg_t msg)
 {

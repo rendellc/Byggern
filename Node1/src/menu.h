@@ -11,8 +11,7 @@
      If no action is wanted, then menu_action_nothing should 
      be supplied.
 
- */ 
-///\todo {remove dependency between menu and adc}
+ */
 
 #ifndef MENU_H_
 #define MENU_H_
