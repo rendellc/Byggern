@@ -18,7 +18,10 @@
 #define CLICK_PIN PE0
 
 int8_t convert_range(uint8_t data){ // convert from 0->255 to -100->100
-	return (float)data*0.784314 - 100;
+	/// \test this must be tested for rounding errors
+	return (int8_t)((200*data) / 255 - 100);
+
+	//return (float)data*0.784314 - 100;
 }
 
 direction_t joy_direction(uint8_t joy_x, uint8_t joy_y){
