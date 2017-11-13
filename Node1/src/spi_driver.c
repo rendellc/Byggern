@@ -1,18 +1,20 @@
-/*
- * spi_driver.c
- *
- * Created: 06.10.2017 10:23:30
- *  Author: rendellc
+/**@file
+ * Implementation of SPI driver for atmega162
+ * with atmega162 as SPI master. Uses SPI mode
+ * 0 in 162s datasheet. 
  */ 
+
 #include "global_declarations.h"
 #include "spi_driver.h"
 #include "avr/io.h"
 #include <stdio.h>
 
+/// Set slave select line low
 void spi_ss_low(){
 	PORTB &= ~(1 << PB4);
 }
 
+/// Set slave select line high
 void spi_ss_high(){
 	PORTB |= (1 << PB4);
 }
@@ -30,7 +32,9 @@ void spi_init()
 	// MSB transmitted first and LSB last
 }
 
-
+/** Transmit one byte of data. 
+ * Wait until byte is recieved and return recieved byte. 
+ */
 uint8_t spi_transmit(uint8_t data)
 {
 	SPDR = data;
