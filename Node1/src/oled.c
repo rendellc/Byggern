@@ -247,7 +247,7 @@ int oled_putchar(char chr){
  * Fill entire display with one value. 
  * @param[in] val Value to place fill screen with. 
  *
- * \example val = 0 will clear the entire screen.
+ * Example: val = 0 will clear the entire screen.
  */
 void oled_fill(uint8_t val){
 	write_c(SET_COL_ADR);  write_c(0x00); write_c(OLED_WIDTH-1);

@@ -1,4 +1,4 @@
-docs/html/
+docs/html/*
 
 *.o
 *.out

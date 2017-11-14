@@ -77,8 +77,8 @@ void oled_buffchar(char chr);
 /**
  * Fill entire display with one value. 
  * @param[in] val Value to place fill screen with. 
- *
- * \example val = 0 will clear the entire screen.
+ * \n
+ * Example: val = 0 will clear the entire screen.
  */
 void oled_fill(uint8_t val);
 
