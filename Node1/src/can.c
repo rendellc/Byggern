@@ -17,10 +17,9 @@ static volatile uint8_t rx_tail[2] = {};					/*!< Tail of buffers */
 /*!
  * Interrupt vector for can message reception. \n
  * Takes the message, and places it in the corresponding recieve buffer, and clears
- * the interrupt. \n
- * If there is no room in the buffer, then the interrupt is cleared and message
- * is ignored. 
-   \todo Implement better overflow handling? Maybe oldest values should be discardeded. Can be as easy as doing head++, tail++
+ * the interrupt.
+ * Overwrite the oldest message if there is no room in 
+ * buffer. 
  */
 ISR(INT1_vect){
 	cli();	

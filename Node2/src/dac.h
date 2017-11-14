@@ -1,10 +1,6 @@
-/*
- * dac.h
- *
- * Created: 03.11.2017 14:27:27
- *  Author: rendellc
- */ 
-
+/*!@file
+ * Interface of external digital to analog interface using I2C.
+ */
 
 #ifndef DAC_H_
 #define DAC_H_
@@ -13,12 +9,16 @@
 #define DAC_POWERDOWN	0x08
 #define DAC_CMD_OUTPUT	0x00
 
+/**
+ * Initialize DAC and I2C on PortD pin 0 and 1. 
+ */
 void dac_init(void);
 
-
-void dac_output(uint8_t voltagePercent);
-
-
+/**
+ * Command DAC to output specified voltage. 
+ * @param[in] voltage 
+ */
+void dac_output(uint8_t voltage);
 
 
 #endif /* DAC_H_ */

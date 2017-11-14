@@ -20,12 +20,10 @@
 #include "uart.h"
 #include "adc.h"
 #include "oled.h"
-//#include "sram_test.h"
+#include "sram_test.h"
 #include "menu.h"
-//#include "sram_test.h"
 #include "spi_driver.h"
 #include "can.h"
-//#include "mcp2515.h"
 #include "joystick.h"
 #include "game.h"
 
@@ -58,7 +56,7 @@ int main()
 	
 	game_init(); // after menu_init
 	
-	SRAM_test();
+	sram_test();
 
 	fprintf(&uart_out, "entering loop\n");
 	

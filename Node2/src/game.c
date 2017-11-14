@@ -31,7 +31,7 @@ void game_tick(){
 void game_tick_playing(){
 	static BOOL ball_dropped = FALSE;
 	
-	// check if ball has been
+	// check if ball has been dropped
 	
 	
 	

@@ -1,9 +1,6 @@
-/*
- * can.c
- *
- * Created: 13.10.2017 18:10:38
- *  Author: rendellc
- */ 
+/*!@file
+ * Implementation of high level CAN bus controller.
+ */
 #include "global_declarations.h"
 #include <avr/interrupt.h>
 #include "can.h"
@@ -17,7 +14,13 @@ volatile can_msg_t rx_buffer[2][RX_BUFFER_MAX] = {};
 volatile uint8_t rx_head[2] = {};
 volatile uint8_t rx_tail[2] = {};
 
-
+/*!
+ * Interrupt vector for can message reception. \n
+ * Takes the message, and places it in the corresponding recieve buffer, and clears
+ * the interrupt.
+ * Overwrite the oldest message if there is no room in 
+ * buffer. 
+ */
 ISR(INT2_vect)
 {
 	cli();
@@ -65,8 +68,9 @@ ISR(INT2_vect)
 	sei();
 }
 
-
-
+/*!
+ * Initialize can controller and mcp. 
+ */
 void can_init()
 {
 	mcp_init();
@@ -80,6 +84,12 @@ void can_init()
 	//EMCUCR |= (1 << SRW01);
 }
 
+#ifdef UART_H_
+
+/*!
+ * Print msg to uart_out stream 
+ * Requires inclusion of "uart.h" and will only be included if uart.h is included
+ */
 void can_print_msg(can_msg_t msg)
 {
 	fprintf(&uart_out, "SID:%i\n", msg.sid);
@@ -89,7 +99,13 @@ void can_print_msg(can_msg_t msg)
 	}
 	fprintf(&uart_out, "\n");
 }
+#endif
 
+/*!
+ * Send message on can bus using the specified tx hardware buffer.
+ * @param msg Msg to send on bus
+ * @param tx_buffer_select Tx buffer to put the message into. 
+ */
 void can_send(can_msg_t msg, uint8_t tx_buffer_select)
 {
 	/*
@@ -139,13 +155,14 @@ void can_send(can_msg_t msg, uint8_t tx_buffer_select)
 	
 	mcp_rts(tx_buffer_select);
 	
-	
-	#ifdef MCP_DEBUG
-	//fprintf(&uart_out, "MCP_LOAD_TX0\t%x\n", msg.data);
-	#endif // MCP_DEBUG
 }
 
-
+/*!
+ * Read message from specified  Rx buffer.
+ * @param rx_buffer_select 0 or 1, which buffer too read from. Undefined behaviour for other values.
+ * @return return the oldest message in the buffer. If buffer is empty, then returned
+ * 		   message will have SID = MSG_INVALID and length=0. 
+ */
 can_msg_t can_read_buffer(uint8_t rx_buffer_select)
 {
 	const uint8_t n = rx_buffer_select; // not different but just a shorter variable name
@@ -163,6 +180,7 @@ can_msg_t can_read_buffer(uint8_t rx_buffer_select)
 	return msg;
 }
 
+/*
 can_msg_t can_read_buffer_backup(uint8_t rx_buffer_select)
 {
 	can_msg_t msg = {};
@@ -191,3 +209,4 @@ can_msg_t can_read_buffer_backup(uint8_t rx_buffer_select)
 	
 	return msg;
 }
+*/

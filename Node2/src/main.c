@@ -19,15 +19,13 @@
 #include "dac.h"
 #include "motor.h"
 #include "game.h"
-
-uint16_t negativescore = 0;
-uint16_t adc_read;
-
+#include "solenoid.h"
 
 int main(void)
 {
 	cli();
 	uart_init();
+	fprintf(&uart_out, "uart initialized\n");
 	fprintf(&uart_out, "can init starting...");
 	spi_init();
 	can_init();
@@ -41,6 +39,10 @@ int main(void)
 	fprintf(&uart_out, "motor init starting...");
 	motor_init();
 	fprintf(&uart_out, "done\n");
+	fprintf(&uart_out, "solenoid init starting...");
+	solenoid_init();
+	fprintf(&uart_out, "done\n");
+
 	sei();
 	
 	
@@ -51,7 +53,7 @@ int main(void)
 	
 	
 	
-	DDRE |= (1 << PE4);
+	
 	
 	motor_enable();
 	motor_encoder_calibrate();

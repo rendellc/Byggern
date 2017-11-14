@@ -11,7 +11,7 @@
 #include "global_declarations.h"
 #include "sram_test.h"
 
-void SRAM_test(void){
+void sram_test(void){
 	volatile char *ext_ram = (char *) RAM_ADR; // Start address for the SRAM
 	uint16_t ext_ram_size = RAM_SIZE;
 	uint16_t write_errors = 0;

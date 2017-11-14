@@ -173,12 +173,10 @@ void motor_enable(void){
 void motor_set_speed(int8_t speed){	
 	if (speed < 0){
 		PORTH &= ~(1 << PIN_DIR);
-		dac_output(-speed);
-		//fprintf(&uart_out, "left\t");
+		dac_output(-speed); 		// -speed because speed is negative
 	} else {
 		PORTH |= (1 << PIN_DIR);
 		dac_output(speed);
-		//fprintf(&uart_out, "right\t");
 	}	
 }
 
