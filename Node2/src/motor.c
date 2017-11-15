@@ -1,8 +1,6 @@
-/*
- * motor.c
- *
- * Created: 03.11.2017 15:29:06
- *  Author: rendellc
+/**
+ * Implementation of motor controller and interface to 
+ * motor box.
  */
 #include "global_declarations.h"
 #include <stdint.h>
@@ -16,11 +14,11 @@
 #include "uart.h" /*!< \todo remove */
 
 
-#define PIN_DIR	PH1
-#define PIN_SEL PH3
-#define PIN_EN	PH4
-#define PIN_OE	PH5
-#define PIN_RST PH6
+#define PIN_DIR	PH1 /*!< Motor direction select pin */
+#define PIN_SEL PH3 /*!< Motor encoder mode select pin */
+#define PIN_EN	PH4 /*!< Motor enable pin */
+#define PIN_OE	PH5 /*!< Encoder output enable pin */
+#define PIN_RST PH6 /*!< Encoder reset pin */
 
 
 // calibration
@@ -112,6 +110,10 @@ int8_t motor_encoder_convert_range(uint16_t raw_data){
 	return (int8_t)((uint32_t)((raw_data - calibrate_min)*100L)/calibrate_max);
 }
 
+/**
+ * Read encoder position by sending commands to the motor box. 
+ * This takes 40-50 microseconds and is a blocking process.
+ */
 int16_t motor_read_encoder(){
 	
 	// set !OE low
@@ -193,6 +195,7 @@ void motor_set_speed(int8_t speed){
 
 /**
  * Set setpoint for motor and enable position regulator. 
+ * @param[in] position 0 is left and 255 is right. 
  */
 void motor_set_position(uint8_t position){
 	/*
