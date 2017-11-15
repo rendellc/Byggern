@@ -51,16 +51,10 @@ int main(void)
 	uint8_t joy_click = 0;
 	uint8_t slider_pos = 0;
 	
-	
-	
-	
-	
 	motor_enable();
 	motor_encoder_calibrate();
 	
-	
-	
-	
+	uint16_t i = 0;
     while(1)
     {
 		motor_enable();
@@ -97,6 +91,10 @@ int main(void)
 			case can_INVALID:
 				//fprintf(&uart_out, "Invalid\n");
 				break;
+				
+			case can_GAME_INFO:
+				fprintf(&uart_out, "Game info message recieved\n");
+				break;
 		}
 		
 		//int16_t enc_read = motor_read_encoder();
@@ -109,11 +107,15 @@ int main(void)
 		
 		//scorekeeping();
 		
-		fprintf(&uart_out, "adc value: %i\t\n", adc_read);
+		//fprintf(&uart_out, "adc value: %i\t\n", adc_read);
 		//fprintf(&uart_out, "lives: %u\n", scorekeeping());
 		
 		//fprintf(&uart_out, "pwm duty: %i\n",  32 + joy_x/2);
 		
+		i = (i+1)%4096;
+		if (i == 0){
+			fprintf(&uart_out, "node two still running\n");
+		}
 		pwm_set_duty(34 + joy_x/2);
     }
 }
