@@ -37,8 +37,7 @@ void game_init_menu(){
 void game_start(){
 	fprintf(&uart_out, "game starting!");
 	
-	game_state = game_PLAYING;
-	
+	//game_state = game_PLAYING;
 }
 
 
@@ -46,10 +45,10 @@ void game_tick(){
 	
 	switch (game_state){
 		case game_INVALID:
-		
-		
+			
 			break;
 		case game_IN_MENU:
+			
 			game_tick_menu();
 			
 			break;
@@ -76,7 +75,6 @@ void game_tick_playing(){
 }
 
 void game_tick_menu(){
-	static BOOL click_released = TRUE;
 	static BOOL joy_released = TRUE;
 	
 	menu_print_current();
@@ -86,13 +84,6 @@ void game_tick_menu(){
 	direction_t joy_dir = joy_direction(joy.x, joy.y);
 	
 	switch (joy_dir){
-		case CLICKED:
-			if (click_released){
-				click_released = FALSE;
-				menu_enter_current();
-			} 
-			break;
-			
 		case UP:
 			if (joy_released){
 				joy_released = FALSE;
@@ -122,7 +113,6 @@ void game_tick_menu(){
 		
 		case NEUTRAL:
 			joy_released = TRUE;
-			click_released = !joy.click;
 			break;
 	}
 	

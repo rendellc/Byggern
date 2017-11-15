@@ -38,7 +38,7 @@ ISR(INT1_vect){
 	}
 	
 	// if there is room in buffer first
-	if ((rx_head[n]+1)%RX_BUFFER_MAX != rx_tail[n]){
+	//if ((rx_head[n]+1)%RX_BUFFER_MAX != rx_tail[n]){
     	volatile can_msg_t msg = {};
     	
     	msg.length = mcp_read(MCP_RXBn | MCP_RXBnDLC) & MCP_DLC_MASK;
@@ -59,7 +59,7 @@ ISR(INT1_vect){
         
     	rx_buffer[n][rx_head[n]] = msg;
     	rx_head[n] = (rx_head[n]+1) % RX_BUFFER_MAX;
-	}
+	//}
 
     mcp_bitmodify(MCP_CANINTF, MCP_RXnIF, 0);
 	sei();

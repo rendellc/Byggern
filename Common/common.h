@@ -42,7 +42,7 @@ typedef enum {
 	UP = 2,
 	DOWN = 3,
 	NEUTRAL = 4,
-	CLICKED
+	//CLICKED
 } direction_t;
 
 

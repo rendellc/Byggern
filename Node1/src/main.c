@@ -28,6 +28,7 @@
 #include "joystick.h"
 #include "game.h"
 
+#include "mcp2515.h"
 
 
 int main()
@@ -48,8 +49,8 @@ int main()
 	oled_init();
 	menu_init(); // after oled
 	
-	//spi_init();
-	//can_init(); // after spi
+	spi_init();
+	can_init(); // after spi
 	
 	sei();
 	
@@ -60,22 +61,41 @@ int main()
 	oled_home();
 	
 	game_init(); // after menu_init
-
-	fprintf(&uart_out, "entering loop\n");
 	
 	uint8_t i = 0;
 	
+	//mcp_loopback_set();
 	
+	can_msg_t msg = {};
+	msg.length = 1;
+	msg.data[0] = 'a';
+	msg.sid = can_GAME_INFO;
+	
+	fprintf(&uart_out, "Sent message\n");
+	can_print_msg(msg);
+	
+	fprintf(&uart_out, "entering loop\n");
 	while (1)
 	{
+		//oled_fill(0xFF);
+				
+		can_send(msg,0);
 		
-		//menu_print_current();
-		if (++i == 0)
-			fprintf(&uart_out, "pulse\n");
+		
+		fprintf(&uart_out, "canctrl status %u\n", mcp_readstatus());
+
+		can_msg_t recieved_msg = can_read_buffer(0);
+		
+		
+		if (recieved_msg.sid != can_INVALID){
+			fprintf(&uart_out, "Recieved message\n");
+			can_print_msg(recieved_msg);
+		}
+	
 		
 		game_tick();
 		
-		_delay_ms(10);
+		_delay_ms(100);
 	}
 	
 	
