@@ -1,3 +1,5 @@
+
+
 /*
  * game.c
  *
@@ -7,7 +9,7 @@
 
 #include "common.h"
 
-game_state_t game_state = INVALID;
+game_state_t game_state = game_INVALID;
 
 /** 
  * Run one iteration of game loop. 
@@ -16,7 +18,7 @@ void game_tick(){
 	
 	
 	switch (game_state){
-		case PLAYING:
+		case game_PLAYING:
 			game_tick_playing();
 			break;
 		

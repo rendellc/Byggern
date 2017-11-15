@@ -174,7 +174,7 @@ can_msg_t can_read_buffer(uint8_t rx_buffer_select)
 		msg = rx_buffer[n][rx_tail[n]];
 		rx_tail[n] = (rx_tail[n] + 1)%RX_BUFFER_MAX;
 	} else{
-		msg.sid = MSG_INVALID;
+		msg.sid = can_INVALID;
 	}
 		
 	return msg;
