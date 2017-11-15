@@ -1,25 +1,28 @@
-/*
- * uart.c
- *
- * Created: 01.09.2017 10:33:35
- *  Author: rendellc
+/*!@file
+ * Implement uart on atmega2560. \n
+ * Uses interrupt for recieving and busy wait for sending. 
+ * \todo Convert to use uint8_t
  */ 
+
 #include "global_declarations.h"
 #include "uart.h"
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+/// Enable use of fprintf(&uart_out,...)
 FILE uart_out = FDEV_SETUP_STREAM(uart_send, NULL, _FDEV_SETUP_WRITE);
+/// Create input stream for uart. Unused. 
 FILE uart_in = FDEV_SETUP_STREAM(NULL, uart_recv, _FDEV_SETUP_READ);
 
-#define BAUD 9600UL
-#define BUFFER_MAX 128
+#define BAUD 9600UL 	/*!< BAUD rate of UART*/
+#define BUFFER_MAX 128	/*!< Size of Rx buffer*/
 
-volatile char recv_buffer[BUFFER_MAX];
-volatile int recvhead = 0;
-volatile int recvtail = 0;
+volatile char recv_buffer[BUFFER_MAX]; 	/*!< Buffer for storing recieved data*/
+volatile int recvhead = 0;				/*!< Head of buffer. Where next recieved byte will be placed. */
+volatile int recvtail = 0;				/*!< Tail of buffer. Where next read will occour. */
 
+/// Interrupt vector for Rx. Place recieved data into buffer.
 ISR(USART0_RX_vect){
 	cli();
 	char input = UDR0;
@@ -30,11 +33,12 @@ ISR(USART0_RX_vect){
 	sei();
 }
 
+///\todo remove interrupt from Tx
 ISR(USART0_TX_vect){
 	
 }
 
-
+///Initialize uart
 void uart_init(void){
 	
 	// set baud rate
@@ -55,12 +59,14 @@ void uart_init(void){
 	UCSR0C &= ~(1 << USBS0);
 }
 
+/// Busy wait transmission of msg
 int uart_send(unsigned char msg){
 	while (!(UCSR0A & (1 << UDRE0)));
 	UDR0 = msg;
 	return 0;
 }
 
+/// Read data from buffer
 unsigned char uart_recv(void){
 	char returnval = 0;
 	if(recvhead != recvtail)
@@ -71,4 +77,3 @@ unsigned char uart_recv(void){
 	return returnval;
 }
 
-#undef BAUD

@@ -15,17 +15,17 @@
 
 
 
-/// Enable use of fprintf(&uart_out,...) for 
+/// Enable use of fprintf(&uart_out,...) 
 FILE uart_out = FDEV_SETUP_STREAM(uart_send, NULL, _FDEV_SETUP_WRITE);
 /// Create input stream for uart. Unused. 
 FILE uart_in = FDEV_SETUP_STREAM(NULL, uart_recv, _FDEV_SETUP_READ);
 
-#define BAUD 9600UL 	/*! BAUD rate of UART*/
-#define BUFFER_MAX 128 	/*! Size of Rx buffer*/
+#define BAUD 9600UL 	/*!< BAUD rate of UART*/
+#define BUFFER_MAX 128 	/*!< Size of Rx buffer*/
 
-volatile char recv_buffer[BUFFER_MAX]; /*! Buffer for storing recieved data*/
-volatile int recvhead = 0; /*! Head of buffer. Where next recieved byte will be placed. */
-volatile int recvtail = 0; /*! Tail of buffer. Where next read will occour. */
+volatile char recv_buffer[BUFFER_MAX]; 	/*!< Buffer for storing recieved data*/
+volatile int recvhead = 0; 				/*!< Head of buffer. Where next recieved byte will be placed. */
+volatile int recvtail = 0; 				/*!< Tail of buffer. Where next read will occour. */
 
 /// Interrupt vector for Rx. Place recieved data into buffer.
 ISR(USART0_RXC_vect){
@@ -82,5 +82,3 @@ unsigned char uart_recv(){
 	}
 	return returnval;
 }
-
-#undef BAUD
