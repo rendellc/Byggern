@@ -70,7 +70,7 @@ int main(void)
 		switch (read.sid)
 		{
 			
-			case MSG_JOY:
+			case can_JOY:
 				joy_x = read.data[0];
 				joy_y = read.data[1];
 				joy_click = read.data[3];
@@ -86,7 +86,7 @@ int main(void)
 				*/
 				break;
 				
-			case MSG_SLIDER:
+			case can_SLIDER:
 				slider_pos = read.data[0];
 				motor_set_position(slider_pos);
 				//fprintf(&uart_out, "slider: %i\n", (slider_pos/5)*2);
@@ -94,7 +94,7 @@ int main(void)
 				
 				break;
 				
-			case MSG_INVALID:
+			case can_INVALID:
 				//fprintf(&uart_out, "Invalid\n");
 				break;
 		}
