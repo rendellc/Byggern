@@ -19,13 +19,13 @@ void game_start();
 
 
 
-static game_state_t game_state = INVALID;
+static game_state_t game_state = game_INVALID;
 
 
 void game_init(){
 	game_init_menu();
 	
-	game_state = IN_MENU;
+	game_state = game_IN_MENU;
 }
 
 void game_init_menu(){
@@ -37,7 +37,7 @@ void game_init_menu(){
 void game_start(){
 	fprintf(&uart_out, "game starting!");
 	
-	game_state = PLAYING;
+	game_state = game_PLAYING;
 	
 }
 
@@ -45,19 +45,19 @@ void game_start(){
 void game_tick(){
 	
 	switch (game_state){
-		case INVALID:
+		case game_INVALID:
 		
 		
 			break;
-		case IN_MENU:
+		case game_IN_MENU:
 			game_tick_menu();
 			
 			break;
-		case PLAYING:
+		case game_PLAYING:
 			game_tick_playing();
 		
 			break;
-		case PAUSED:
+		case game_PAUSED:
 		
 		
 			break;	
@@ -67,6 +67,8 @@ void game_tick(){
 }
 
 void game_tick_playing(){
+	
+	// check if ball has been dropped
 	
 	
 	
@@ -82,7 +84,6 @@ void game_tick_menu(){
 	joystick_t joy = joy_get_state();
 	
 	direction_t joy_dir = joy_direction(joy.x, joy.y);
-	
 	
 	switch (joy_dir){
 		case CLICKED:
@@ -103,7 +104,13 @@ void game_tick_menu(){
 				joy_released = FALSE;
 				menu_move_cursor(1);
 			}
+			break;
+			
 		case RIGHT:
+			if (joy_released){
+				joy_released = FALSE;
+				menu_enter_current();
+			}
 			break;
 		
 		case LEFT:
@@ -111,7 +118,6 @@ void game_tick_menu(){
 				joy_released = FALSE;
 				menu_enter_parent();
 			}
-		
 			break;
 		
 		case NEUTRAL:

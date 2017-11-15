@@ -65,7 +65,7 @@ void send_slider(void)
 	uint8_t slider_pos = adc_read_channel(CH_SLIDER);
 	
 	can_msg_t msg = {};
-	msg.sid = MSG_SLIDER;
+	msg.sid = can_SLIDER;
 	msg.data[0] = slider_pos;
 	msg.length = 1;
 	
@@ -91,7 +91,7 @@ void send_joy(void)
 	uint8_t joy_click = !(PINE & (1 << CLICK_PIN));
 	
 	can_msg_t msg = {};
-	msg.sid = MSG_JOY;
+	msg.sid = can_JOY;
 	msg.data[0] = joy_xs;
 	msg.data[1] = joy_ys;
 	msg.data[2] = joy_dir; // casting?
@@ -105,6 +105,8 @@ void send_joy(void)
 
 /// Initialize joystick
 void joystick_init(void){
-	PORTE  |= 1 << CLICK_PIN;    // + PUD=0 gives pull-up
-	DDRE   &= ~(1 << CLICK_PIN); // input
+	
+	// \note Joystick clicker is not connected as of 15.11.2017
+	//PORTE  |= 1 << CLICK_PIN;    // + PUD=0 gives pull-up
+	//DDRE   &= ~(1 << CLICK_PIN); // input
 }

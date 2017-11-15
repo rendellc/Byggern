@@ -18,6 +18,7 @@
 
 
 #include "uart.h"
+
 #include "adc.h"
 #include "oled.h"
 #include "sram_test.h"
@@ -27,9 +28,12 @@
 #include "joystick.h"
 #include "game.h"
 
+
+
 int main()
 {
 	cli();
+	
 	// SRAM init
 	MCUCR |= (1 << SRE);
 	SFIOR |= (1 << XMM2);
@@ -40,35 +44,37 @@ int main()
 	__malloc_heap_start = (char*)RAM_ADR;
 	__malloc_heap_end   = (char*)(RAM_ADR + RAM_SIZE);
 	
-	adc_init(); // adc init (must be after SRAM init)
+	adc_init(); // adc init (must be after sram init)
 	oled_init();
 	menu_init(); // after oled
-	spi_init();
-	can_init(); // after spi
+	
+	//spi_init();
+	//can_init(); // after spi
 	
 	sei();
 	
-	// setup printf, \note remove?
+	// NOTE(rendellc): required for sram test
 	stdout = &uart_out; 
 	stdin  = &uart_in;
 	
 	oled_home();
 	
 	game_init(); // after menu_init
-	
-	sram_test();
 
 	fprintf(&uart_out, "entering loop\n");
 	
 	uint8_t i = 0;
 	
+	
 	while (1)
-	{	
+	{
+		
+		//menu_print_current();
 		if (++i == 0)
-			fprintf(&uart_out, "tick x256\n");
+			fprintf(&uart_out, "pulse\n");
 		
 		game_tick();
-
+		
 		_delay_ms(10);
 	}
 	
