@@ -33,23 +33,23 @@ const int16_t lowpass_coeff = 4;
 const int16_t lowpass_enable = 1; /*!< set to zero to disable low pass filter */
 
 // regulator
-static uint8_t position_regulator_enabled = 0;
+static uint8_t position_regulator_enabled = 0; // doesnt need to volatile since it wont change often
 
-
-pi_t regulator = {};
+pi_t regulator = {}; 
 
 /// position set point
 static volatile int16_t encoder_setpoint = 0;
 
-static volatile int16_t raw_encoder[2] = {};
-static volatile int16_t force[2] = {}; 
 
+static volatile int16_t raw_encoder[2] = {}; /*!< Raw encoder data. Index i means at time (n - i) */
+static volatile int16_t force[2] = {}; 		 /*!< Output sent to motor Index i means at time (n - i) */
 
+/// Interrupt vector which controls the motor
 ISR(TIMER0_OVF_vect){
 	cli();
 	// sample encoder
 	raw_encoder[1] = raw_encoder[0];
-	raw_encoder[0] = lowpass_enable * raw_encoder[1]/lowpass_coeff + motor_read_encoder();
+	raw_encoder[0] = (lowpass_enable * raw_encoder[1])/lowpass_coeff + motor_read_encoder();
 	
 	
 	if (position_regulator_enabled){
@@ -66,7 +66,7 @@ ISR(TIMER0_OVF_vect){
 
 
 /*!
- * Calibrate motor encoder
+ * Subroutine which runs the motor from wall to wall and sets the global calibration variables. 
  */
 void motor_encoder_calibrate()
 {
@@ -148,7 +148,10 @@ int16_t motor_read_encoder(){
 	return read;
 }
 
-
+/**
+ * Initialize DAC and set up IO pins to interface with motor.
+ * Setup position regulator and enable motor. 
+ */
 void motor_init(void){
 	dac_init();
 	
@@ -166,21 +169,31 @@ void motor_init(void){
 	motor_enable();
 }
 
+/**
+ * Enable motor,
+ */
 void motor_enable(void){
 	PORTH |= (1 << PIN_EN);
 }
 
+
+/**
+ * Set speed of motor.
+ * @param speed Integer which denotes speed and direction. Negative numbers give negative motion. 
+ */
 void motor_set_speed(int8_t speed){	
 	if (speed < 0){
 		PORTH &= ~(1 << PIN_DIR);
-		dac_output(-speed); 		// -speed because speed is negative
+		dac_output((uint8_t)(-speed)); 		// -speed because speed is negative
 	} else {
 		PORTH |= (1 << PIN_DIR);
-		dac_output(speed);
+		dac_output((uint8_t)speed);
 	}	
 }
 
-
+/**
+ * Set setpoint for motor and enable position regulator. 
+ */
 void motor_set_position(uint8_t position){
 	/*
 	if (position > 100){
