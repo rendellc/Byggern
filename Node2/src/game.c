@@ -9,6 +9,9 @@
 
 game_state_t game_state = INVALID;
 
+/** 
+ * Run one iteration of game loop. 
+ */
 void game_tick(){
 	
 	

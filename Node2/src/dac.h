@@ -16,7 +16,7 @@ void dac_init(void);
 
 /**
  * Command DAC to output specified voltage. 
- * @param[in] voltage 
+ * @param[in] voltage Number between 0 and 127 which 
  */
 void dac_output(uint8_t voltage);
 

@@ -1,18 +1,17 @@
-/*
- * spi_driver.c
- *
- * Created: 06.10.2017 10:23:30
- *  Author: rendellc
- */ 
+/**@file
+ * Implementation of spi-driver. 
+ */
 #include "global_declarations.h"
 #include "spi_driver.h"
 #include "avr/io.h"
 #include <stdio.h>
 
+/// Set slave select pin low
 void spi_ss_low(){
 	PORTB &= ~(1 << PB7);
 }
 
+/// Set slave select pin high
 void spi_ss_high(){
 	PORTB |= (1 << PB7);
 }
@@ -30,7 +29,7 @@ void spi_init(void)
 	// MSB transmitted first and LSB last
 }
 
-/** Send and recieve data
+/**Send and recieve data. Blocks processor while transmitting. 
  * @param[in] data One byte of data to transmit
  * @returns Data recieved.
  */
