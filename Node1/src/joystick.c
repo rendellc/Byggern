@@ -1,29 +1,32 @@
-/*
- * joy_com.c
- *
- * Created: 20.10.2017 16:00:26
- *  Author: rendellc
- */ 
+/**@file
+ * Implementation of joystick module for node 1.
+ */
 
 #include "can.h"
 #include "adc.h"
 #include "uart.h"
 
-#define CH_JOY_Y	0
-#define CH_JOY_X	1
-#define CH_SLIDER	2
-#define CH_TOUCH	3
+#define CH_JOY_Y	0 /*!< ADC channel for joystick y axis */
+#define CH_JOY_X	1 /*!< ADC channel for joystick x axis */
+#define CH_SLIDER	2 /*!< ADC channel for slider */
+#define CH_TOUCH	3 /*!< ADC channel for touch button */
 #define ANALOG_THRESH 25 // 18 before
 
-#define CLICK_PIN PE0
+#define CLICK_PIN PE0 /*!< Pin on atmega162 which joy click is connected to */
 
-int8_t convert_range(uint8_t data){ // convert from 0->255 to -100->100
+/// Convert range from 0-to-255 to -100-to-100
+int8_t convert_range(uint8_t data){
 	/// \test this must be tested for rounding errors
 	return (int8_t)((200*data) / 255 - 100);
 
 	//return (float)data*0.784314 - 100;
 }
 
+/**
+ * Calculate direction of joystick based on coordinates
+ * @param[in] joy_x X axis of joystick
+ * @param[in] joy_y Y axis of joystick
+ */
 direction_t joy_direction(uint8_t joy_x, uint8_t joy_y){
 	if (!(PINE & (1 << CLICK_PIN)))
 		return CLICKED;
@@ -45,6 +48,7 @@ direction_t joy_direction(uint8_t joy_x, uint8_t joy_y){
 	
 }
 
+/// get current state of joystick
 joystick_t joy_get_state(){
 	joystick_t joy_state = {};
 	
@@ -55,7 +59,7 @@ joystick_t joy_get_state(){
 	return joy_state;
 }
 
-
+/// Send slider position on can bus. Used for testing. 
 void send_slider(void)
 {
 	uint8_t slider_pos = adc_read_channel(CH_SLIDER);
@@ -71,6 +75,10 @@ void send_slider(void)
 		
 }
 
+/*!
+ * Read joystick and send it as a message on the can bus.
+ * Always sends on can channel 0. 
+ */
 void send_joy(void)
 {
 	uint8_t joy_x = adc_read_channel(CH_JOY_X);
@@ -95,9 +103,8 @@ void send_joy(void)
 	can_send(msg, 0);
 }
 
-
+/// Initialize joystick
 void joystick_init(void){
 	PORTE  |= 1 << CLICK_PIN;    // + PUD=0 gives pull-up
 	DDRE   &= ~(1 << CLICK_PIN); // input
 }
-

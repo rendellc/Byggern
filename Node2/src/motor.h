@@ -1,4 +1,4 @@
-/**
+/**@file
  * Interface for motor controller and motor box interface. 
  */
 

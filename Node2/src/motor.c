@@ -1,4 +1,4 @@
-/**
+/**@file
  * Implementation of motor controller and interface to 
  * motor box.
  */
