@@ -18,7 +18,7 @@
 #include "ir.h"
 #include "dac.h"
 #include "motor.h"
-#include "game.h"
+#include "game_slave.h"
 #include "solenoid.h"
 
 int main(void)
