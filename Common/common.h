@@ -64,7 +64,7 @@ typedef enum {
 	can_SLIDER = 2,
 	can_GAME_CMD = 3,
 	can_GAME_INFO = 4,
-	can_GAME_DATA = 5	
+	can_GAME_DATA = 5
 } CAN_MSG_TYPE;
 
 
@@ -75,5 +75,8 @@ typedef enum {
 //#define MSG_GAME_INFO	4 /*!< Command ack CAN message SID */
 //#define MSG_GAME_DATA	5 /*!< Game data CAN message SID */
 
-
+enum {
+    game_cmd_CHECK_BALL_DROP
+    // probably need more
+};
 #endif // TYPES_H
