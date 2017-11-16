@@ -1,5 +1,5 @@
 docs/html/*
-Node1/debug
-Node2/debug
+Node1/debug/*
+Node2/debug/*
 *.o
 *.out
