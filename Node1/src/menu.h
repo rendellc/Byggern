@@ -89,4 +89,10 @@ void menu_enter_current(void);
  */
 void menu_enter_parent(void);
 
+/**
+ * Check joystick for input and update menu. 
+ */
+void menu_handle_input(void);
+
+
 #endif /* MENU_H_ */

@@ -244,6 +244,53 @@ void menu_enter_current(void)
 void menu_enter_parent(void){
 	oled_fill(0x00);
 	
-	current = current->parent;
+	current = current->parent;	
+}
+
+
+/**
+ * Check for joystick input and update menu choices.
+ */
+void menu_handle_input(void){                
+        
+        static BOOL joy_released = TRUE;
+	
+	joystick_t joy = joy_get_state();
+	
+	direction_t joy_dir = joy_direction(joy.x, joy.y);
+	
+	switch (joy_dir){
+		case UP:
+			if (joy_released){
+				joy_released = FALSE;
+				menu_move_cursor(-1);
+			}
+			break;
+		case DOWN:
+			if (joy_released){
+				joy_released = FALSE;
+				menu_move_cursor(1);
+			}
+			break;
+			
+		case RIGHT:
+			if (joy_released){
+				joy_released = FALSE;
+				menu_enter_current();
+			}
+			break;
+		
+		case LEFT:
+			if (joy_released){
+				joy_released = FALSE;
+				menu_enter_parent();
+			}
+			break;
+		
+		case NEUTRAL:
+			joy_released = TRUE;
+			break;
+	}
 	
 }
+

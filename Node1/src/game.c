@@ -75,47 +75,12 @@ void game_tick_playing(){
 }
 
 void game_tick_menu(){
-	static BOOL joy_released = TRUE;
-	
+        	
 	menu_print_current();
-	
-	joystick_t joy = joy_get_state();
-	
-	direction_t joy_dir = joy_direction(joy.x, joy.y);
-	
-	switch (joy_dir){
-		case UP:
-			if (joy_released){
-				joy_released = FALSE;
-				menu_move_cursor(-1);
-			}
-			break;
-		case DOWN:
-			if (joy_released){
-				joy_released = FALSE;
-				menu_move_cursor(1);
-			}
-			break;
-			
-		case RIGHT:
-			if (joy_released){
-				joy_released = FALSE;
-				menu_enter_current();
-			}
-			break;
-		
-		case LEFT:
-			if (joy_released){
-				joy_released = FALSE;
-				menu_enter_parent();
-			}
-			break;
-		
-		case NEUTRAL:
-			joy_released = TRUE;
-			break;
-	}
-	
+        
+        menu_handle_input();
+
+
 	/*
 	
 	if (joy.click && click_released){
