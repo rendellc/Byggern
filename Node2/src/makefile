@@ -1,6 +1,6 @@
 CC=avr-gcc
 CFLAGS=-g -Os -mmcu=atmega2560 -std=c99 -Wall
-OBJS=TWI_Master.o can.o dac.o ir.o main.o mcp2515.o motor.o pwm.o spi_driver.o uart.o pi.o
+OBJS=TWI_Master.o can.o dac.o ir.o main.o mcp2515.o motor.o pwm.o spi_driver.o uart.o pi.o solonoid.o
 outname=node2.out
 
 
@@ -38,6 +38,9 @@ can.o: mcp2515.o spi_driver.o uart.o
 
 TWI_Master.o:
 	$(CC) $(CFLAGS) -c TWI_Master.c
+
+solonoid.o:
+	$(CC) $(CFLAGS) -c solonoid.c
 
 pi.o:
 	$(CC) $(CFLAGS) -c pi.c
