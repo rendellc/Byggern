@@ -196,24 +196,50 @@ Copyright 2003 Kimberly Otten Software Consulting
 #define MCP_STAT_TX2REQ	0x40
 #define MCP_STAT_TX2IF	0x80
 
+/// initialise MCP2515, setup registers. set MCP2515 to normal mode at end
 void mcp_init();
 
+/// reset function for MCP2515
 void mcp_reset();
 
+/** Read an MCP2515 register
+    @param[in] which register adress to read
+	@return the values of the read register
+*/
 uint8_t mcp_read(uint8_t adr);
 
+/** Read RX0 reciever bufffer of the MCP2515
+    \todo implement functionality to select which buffer to read
+    @param[in] which buffer to read 
+	@return data from buffer
+*/
 uint8_t mcp_read_buffer(uint8_t rx_select, uint8_t data_select);
 
+/** Write data to selected register address
+    @param register adress
+	@param data values
+*/
 void mcp_write(uint8_t adr, uint8_t data);
 
+/** MCP ready to trasmit funtion
+    @param select buffer
+*/
 void mcp_rts(uint8_t tx_buffer_select); //Request To Send
 
+/** MCP read status function
+    @return commonly used status values for the MCP
+*/
 uint8_t mcp_readstatus();
 
+/** bit modify command for MCP2515
+    @param register adress
+	@param mask
+	@param data value
+*/ 
 void mcp_bitmodify(uint8_t adr, uint8_t mask, uint8_t data);
 
-uint8_t mcp_loopback(uint8_t data);
-
+/** Set MCP2515 to loopback mode
+*/
 void mcp_loopback_set();
 
 #endif
