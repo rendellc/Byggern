@@ -7,17 +7,18 @@
 
 #include <stdint.h>
 
+#define SCALING_FACTOR 128
+
 typedef struct pi_t_ {
     // setpoint
     //float setpoint;
 
     // parameters
-    float Kp;
-    float Ki;
+    uint16_t Kp;
+    uint16_t Ki;
 
     // error tracking
-    float error;
-    float errorSum;
+    int16_t errorSum;
 } pi_t;
 
 
@@ -34,7 +35,7 @@ void pi_regulator_init(struct pi_t_* regulator_p, float Kp, float Ki);
 	@param measured value
 	@return motor speed
 */
-float pi_regulator(struct pi_t_* regulator_p, float setpoint, float measurement);
+int16_t pi_regulator(struct pi_t_* regulator_p, float setpoint, float measurement);
 
 
 #endif

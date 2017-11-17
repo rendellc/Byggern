@@ -1,11 +1,11 @@
 #include "pi.h"
-#include "uart.h"
+#include "uart.h" //debugging purposes
 
-void pi_regulator_init(pi_t* regulator_p, float Kp, float Ki){
+void pi_regulator_init(pi_t* regulator_p, uint16_t Kp, uint16_t Ki){
     //regulator_p->setpoint = setpoint;
     regulator_p->Kp       = Kp;
     regulator_p->Ki       = Ki;
-    regulator_p->error    = 0;
+	
     regulator_p->errorSum = 0;
 	
 	
@@ -13,13 +13,24 @@ void pi_regulator_init(pi_t* regulator_p, float Kp, float Ki){
 }
 
 
-float pi_regulator(pi_t* regulator_p, float setpoint, float measurement){
-    regulator_p->error = (measurement - setpoint);
-    regulator_p->errorSum += regulator_p->error;
+int16_t pi_regulator(pi_t* regulator_p, int16_t setpoint, int16_t measurement){
+	
+	int16_t errors = setpoint - measurement;
+	int16_t p_term, i_term;
+	int32_t ret;
+	
+	//calculate p_term
+	p_term = pi_t->Kp * errors;
+	
+	//calculate i_term
+	pi_t->errorSum = pi_t->errorSum + errors;
+	i_term = pi_t->Ki * pi_t->errorSum;
 	
 	//fprintf(&uart_out, "error: %i\n", regulator_p->error);
 	
-	return regulator_p->Kp * regulator_p->error + regulator_p->Ki * regulator_p->errorSum;
+	ret = (p_term + i_term) / SCALING_FACTOR;
+	
+	return ((int16_t)ret);
 }
 
 
