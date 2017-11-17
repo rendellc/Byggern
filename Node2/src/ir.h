@@ -11,8 +11,10 @@
 
 #include <stdint.h>
 
+/// Initialising of ADC for reading ir diode
 void ir_init(void);
 
+///  Read the ADC for ir value
 uint16_t ir_read(void);
 
 #endif /* IR_H_ */

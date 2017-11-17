@@ -1,8 +1,6 @@
-/*
- * global_declarations.h
- *
- * Created: 01.09.2017 12:53:09
- *  Author: gr 43
+/*!@file
+ * Declarations and includes that are usesful in most of Node2.
+ * Defines F_CPU and should be the first include.
  */ 
 
 

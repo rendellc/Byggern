@@ -1,13 +1,14 @@
-
-
-
+/*!@file
+* implementaion of functions for solenoid
+*/
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include "solenoid.h"
 
 
 void solenoid_init(){
-    DDRE |= (1 << PE4);
+    DDRE |= (1 << PE4); /**< set PE¤ to output port */ 
 }
 
 

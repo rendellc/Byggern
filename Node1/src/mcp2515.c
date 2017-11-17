@@ -1,9 +1,7 @@
-/*
- * MCP2515.c
- *
- * Created: 06.10.2017 11:52:12
- *  Author: rendellc
- */ 
+/*!@file
+*  implement functions for controlling MCP2515 Can controller
+*/
+
 #include "global_declarations.h"
 
 #include <avr/io.h>
@@ -13,7 +11,7 @@
 #include "spi_driver.h"
 #include "uart.h"
 
-
+/// initialise MCP2515, setup registers. set MCP2515 to normal mode at end
 void mcp_init()
 {
 	mcp_reset();
@@ -49,7 +47,7 @@ void mcp_init()
 }
 
 
-
+/// reset function for MCP2515
 void mcp_reset()
 {
 	spi_ss_low();
@@ -63,6 +61,11 @@ void mcp_reset()
 	#endif // MCP_DEBUG
 }
 
+
+/** Read an MCP2515 register
+    @param[in] which register adress to read
+	@return the values of the read register
+*/
 uint8_t mcp_read(uint8_t adr)
 {
 	spi_ss_low();
@@ -78,6 +81,12 @@ uint8_t mcp_read(uint8_t adr)
 	return read;
 }
 
+
+/** Read RX0 reciever bufffer of the MCP2515
+    \todo implement functionality to select which buffer to read
+    @param[in] which buffer to read 
+	@return data from buffer
+*/
 uint8_t mcp_read_buffer(uint8_t rx_select, uint8_t data_select)
 {
 	spi_ss_low();
@@ -96,6 +105,10 @@ uint8_t mcp_read_buffer(uint8_t rx_select, uint8_t data_select)
 }
 
 
+/** Write data to selected register address
+    @param register adress
+	@param data values
+*/
 void mcp_write(uint8_t adr, uint8_t data)
 {
 	spi_ss_low();
@@ -110,6 +123,9 @@ void mcp_write(uint8_t adr, uint8_t data)
 	#endif // MCP_DEBUG
 }
 
+/** MCP ready to trasmit funtion
+    @param select buffer
+*/
 void mcp_rts(uint8_t tx_buffer_select)
 {
 	spi_ss_low();
@@ -120,7 +136,9 @@ void mcp_rts(uint8_t tx_buffer_select)
 	fprintf(&uart_out, "MCP_RTS\t%i\n", tx_buffer);
 	#endif // MCP_DEBUG
 }
-
+/** MCP read status function
+    @return commonly used status values for the MCP
+*/
 uint8_t mcp_readstatus()
 {
 	spi_ss_low();
@@ -136,6 +154,11 @@ uint8_t mcp_readstatus()
 	return status;
 }
 
+/** bit modify command for MCP2515
+    @param register adress
+	@param mask
+	@param data value
+*/  
 void mcp_bitmodify(uint8_t adr, uint8_t mask, uint8_t data)
 {
 	spi_ss_low();
@@ -150,7 +173,8 @@ void mcp_bitmodify(uint8_t adr, uint8_t mask, uint8_t data)
 	#endif // MCP_DEBUG
 }
 
-
+/** Set MCP2515 to loopback mode
+*/
 void mcp_loopback_set()
 {
 	mcp_write(MCP_CANCTRL, MODE_CONFIG);
