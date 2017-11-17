@@ -1,14 +1,22 @@
 /*!@file
-*  declaratom functions for solenoid
+* implementaion of functions for solenoid
 */
 
+#include <avr/io.h>
+#include <util/delay.h>
+#include "solenoid.h"
 
-/** initialisation of Solenoid
 
-*/ 
-void solenoid_init();
+void solenoid_init(){
+    DDRE |= (1 << PE4); /**< set PE¤ to output port */ 
+}
 
-/** function to send a pulse to the solenoid
 
-*/
-void solenoid_trigger();
+void solenoid_trigger(){
+    PORTE &= ~(1 << PE4);
+
+    // \todo Use interrupt to disable solenoid
+    _delay_us(10); // find good timing? 
+
+    PORTE |= (1 << PE4);
+}
