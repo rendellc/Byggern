@@ -1,13 +1,13 @@
-/*
- * ir.c
- *
- * Created: 27.10.2017 14:02:29
- *  Author: rendellc
+/*!@file
+ * Implement ADC usage on atmega2560. \n
  */ 
+
 #include "global_declarations.h"
 #include <avr/io.h>
 
-// make separate adc module?
+/// \todo make separate adc module?
+
+/// Initialising of ADC for reading ir diode
 void ir_init(void)
 {
 	
@@ -18,6 +18,8 @@ void ir_init(void)
 	ADCSRA |= (1 << ADEN);
 }
 
+
+///  Read the ADC for ir value
 uint16_t ir_read(void)
 {
 	//ADMUX &= ~(1 << REFS1); // vref=1.1V internal
