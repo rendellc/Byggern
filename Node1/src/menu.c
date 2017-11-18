@@ -8,7 +8,7 @@
 
 #include "oled.h"
 #include "menu.h"
-#include "joystick.h"
+#include "input.h"
 #include "global_declarations.h"
 #include "uart.h"				/*!< \todo remove, included only for debug purposes */
 
@@ -19,15 +19,32 @@ static menu_t* current; 		/*!< menu currently displayed on screen */
 static uint8_t subchoice = 0;	/*!< submenus currently pointed to on screen*/ 
 
 /// implement an empty action that submenus can have.
-void menu_action_nothing(){
-	fprintf(&uart_out, "nothing\n");
-};
+void menu_action_nothing(){};
 
-/// Setup atmega162 IO to interface with clicker on joystick.
-void menu_click_init(){
-	joystick_init();
-	//PORTE  |= 1 << PE0;
-	//DDRE   &= ~(1 << PE0);
+void menu_action_print_legal(){
+	oled_fill(0x00);
+	oled_home();
+	/*
+	fprintf(&uart_out, "Legal\n"));
+	fprintf(&uart_out, " TTK4115 - Byggern\n");
+	fprintf(&uart_out, " Rendell Cale\n");
+	fprintf(&uart_out, " William Ke\n");
+	fprintf(&uart_out, " Frode van der Meeren\n");
+	*/
+	direction_t joy_dir;
+	do {
+		joystick_t joy = joy_get_state();
+		joy_dir = joy_direction(joy.x,joy.y);
+	} while (joy_dir != LEFT);
+}
+
+void menu_show_highscore(){
+	//fprintf(&uart_out, "highscore not implemented yet\n");
+	direction_t joy_dir;
+	do {
+		joystick_t joy = joy_get_state();
+		joy_dir = joy_direction(joy.x,joy.y);
+	} while (joy_dir != LEFT);
 }
 
 /*!
@@ -36,14 +53,16 @@ void menu_click_init(){
  */
 menu_t* menu_init_menu(char* title, menu_t* parent, void (*action)(void)){
 	
-	// test if there is more room in parent
-	if (parent != head && parent->submenus[MAX_SUBMENUS - 1] != NULL){
-		fprintf(&uart_out, "no more room in %s\n", parent->title);
+	// test if there is more room in parent \todo implement overflow handling which works with head
+	/*
+	if ((parent->submenus[MAX_SUBMENUS - 1] != NULL)){
+		fprintf(&uart_out, "no more room in %s\n", "a");//parent->title);
 		
 		return NULL;
 	}
+	*/
 		
-	menu_t* menu = (menu_t*) malloc(sizeof(menu_t));	
+	menu_t* menu = (menu_t*) malloc(sizeof(menu_t));
 	
 	/// \note This fills in one extra '\\0' in order to guarantee proper termination
 	for (uint8_t i = 0; i <= MAX_TITLE_LENGTH; i++){
@@ -70,8 +89,8 @@ menu_t* menu_init_menu(char* title, menu_t* parent, void (*action)(void)){
 			}
 		}
 	}
+
 	
-	///\todo {must also be added when the else{...} statement excecutes}
 	menu->action = action;
 	
 	return menu;
@@ -81,19 +100,18 @@ menu_t* menu_init_menu(char* title, menu_t* parent, void (*action)(void)){
  * Initialize menu system 
  */
 void menu_init(){
-	menu_click_init();
 		
 	head = menu_init_menu("Main", head, menu_action_nothing);
 	
 	menu_init_menu("Start", head, game_start);
 	menu_init_menu("Difficulty", head, menu_action_nothing);
-	menu_t* menu_highscore = menu_init_menu("Highscore", head, menu_action_nothing);
-	menu_t* menu_legal = menu_init_menu("Legal", head, menu_action_nothing);
+	menu_t* menu_settings = menu_init_menu("Settings", head, menu_action_nothing);
+	menu_init_menu("Highscore", head, menu_show_highscore);
+	//menu_init_menu("Legal", head, menu_action_print_legal);
+		
+	menu_init_menu("Standard", menu_settings, game_setting_standard);
+	menu_init_menu("Alternative", menu_settings, game_setting_alternative);
 	
-	menu_init_menu("TTK4115 - Byggern", menu_legal, menu_action_nothing);
-	menu_init_menu("Rendell Cale", menu_legal, menu_action_nothing);
-	menu_init_menu("William Ke", menu_legal, menu_action_nothing);
-	menu_init_menu("Frode van der Meeren", menu_legal, menu_action_nothing);
 	current = head;
 }
 
@@ -124,51 +142,6 @@ void menu_print_menu(menu_t* menu_head){
 	current = save;
 }
 
-/// \todo {deprecate this}
-/// \deprecated
-/*
-void menu_update_subchoice()
-{	
-	direction_t adc_joy = adc_direction_joy();
-	
-	switch (adc_joy)
-	{
-		case UP:
-			if (subchoice > 0)
-				--subchoice;
-			break;
-		case DOWN:
-			if ((subchoice+1) < MAX_SUBMENUS && current->submenus[subchoice+1])
-				++subchoice;
-			break;
-		case LEFT:
-			current = current->parent;
-			subchoice = 0;
-			break;
-		case RIGHT:
-			if(current->submenus[subchoice]->submenus[0] != NULL)
-			{
-				// fprintf(&uart_out, "%s er valgt!\n", current->submenus[subchoice]->title);
-				// TODO: Nå vet vi at en sluttfunksjon er valgt, gjør handlingen!
-				current->action();
-			}
-			else
-			{
-				current = current->submenus[subchoice];
-				subchoice = 0;
-			}
-			break;
-		default:
-			break;		
-	}
-	
-	if (adc_joy==RIGHT || (adc_joy==LEFT && current != head))
-		oled_reset();
-	
-	menu_print_current();
-}
-*/
-
 
 /* Move cursor up or down by 1 step. Dont wrap around at both ends.
  * @param[in] step Move down if 1 and move up if -1. 
@@ -177,17 +150,9 @@ void menu_move_cursor(int8_t step)
 {
 	uint8_t new_subchoice = (uint8_t)((int8_t)subchoice + step);
 	
-	fprintf(&uart_out, "new_subchoice: %u\n", new_subchoice);
-	
 	if (current->submenus[new_subchoice] != NULL && new_subchoice < MAX_SUBMENUS){
 		subchoice = new_subchoice;
 	}
-	/*
-	else if (new_subchoice == (uint8_t)-1){
-		oled_fill(0x00);
-		current = current->parent;	
-	}
-	*/
 }
 
 
@@ -229,10 +194,7 @@ void menu_enter_current(void)
 	if (current->submenus[subchoice] != NULL && current->submenus[subchoice]->submenus[0] != NULL){
 		//fprintf(&uart_out, "current: %p\n", current);
 		//fprintf(&uart_out, "next:    %p\n", current->submenus[subchoice]);
-	
-		fprintf(&uart_out, "nothing: \t%p\n", menu_action_nothing);
-		fprintf(&uart_out, "action : \t\t%p\n", (*(current->submenus[subchoice]->action)));
-		
+
 		current = current->submenus[subchoice];
 		subchoice = 0;
 	}
@@ -253,7 +215,7 @@ void menu_enter_parent(void){
  */
 void menu_handle_input(void){                
         
-        static BOOL joy_released = TRUE;
+    static BOOL joy_released = TRUE;
 	
 	joystick_t joy = joy_get_state();
 	

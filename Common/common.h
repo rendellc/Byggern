@@ -31,8 +31,8 @@ typedef struct {
 
 /// struct for holding slider and button state
 typedef struct {
-	int slider;
-	int button;
+	uint8_t slider;
+	uint8_t button;
 } touch_t;
 
 /// enum for holding joystick directions
@@ -58,25 +58,45 @@ typedef struct {
 
 // --- CAN message SIDs ---
 // \note gcc compiler flag -fshort-enums is required
-typedef enum {
+enum {
 	can_INVALID = 0,
-	can_JOY = 1,
-	can_SLIDER = 2,
-	can_GAME_CMD = 3,
-	can_GAME_INFO = 4,
-	can_GAME_DATA = 5
-} CAN_MSG_TYPE;
+	can_GAME_CMD,
+	can_GAME_INFO,
+	can_GAME_DATA	
+};
 
 
 //define MSG_INVALID		0 /*!< invalid CAN message SID */
 //#define MSG_JOY			1 /*!< joystick CAN message SID */
 //#define MSG_SLIDER		2 /*!< slider CAN message SID */
-//#define MSG_GAME_CMD	3 /*!< Game command CAN message SID */
-//#define MSG_GAME_INFO	4 /*!< Command ack CAN message SID */
-//#define MSG_GAME_DATA	5 /*!< Game data CAN message SID */
+//#define MSG_GAME_CMD		3 /*!< Game command CAN message SID */
+//#define MSG_GAME_INFO		4 /*!< Command ack CAN message SID */
+//#define MSG_GAME_DATA		5 /*!< Game data CAN message SID */
 
+#define game_cmd_INDEX 0
 enum {
-    game_cmd_CHECK_BALL_DROP
-    // probably need more
+    game_cmd_CHECK_BALL_DROP = 10,
+	game_cmd_RESET_GAME,
+	game_cmd_ACTION,
+	game_cmd_SLAVE_ACK,
+	game_cmd_SET_STATE,
+	game_cmd_CHANGE_SETTING,
 };
+
+// settings for game
+
+typedef enum {
+	game_setting_STANDARD = 20,
+	game_setting_ALTERNATIVE
+} game_setting_t;
+
+#define game_setting_standard_turn	1
+#define game_setting_standard_fire	2
+#define game_setting_standard_motor	3
+
+#define game_setting_alternative_turn	1
+#define game_setting_alternative_fire	2
+#define game_setting_alternative_motor	3
+
+
 #endif // TYPES_H

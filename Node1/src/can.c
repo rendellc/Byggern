@@ -105,7 +105,6 @@ void can_send(can_msg_t msg, uint8_t tx_buffer_select)
 {
 	/// \todo check for buffer full, can return false if buffer is full
 	
-	
 	uint8_t MCP_TXBn = MCP_TXB0;
 	uint8_t MCP_LOAD_TXn = MCP_LOAD_TX0;
 	switch (tx_buffer_select)

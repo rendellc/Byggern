@@ -15,7 +15,7 @@ volatile uint8_t * const adc_adr = (uint8_t*)ADC_ADR; /*!< address of ADC on bus
  */
 void adc_init(void){
 	DDRD  &= ~(1 << DDD2);
-	PORTD |= (1 << PD2);
+	PORTD |=  (1 << PD2);
 }
 
 
