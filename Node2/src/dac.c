@@ -35,12 +35,12 @@ void dac_output(uint8_t voltage){
 	msg[1] = DAC_CMD_OUTPUT;
 	
 	// handle overflow / invalid input 
-	//if (voltage >= 128){
-	//	msg[2] = 255;
-	//} 
-	//else{
+	if (voltage >= 128){
+		msg[2] = 255;
+	} 
+	else{
 		msg[2] = 2*voltage; // convert range from 0-127 to 0-255 (almost 0-255)	
-	//}
+	}
 
 	#ifdef UART_H_
 	//fprintf(&uart_out, "voltage out [0-255]: %u\n", msg[2]);

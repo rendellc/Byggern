@@ -36,8 +36,9 @@ static const can_msg_t msg_start_ack = {can_GAME_INFO, 2, {game_cmd_SLAVE_ACK, g
 
 static uint8_t interrupt_counter = 0;
 ISR(TIMER3_COMPA_vect){
-	if (!++interrupt_counter)
-		fprintf(&uart_out, ".");
+	if (!++interrupt_counter){
+		//fprintf(&uart_out, ".");
+	}
 	
 	game_tick();
 
@@ -64,6 +65,7 @@ void game_tick(){
 	
 	game_update_ball_dropped();
 	
+	// Handle all messages on the can buffer
 	can_msg_t msg = can_read_buffer(0);
 	can_msg_t ack_msg = {0,0,{}};
 	
@@ -101,8 +103,7 @@ void game_tick(){
 				case game_setting_ALTERNATIVE:
 					motor = msg.data[game_setting_alternative_motor];
 					fire = msg.data[game_setting_alternative_fire];
-					turn = PWM_TURN_MID - (int8_t)msg.data[game_setting_alternative_turn]/2;
-					fprintf(&uart_out, "turn: %u \n", (uint8_t)turn);
+					turn = PWM_TURN_MID - (int8_t)(msg.data[game_setting_alternative_turn]-128)*50/128;
 				break;
 				}
 				
@@ -130,46 +131,6 @@ void game_tick(){
 	}
 }
 
-/*
-void game_tick_playing(){
-	// things that should be done every iteration
-	game_update_ball_dropped();
-	
-	// communication with game_master on node1
-	can_msg_t msg = can_read_buffer(0);
-	
-	while (msg.sid != can_INVALID){
-		//fprintf(&uart_out, "...");
-		
-		switch (msg.sid){
-		case can_GAME_CMD:
-			//fprintf(&uart_out, "cmd...");
-			game_handle_cmd(msg);
-			
-		break;
-		case can_GAME_INFO:
-			fprintf(&uart_out, "info\n");
-			
-		break;
-		case can_GAME_DATA:
-			fprintf(&uart_out, "data\n");
-			
-		break;
-		case can_INVALID:
-			fprintf(&uart_out, "invalid message");
-		break;
-		default:
-			fprintf(&uart_out, "ERROR: invalid sid %u\n", msg.sid);
-			
-		break;
-		}
-		
-		msg = can_read_buffer(0); // get new message untill buffer is empty
-	}
-	fprintf(&uart_out, ":");	
-	
-}
-*/
 
 void game_update_ball_dropped(){
 	// check if ball has been dropped
@@ -180,68 +141,3 @@ void game_update_ball_dropped(){
 		ball_dropped = TRUE;
 	}
 }
-
-/*
-void game_handle_cmd(can_msg_t cmd_msg){
-	
-	can_msg_t msg = {0,0,{}};
-	
-	
-	switch (cmd_msg.data[0]){
-	case game_cmd_CHECK_BALL_DROP:
-		//fprintf(&uart_out, "dropped: %u\n", ball_dropped);
-		msg.sid = can_GAME_INFO;
-		msg.length = 2;
-		msg.data[0] = game_cmd_CHECK_BALL_DROP;
-		msg.data[1] = ball_dropped;
-		
-		can_send(msg,0);
-		
-	break;
-	case game_cmd_RESET_GAME:
-		fprintf(&uart_out, "reset game\n");
-		ball_dropped = FALSE;
-		
-		game_state = game_PLAYING;
-		can_send(msg_reset_ack, 0);
-		
-	break;
-	case game_cmd_CHANGE_SETTING:
-		game_setting = cmd_msg.data[1];
-		
-	break;
-	case game_cmd_ACTION:{
-		BOOL fire = FALSE;
-		int8_t turn = 50;
-		int8_t motor = 0;
-		
-		fprintf(&uart_out, "action\n");
-		switch (game_setting){
-		case game_setting_STANDARD:
-			fire  = cmd_msg.data[game_setting_standard_fire];
-			turn  = cmd_msg.data[game_setting_standard_turn];
-			motor = cmd_msg.data[game_setting_standard_motor];
-		
-		break;
-		case game_setting_ALTERNATIVE:
-			fire  = cmd_msg.data[game_setting_alternative_fire];
-			turn  = cmd_msg.data[game_setting_alternative_turn];
-			motor = cmd_msg.data[game_setting_alternative_motor];
-			
-		break;
-		default:
-			fprintf(&uart_out, "invalid input setting\n");
-		break;
-		}
-		
-		fprintf(&uart_out, "%u\t%i\t%u\n", fire, motor, turn);
-		
-	}
-	break;
-	default:
-		fprintf(&uart_out, "unhandled command: %u\n", cmd_msg.data[0]);
-	break;
-	}
-}
-
-*/

@@ -38,8 +38,9 @@ int main(void)
 	fprintf(&uart_out, "done\n");
 	fprintf(&uart_out, "motor init starting...");
 	motor_init();
-	motor_enable();
+	motor_enable();	
 	motor_encoder_calibrate();
+	/*
 	fprintf(&uart_out, "done\n");
 	fprintf(&uart_out, "solenoid init starting...");
 	solenoid_init();
@@ -49,10 +50,8 @@ int main(void)
 	fprintf(&uart_out, "done\n");
 	sei();
 	
-	
-    while(1){
-		fprintf(&uart_out, ".");
-	}
+	*/
+    while(1);
 	
 	
 	return 0;
