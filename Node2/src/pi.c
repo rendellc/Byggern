@@ -8,8 +8,9 @@ void pi_regulator_init(pi_t* regulator_p, float Kp, float Ki){
     regulator_p->error    = 0;
     regulator_p->errorSum = 0;
 	
-	
-	fprintf(&uart_out, "pi initialized\n");
+	#ifdef UART_H_
+	fprintf(&uart_out, "pi...");
+	#endif
 }
 
 

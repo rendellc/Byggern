@@ -3,10 +3,12 @@
  * motor box.
  */
 #include "global_declarations.h"
+
 #include <stdint.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+
 #include "dac.h"
 #include "motor.h"
 #include "pi.h"
@@ -68,7 +70,7 @@ ISR(TIMER0_OVF_vect){
  */
 void motor_encoder_calibrate()
 {
-	motor_set_speed(40);
+	motor_set_speed(35);
 	int16_t old_value = motor_read_encoder();
 	_delay_ms(100);
 	int16_t new_value = motor_read_encoder();
@@ -81,23 +83,30 @@ void motor_encoder_calibrate()
 		new_value = motor_read_encoder();
 	}
 	calibrate_max = new_value;
-	fprintf(&uart_out, "encoder min %i\n", calibrate_min);
+	fprintf(&uart_out, "encoder min %i <", calibrate_min);
 	
 	
-	motor_set_speed(-40);
+	motor_set_speed(-35);
+	fprintf(&uart_out, "-");
 	old_value = motor_read_encoder();
+	fprintf(&uart_out, "+");
 	_delay_ms(100);
+	fprintf(&uart_out, "-");
 	new_value = motor_read_encoder();
-	//find max value
+	fprintf(&uart_out, ">");
 	
+	//find max value
 	while(new_value > old_value)
 	{
 		old_value = motor_read_encoder();
 		_delay_ms(100);
 		new_value = motor_read_encoder();
+		
 	}
 	calibrate_min = new_value;
-	fprintf(&uart_out, "encoder max %i\n", calibrate_max);
+	fprintf(&uart_out, "%i max...", calibrate_max);
+	
+	motor_set_speed(0);
 }
 
 
@@ -166,9 +175,7 @@ void motor_init(void){
 	TIMSK0 |= (1 << TOIE0);  // enable
 	
 	// set regulator parameters
-	pi_regulator_init(&regulator, 1, 0.1);
-	
-	motor_enable();
+	pi_regulator_init(&regulator, 1.0, 0.1);
 }
 
 /**
@@ -186,10 +193,10 @@ void motor_enable(void){
 void motor_set_speed(int8_t speed){	
 	if (speed < 0){
 		PORTH &= ~(1 << PIN_DIR);
-		dac_output((uint8_t)(-speed)); 		// -speed because speed is negative
+		dac_output(-speed); 		// -speed because speed is negative
 	} else {
 		PORTH |= (1 << PIN_DIR);
-		dac_output((uint8_t)speed);
+		dac_output(speed);
 	}	
 }
 

@@ -4,6 +4,8 @@
  * Created: 27.10.2017 09:37:52
  *  Author: rendellc
  */ 
+#include "global_declarations.h"
+#include "uart.h"
 #include "pwm.h"
 #include <avr/interrupt.h>
 
@@ -24,7 +26,7 @@ void pwm_init(void)
 	ICR1 = PWM_TOP;
 	//ICR1L = 40000	& 0xFF; 
 	//ICR1H = (40000<<8) & 0xFF; // TOP = 310
-	TCCR1B = (1 << CS11) & ~(1 << CS10 | 1 << CS12);     //((1 << CS12) | (1 << CS10)) & ~(1 << CS11); // prescaler = 8
+	TCCR1B |= (1 << CS11) & ~(1 << CS10 | 1 << CS12);     //((1 << CS12) | (1 << CS10)) & ~(1 << CS11); // prescaler = 8
 	TCCR1B |= (1 << WGM12 | 1 << WGM13);
 	TCCR1A |= (~(1 << COM1A0) & (1 << COM1A1)) | ((1 << WGM11) & ~(1 << WGM10));	// non-inverting fast pwm
 	
@@ -38,6 +40,8 @@ void pwm_set_duty(int8_t duty){
 	} else if (duty < 0){
 		duty = 0;
 	}
+	
+	//fprintf(&uart_out, "duty: %i\n", duty);
 	
 	OCR1A = PWM_MIN + PWM_RES*duty;
 	

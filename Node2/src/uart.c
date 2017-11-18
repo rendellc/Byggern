@@ -33,11 +33,6 @@ ISR(USART0_RX_vect){
 	sei();
 }
 
-///\todo remove interrupt from Tx
-ISR(USART0_TX_vect){
-	
-}
-
 ///Initialize uart
 void uart_init(void){
 	
@@ -47,7 +42,7 @@ void uart_init(void){
 	UBRR0H = (timerval>>8)&0x0F;
 	
 	// enable interupts on Rx & Tx, and enable Rx & Tx
-	UCSR0B |= (1 << RXCIE0) | (1 << TXCIE0) | (1 << RXEN0) | (1 << TXEN0);
+	UCSR0B |= (1 << RXCIE0) | (1 << TXEN0);
 	
 	// enable async mode
 	UCSR0C &= ~(1 << UMSEL01); // changed from UMSEL0

@@ -1,0 +1,35 @@
+3 steg:
+
+1) Node 1 sender joystick/slider/button til node2
+
+2) Node 1 poller node 2 for ball_dropped
+
+3) Node 2 svarer med datapakke til node 1
+
+
+
+
+
+
+cmd format:
+sid = can_GAME_CMD
+data[0] = game_cmd_*
+data[1-7] = data
+
+
+
+
+
+
+
+Start
+Difficulty
+Controller
+	- Standard
+Highscore
+	-
+Legal
+	- fag
+	- navn
+	- navn
+	- navn

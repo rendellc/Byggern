@@ -25,7 +25,7 @@ int main(void)
 {
 	cli();
 	uart_init();
-	fprintf(&uart_out, "uart initialized\n");
+	fprintf(&uart_out, "\nuart initialized\n");
 	fprintf(&uart_out, "can init starting...");
 	spi_init();
 	can_init();
@@ -38,84 +38,22 @@ int main(void)
 	fprintf(&uart_out, "done\n");
 	fprintf(&uart_out, "motor init starting...");
 	motor_init();
+	motor_enable();
+	motor_encoder_calibrate();
 	fprintf(&uart_out, "done\n");
 	fprintf(&uart_out, "solenoid init starting...");
 	solenoid_init();
 	fprintf(&uart_out, "done\n");
-
+	fprintf(&uart_out, "game init starting...");
+	game_init();
+	fprintf(&uart_out, "done\n");
 	sei();
 	
 	
-	int8_t joy_x = 0;
-	int8_t joy_y = 0;
-	uint8_t joy_click = 0;
-	uint8_t slider_pos = 0;
+    while(1){
+		fprintf(&uart_out, ".");
+	}
 	
-	motor_enable();
-	motor_encoder_calibrate();
 	
-	uint16_t i = 0;
-    while(1)
-    {
-		motor_enable();
-		
-		can_msg_t read = can_read_buffer(0);
-		
-		switch (read.sid)
-		{
-			
-			case can_JOY:
-				joy_x = read.data[0];
-				joy_y = read.data[1];
-				joy_click = read.data[3];
-				/*
-				if (joy_click){
-					fprintf(&uart_out, "click\n");
-					PORTE &= ~(1 << PE4);
-				}
-				else{
-					fprintf(&uart_out, "no click\n");
-					PORTE |= (1 << PE4);
-				}
-				*/
-				break;
-				
-			case can_SLIDER:
-				slider_pos = read.data[0];
-				motor_set_position(slider_pos);
-				//fprintf(&uart_out, "slider: %i\n", (slider_pos/5)*2);
-				//motor_set_position(50);
-				
-				break;
-				
-			case can_INVALID:
-				//fprintf(&uart_out, "Invalid\n");
-				break;
-				
-			case can_GAME_INFO:
-				fprintf(&uart_out, "Game info message recieved\n");
-				break;
-		}
-		
-		//int16_t enc_read = motor_read_encoder();
-		//fprintf(&uart_out, "encoder read %i\n", enc_read);
-		//fprintf(&uart_out, "joy_y read %i\n", joy_y);
-		//fprintf(&uart_out, "click: %i\n", joy_click);
-		//motor_set_speed(joy_y/2);
-		//uint16_t adc_read = ir_read(); // changed to global variable instead
-		uint8_t adc_read = ir_read();
-		
-		//scorekeeping();
-		
-		//fprintf(&uart_out, "adc value: %i\t\n", adc_read);
-		//fprintf(&uart_out, "lives: %u\n", scorekeeping());
-		
-		//fprintf(&uart_out, "pwm duty: %i\n",  32 + joy_x/2);
-		
-		i = (i+1)%4096;
-		if (i == 0){
-			fprintf(&uart_out, "node two still running\n");
-		}
-		pwm_set_duty(34 + joy_x/2);
-    }
+	return 0;
 }

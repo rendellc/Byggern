@@ -25,7 +25,10 @@
 
 #include <avr/io.h>              
 #include <avr/interrupt.h>
+#include <stdint.h>
 #include "TWI_Master.h"
+
+#include "uart.h"
 
 static unsigned char TWI_buf[ TWI_BUFFER_SIZE ];    // Transceiver buffer
 static unsigned char TWI_msgSize;                   // Number of bytes to be transmitted.
@@ -77,9 +80,11 @@ then initialize the next operation and return.
 void TWI_Start_Transceiver_With_Data( unsigned char *msg, unsigned char msgSize )
 {
   unsigned char temp;
+	
+	uint16_t get_out_off_loop = 0; // TWI got stuck in loop so this forces it out
+  while ( TWI_Transceiver_Busy() && (++get_out_off_loop)%(1 << 8));             // Wait until TWI is ready for next transmission.
 
-  while ( TWI_Transceiver_Busy() );             // Wait until TWI is ready for next transmission.
-
+	
   TWI_msgSize = msgSize;                        // Number of data to transmit.
   TWI_buf[0]  = msg[0];                         // Store slave address with R/W setting.
   if (!( msg[0] & (TRUE<<TWI_READ_BIT) ))       // If it is a write operation, then also copy data.
@@ -123,7 +128,8 @@ unsigned char TWI_Get_Data_From_Transceiver( unsigned char *msg, unsigned char m
 {
   unsigned char i;
 
-  while ( TWI_Transceiver_Busy() );             // Wait until TWI is ready for next transmission.
+  while ( TWI_Transceiver_Busy() )             // Wait until TWI is ready for next transmission.
+	fprintf(&uart_out, ".");
 
   if( TWI_statusReg.lastTransOK )               // Last transmission competed successfully.              
   {                                             

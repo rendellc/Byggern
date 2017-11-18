@@ -64,7 +64,7 @@ unsigned char TWI_Get_Data_From_Transceiver( unsigned char *, unsigned char );
 #define TWI_ADR_BITS  1       // Bit position for LSB of the slave address bits in the init byte.
 
 #define TRUE          1
-#define FALSE         0
+#define FALSE         !TRUE
 
 /****************************************************************************
   TWI State codes

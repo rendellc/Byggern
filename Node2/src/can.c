@@ -40,7 +40,7 @@ ISR(INT2_vect)
 	
 	// check if there is room in buffer first
 	//if ((rx_head[n]+1)%RX_BUFFER_MAX != rx_tail[n]){
-		volatile can_msg_t msg = {};
+		can_msg_t msg = {};
 		
 		msg.length = mcp_read(MCP_RXBn | MCP_RXBnDLC) & MCP_DLC_MASK;
 		
@@ -58,8 +58,6 @@ ISR(INT2_vect)
 		}
 		spi_ss_high();
 		
-		
-	
 		rx_buffer[n][rx_head[n]] = msg;
 		rx_head[n] = (rx_head[n]+1) % RX_BUFFER_MAX;
 	//}
