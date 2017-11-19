@@ -98,7 +98,13 @@ void game_tick(){
 				case game_setting_STANDARD:
 					motor = msg.data[game_setting_standard_motor];
 					fire = msg.data[game_setting_standard_fire];
-					turn = PWM_TURN_MID - (int8_t)msg.data[game_setting_standard_turn]/2;	
+					turn = PWM_TURN_MID + (int8_t)msg.data[game_setting_standard_turn]/2;
+					
+					//fprintf(&uart_out, "motor %u\n", (uint8_t)motor);
+					
+					motor_set_position((uint8_t)motor);
+					
+					
 				break;
 				case game_setting_ALTERNATIVE:
 					motor = msg.data[game_setting_alternative_motor];
@@ -107,10 +113,11 @@ void game_tick(){
 				break;
 				}
 				
-				//fprintf(&uart_out, "(m,f,t) = (%u, %u, %i)\n", (uint8_t)motor, fire, turn);
-				//motor_set_position(motor);
+				//fprintf(&uart_out, "%i\t%i\t%u\n", (int8_t)turn, (uint8_t)motor, fire);
 				
+				//fprintf(&uart_out, "motor: %i\n", motor);
 				
+				//motor_set_speed(motor);
 				pwm_set_duty(turn);
 				
 				if (fire){

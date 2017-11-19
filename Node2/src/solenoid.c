@@ -16,7 +16,6 @@
 ISR(TIMER5_COMPA_vect){
 	PORTE |= (1 << PE4);
 	
-	fprintf(&uart_out, "interrupt disabled\n");
 	TIMSK5 &= ~(1 << OCIE5A);
 }
 
@@ -27,7 +26,7 @@ void solenoid_init(){
 		
 	// prescaler=1024 and OCR3A=128 gives frequency of 60 Hz
 	TCCR5B |= (1 << WGM52) | (1 << CS52) | (1 << CS50);
-	OCR5A = 20000; //128; // 30 Hz
+	OCR5A = 5000; //128; // 30 Hz
 	
 	
 	
@@ -37,7 +36,6 @@ void solenoid_init(){
 
 
 void solenoid_trigger(){
-	fprintf(&uart_out, "interrupt enabled\n");
 	PORTE &= ~(1 << PE4);
 	
 	TIMSK5 |= (1 << OCIE5A);

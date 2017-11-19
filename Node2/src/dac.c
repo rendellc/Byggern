@@ -17,7 +17,6 @@ void dac_init(void){
 	
 	DDRD |= (1 << PD0 | 1 << PD1); // set up scl, sda as output pins
 	
-	TWI_Master_Initialise();
 	
 	#ifdef UART_H_
 	fprintf(&uart_out, "i2c...dac...");
@@ -28,7 +27,9 @@ void dac_init(void){
  * Command DAC to output specified voltage. 
  */
 void dac_output(uint8_t voltage){
-	//fprintf(&uart_out, "success");
+	
+	
+	
 	uint8_t msg[3] = {};
 	
 	msg[0] = 0b01010000; //

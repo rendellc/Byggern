@@ -21,9 +21,7 @@ volatile uint8_t rx_tail[2] = {};
  * Overwrite the oldest message if there is no room in 
  * buffer. 
  */
-ISR(INT2_vect)
-{
-	cli();
+ISR(INT2_vect){
 	// pick correct buffer, RXB1 has highest priority now
 	volatile uint8_t n			  = 0;
 	volatile uint8_t MCP_RXBn	  = MCP_RXB0;
@@ -63,7 +61,6 @@ ISR(INT2_vect)
 	//}
 	mcp_bitmodify(MCP_CANINTF, MCP_RXnIF, 0); 
 	
-	sei();
 }
 
 /*!

@@ -22,8 +22,12 @@
 #define PIN_OE	PH5 /*!< Encoder output enable pin */
 #define PIN_RST PH6 /*!< Encoder reset pin */
 
+#define MOTOR_MAX_FORCE			50
+#define MOTOR_CALIBRATE_SPEED	40 /*!< speed which motor will run with during calibration */
+#define MOTOR_REG_THESHOLD		100 /*!< Regulator is stopped when abs(encoder-setpoint) < threshold */
 
 // calibration
+static BOOL is_calibrated = FALSE;
 static int16_t calibrate_min = 0;
 static int16_t calibrate_max = 0;
 
@@ -33,35 +37,34 @@ const int16_t lowpass_coeff = 4;
 const int16_t lowpass_enable = 1; /*!< set to zero to disable low pass filter */
 
 // regulator
-static uint8_t position_regulator_enabled = 0; // doesnt need to volatile since it wont change often
-
-pi_t regulator = {}; 
+pi_t regulator;
 
 /// position set point
 static volatile int16_t encoder_setpoint = 0;
 
 
-static volatile int16_t raw_encoder[2] = {}; /*!< Raw encoder data. Index i means at time (n - i) */
-static volatile int16_t force[2] = {}; 		 /*!< Output sent to motor Index i means at time (n - i) */
+static volatile int16_t measurement = 0; /*!< Raw encoder data. Index i means at time (n - i) */
+//static volatile int16_t force[2] = {}; 		 /*!< Output sent to motor Index i means at time (n - i) */
 
 /// Interrupt vector which controls the motor
-ISR(TIMER0_OVF_vect){
-	cli();
-	// sample encoder
-	raw_encoder[1] = raw_encoder[0];
-	raw_encoder[0] = (lowpass_enable * raw_encoder[1])/lowpass_coeff + motor_read_encoder();
+ISR(TIMER4_OVF_vect){
 	
+	//fprintf(&uart_out, "encoder setpoint: %i\t%i\n", encoder_setpoint, calibrate_min);
+	//fprintf(&uart_out, "encoder: %i\t%i\t%i\n", calibrate_min, encoder_setpoint, calibrate_max);
+	measurement = motor_read_encoder();
+	int8_t force = pi_regulator(&regulator, encoder_setpoint, measurement);
 	
-	if (position_regulator_enabled){
-		motor_set_speed(pi_regulator(&regulator, encoder_setpoint, raw_encoder[0]));
-		//fprintf(&uart_out, "output %i\n", force[0]/128);
-		
+	if (force > MOTOR_MAX_FORCE){
+		force = MOTOR_MAX_FORCE;
+	} 
+	else if (force < - MOTOR_MAX_FORCE){
+		force = -MOTOR_MAX_FORCE;
 	}
 	
+	motor_set_speed(force);
+	fprintf(&uart_out, "force: %i\n", force);
+	//fprintf(&uart_out, "pi_reg %i\t%i\t%i\n", encoder_setpoint, measurement, force);
 	
-	// clear overflow flag
-	TIFR0  |= (1 << TOV0);
-	sei();
 }
 
 
@@ -69,31 +72,13 @@ ISR(TIMER0_OVF_vect){
  * Subroutine which runs the motor from wall to wall and sets the global calibration variables. 
  */
 void motor_encoder_calibrate()
-{
-	motor_set_speed(35);
+{	
+	fprintf(&uart_out, "Motor calibration\n");
+	
+	motor_set_speed(-MOTOR_CALIBRATE_SPEED);
 	int16_t old_value = motor_read_encoder();
 	_delay_ms(100);
 	int16_t new_value = motor_read_encoder();
-	//find min value
-	
-	while(new_value < old_value)
-	{
-		old_value = motor_read_encoder();
-		_delay_ms(100);
-		new_value = motor_read_encoder();
-	}
-	calibrate_max = new_value;
-	fprintf(&uart_out, "encoder min %i <", calibrate_min);
-	
-	
-	motor_set_speed(-35);
-	fprintf(&uart_out, "-");
-	old_value = motor_read_encoder();
-	fprintf(&uart_out, "+");
-	_delay_ms(100);
-	fprintf(&uart_out, "-");
-	new_value = motor_read_encoder();
-	fprintf(&uart_out, ">");
 	
 	//find max value
 	while(new_value > old_value)
@@ -104,15 +89,37 @@ void motor_encoder_calibrate()
 		
 	}
 	calibrate_min = new_value;
-	fprintf(&uart_out, "%i max...", calibrate_max);
+	fprintf(&uart_out, "\tleft %i <---> ", calibrate_min);
+	
+	motor_set_speed(MOTOR_CALIBRATE_SPEED);
+	old_value = motor_read_encoder();
+	_delay_ms(100);
+	new_value = motor_read_encoder();
+	//find min value
+	
+	while(new_value < old_value)
+	{
+		old_value = motor_read_encoder();
+		_delay_ms(100);
+		new_value = motor_read_encoder();
+	}
+	calibrate_max = new_value;
+	fprintf(&uart_out, "%i right\n", calibrate_max);
 	
 	motor_set_speed(0);
+	
+	is_calibrated = TRUE;
+	
+
+	
+	motor_goto_center();
+	
 }
 
-
 /*!
- * Convert data fra encoder using the calibration constants.
+ * Convert data from encoder using the calibration constants.
  * Undefined behaviour if motor_encoder_calibrate has not been executed first.
+ * \deprecated
  */
 int8_t motor_encoder_convert_range(uint16_t raw_data){
 	/// \test this need to be tested for overflow errors
@@ -164,18 +171,15 @@ int16_t motor_read_encoder(){
  * Setup position regulator and enable motor. 
  */
 void motor_init(void){
-	dac_init();
-	
+
 	DDRH |= ( 1 << PIN_DIR | 1 << PIN_SEL | 1 << PIN_EN | 1 << PIN_OE | 1 << PIN_RST );
 	
 	
-	/// set sampling rate for encoder, \todo change to 16-bit timer to get slower refresh rate
-	TCCR0B |= (1 << CS02 | 1 << CS00); // prescaler 1024 here  but prescaler = 256 => crash? \test more
-	TIFR0  |= (1 << TOV0);   // clear overflow flag
-	TIMSK0 |= (1 << TOIE0);  // enable
+	/// set sampling rate for encoder to 15 Hz with prescaler=4, and interrupt on overflow
+	TCCR4B |= (1 << CS41); 
 	
 	// set regulator parameters
-	pi_regulator_init(&regulator, 1.0, 0.1);
+	pi_regulator_init(&regulator, 1, 1);
 }
 
 /**
@@ -191,6 +195,8 @@ void motor_enable(void){
  * @param speed Integer which denotes speed and direction. Negative numbers give negative motion. 
  */
 void motor_set_speed(int8_t speed){	
+	sei(); // twi locks node if interrupts are disabled. \todo Find better solution
+	
 	if (speed < 0){
 		PORTH &= ~(1 << PIN_DIR);
 		dac_output(-speed); 		// -speed because speed is negative
@@ -205,15 +211,58 @@ void motor_set_speed(int8_t speed){
  * @param[in] position 0 is left and 255 is right. 
  */
 void motor_set_position(uint8_t position){
-	/*
-	if (position > 100){
-		position = 100;
+	if (is_calibrated){
+		
+	
+		/*
+		#define MOVING_AVG_NUMBER 5
+		static uint8_t position_log[MOVING_AVG_NUMBER] = {};
+		static int16_t last_setpoint = 0;
+		//static int32_t encoder_setpoint[3] = {};
+		
+		uint16_t position_filtered = position;
+		for (uint8_t i = 0; i < MOVING_AVG_NUMBER-1; ++i){
+			position_filtered += position_log[i];
+		}
+		position = (uint8_t)position_filtered / MOVING_AVG_NUMBER;
+		*/
+
+		// Add 1st order IIR filter make measurements more stable
+	
+		//fprintf(&uart_out, "position: %i\n", (int16_t)position);
+	
+		encoder_setpoint = calibrate_min + (calibrate_max - calibrate_min)/256 * (int16_t)position;
+	
+		/*
+		if ( abs(encoder_setpoint - last_setpoint) > 35)
+			fprintf(&uart_out, "difference %i\t%u\n", abs(encoder_setpoint - last_setpoint), position);
+		*/
+
+		//fprintf(&uart_out, "motor %u\n", (uint8_t)position);
+		//fprintf(&uart_out, "encoder: %i\t%i\t%i\n", calibrate_min, encoder_setpoint, calibrate_max);
+		
+		//pi_regulator(&regulator, encoder_setpoint, measurement);
+		
+		// enable interrupts
+		TIMSK4 |= (1 << TOIE4);
+		TIFR4 |= (1 << TOV4);
 	}
-	*/
 	
-	encoder_setpoint = calibrate_min + ((calibrate_max - calibrate_min)*(int32_t)position)/256;
+}
+
+
+void motor_disable_position_control(void){
+	TIMSK4 &= ~(1 << TOIE4);  // disable interrupts
+}
+
+
+
+void motor_goto_center(void){
 	
-	//pi_regulator(&regulator, encoder_setpoint, raw_encoder[0]);
+	motor_set_position(128);
 	
-	position_regulator_enabled = 1;
+	while (abs(encoder_setpoint - measurement) > MOTOR_REG_THESHOLD);
+	
+	
+	motor_disable_position_control();
 }

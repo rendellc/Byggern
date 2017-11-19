@@ -6,9 +6,11 @@
  */ 
 
 #include "global_declarations.h"
+
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <util/delay.h>
+#include <avr/sleep.h>
 
 #include "spi_driver.h"
 #include "uart.h"
@@ -36,11 +38,14 @@ int main(void)
 	fprintf(&uart_out, "ir init starting...");
 	ir_init();
 	fprintf(&uart_out, "done\n");
+	
+	TWI_Master_Initialise();
+	
+	dac_init();
+	
+	
 	fprintf(&uart_out, "motor init starting...");
 	motor_init();
-	motor_enable();	
-	motor_encoder_calibrate();
-	/*
 	fprintf(&uart_out, "done\n");
 	fprintf(&uart_out, "solenoid init starting...");
 	solenoid_init();
@@ -48,9 +53,19 @@ int main(void)
 	fprintf(&uart_out, "game init starting...");
 	game_init();
 	fprintf(&uart_out, "done\n");
-	sei();
 	
-	*/
+	
+	
+	
+	sei();
+	motor_enable();
+	motor_encoder_calibrate(); // after enabling interrupts
+	
+	motor_set_position(128);
+	
+	fprintf(&uart_out, "system init complete\n");
+	
+	
     while(1);
 	
 	
