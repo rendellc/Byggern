@@ -12,12 +12,14 @@
 #define FALSE (!TRUE)
 typedef uint8_t BOOL;
 
-// game state
+// game state, can be moved to game.c/h
 typedef enum {
 	game_INVALID,
 	game_IN_MENU,
 	game_PLAYING,
-	game_PAUSED
+	game_PAUSED,
+	game_GAME_OVER,
+	game_FREE_PLAY
 } game_state_t;
 
 
@@ -47,56 +49,65 @@ typedef enum {
 
 
 // --- Can Bus ---
-/// maximum number of bytes in a can transmission
-#define CAN_MAX_BYTES 8
-/// struct for holding can message
-typedef struct {
-	uint8_t  sid;
-	uint8_t  length;
-	uint8_t  data[CAN_MAX_BYTES];
-} can_msg_t;
+
 
 // --- CAN message SIDs ---
 // \note gcc compiler flag -fshort-enums is required
 enum {
 	can_INVALID = 0,
 	can_GAME_CMD,
-	can_GAME_INFO,
 	can_GAME_DATA	
 };
 
-
-//define MSG_INVALID		0 /*!< invalid CAN message SID */
-//#define MSG_JOY			1 /*!< joystick CAN message SID */
-//#define MSG_SLIDER		2 /*!< slider CAN message SID */
-//#define MSG_GAME_CMD		3 /*!< Game command CAN message SID */
-//#define MSG_GAME_INFO		4 /*!< Command ack CAN message SID */
-//#define MSG_GAME_DATA		5 /*!< Game data CAN message SID */
-
 #define game_cmd_INDEX 0
-enum {
+typedef enum {
     game_cmd_CHECK_BALL_DROP = 10,
 	game_cmd_RESET_GAME,
 	game_cmd_ACTION,
 	game_cmd_SLAVE_ACK,
 	game_cmd_SET_STATE,
 	game_cmd_CHANGE_SETTING,
+	game_cmd_CHANGE_DIFFICULTY
+} game_cmd_t;
+
+// specifiers for game_cmd
+enum {
+	game_cmd_setting_STANDARD = 20,
+	game_cmd_setting_ALTERNATIVE,
+	game_cmd_difficulty_STANDARD,
+	game_cmd_difficulty_IMPOSSIBLE
 };
 
-// settings for game
+	
 
+// difficulty levels
 typedef enum {
 	game_setting_STANDARD = 20,
-	game_setting_ALTERNATIVE
+	game_setting_ALTERNATIVE,
 } game_setting_t;
 
-#define game_setting_standard_turn	1
-#define game_setting_standard_fire	2
-#define game_setting_standard_motor	3
 
-#define game_setting_alternative_turn	1
-#define game_setting_alternative_fire	2
-#define game_setting_alternative_motor	3
+/// maximum number of bytes in a can transmission
+#define CAN_MAX_BYTES 8
+/// struct for holding can message
+typedef struct {
+	uint8_t  sid;
+	uint8_t  length;
+	union{
+		uint8_t  data[CAN_MAX_BYTES];
+		struct {
+			game_cmd_t cmd_specifier;
+			uint8_t cmd_data[7];
+		};
+	};
+	
+} can_msg_t;
+
+// indices into cmd_data
+#define game_joy_x_index		0
+#define game_joy_y_index		1
+#define game_slider_index		2
+#define game_button_index		3
 
 
 #endif // TYPES_H

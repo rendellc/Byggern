@@ -16,16 +16,13 @@
 #include "oled_cmds.h"
 #include <util/delay.h>
 
-#define OLED_WIDTH 128           /*!< Number of pixels of width of display */
-#define OLED_PAGES 8 			 /*!< Number of pages */
+
 #define OLED_HEIGHT OLED_PAGES*8 /*!< Screen is 8 pages tall */
 #define SPACING 1				 /*!< Spacing between characters when writing to display */
 
-/// \note buffchr will have bugs if fontwidth changes during execution
+/// \note buffchr will have bugs if FONT_WIDTH changes during execution
 
-const uint8_t* font			= (const uint8_t*) font4; /*!< Font selection */
-const uint8_t  fontheight	= 6;					  /*!< Height of font */
-const uint8_t  fontwidth	= 4;					  /*!< Width of font  */
+const uint8_t* FONT			= (const uint8_t*) font4; /*!< Font selection */
 
 /// Backbuffer for the oled display
 volatile uint8_t* buffer	= (uint8_t*)OLED_BUFFER_ADR;
@@ -168,7 +165,7 @@ void oled_pos(uint8_t row, uint8_t column){
 void oled_buffchar(char chr){
 	if(chr >= ASCII_OFFSET && xpos < OLED_WIDTH && ypos < OLED_PAGES) {
 		
-		if (xpos + fontwidth >= OLED_WIDTH){
+		if (xpos + FONT_WIDTH >= OLED_WIDTH){
 			oled_newline();	
 			
 			/*
@@ -177,17 +174,17 @@ void oled_buffchar(char chr){
 			// - how: writes last word to next line before placing chr in buffer
 			// - bugs: extra gets added
 			
-			int8_t x = (int8_t)xpos - SPACING - (int8_t)fontwidth; // need signed values for error checking
+			int8_t x = (int8_t)xpos - SPACING - (int8_t)FONT_WIDTH; // need signed values for error checking
 
 			uint8_t zeroCounter = 0;
-			while (zeroCounter != fontwidth && x >= 0){
-				for (uint8_t i = 0; i<fontwidth; ++i){
+			while (zeroCounter != FONT_WIDTH && x >= 0){
+				for (uint8_t i = 0; i<FONT_WIDTH; ++i){
 					zeroCounter = zeroCounter + (buffer[ypos*OLED_WIDTH + x + i] == 0x00);
 				}
 				
-				if (zeroCounter == fontwidth){ // chr consisting only of zeroes, ie a space ' '
+				if (zeroCounter == FONT_WIDTH){ // chr consisting only of zeroes, ie a space ' '
 					// push contents from this line of the buffer to the next line
-					for (int seg = x+1, i=-fontwidth; seg < OLED_WIDTH; ++seg, ++i){
+					for (int seg = x+1, i=-FONT_WIDTH; seg < OLED_WIDTH; ++seg, ++i){
 						buffer[((ypos + 1)%OLED_PAGES)*OLED_WIDTH + i] = buffer[ypos*OLED_WIDTH + seg];
 						buffer[ypos*OLED_WIDTH + seg] = 0x00;
 						xpos = i;
@@ -196,7 +193,7 @@ void oled_buffchar(char chr){
 					++xpos;
 				} else {
 					zeroCounter = 0;
-					x =  x - SPACING - fontwidth;
+					x =  x - SPACING - FONT_WIDTH;
 				}
 			}
 			if (x < 0){
@@ -206,8 +203,8 @@ void oled_buffchar(char chr){
 		}
 
 		// write char
-		for (uint8_t seg = 0; seg < fontwidth; ++seg){
-			buffer[ypos*OLED_WIDTH + xpos] = pgm_read_word(&font[(chr - ASCII_OFFSET)*fontwidth + seg]);
+		for (uint8_t seg = 0; seg < FONT_WIDTH; ++seg){
+			buffer[ypos*OLED_WIDTH + xpos] = pgm_read_word(&FONT[(chr - ASCII_OFFSET)*FONT_WIDTH + seg]);
 			oled_goto_nextpos();
 		}
 		
@@ -258,6 +255,14 @@ void oled_fill(uint8_t val){
 		}
 	}
 }
+
+/**
+ * Place raw data on screen at cursor position. Doesn't increment cursor.
+ */
+void oled_putraw(uint8_t raw, uint8_t x, uint8_t y){
+	buffer[y*OLED_WIDTH + x] = raw;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 

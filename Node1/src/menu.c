@@ -1,15 +1,18 @@
 /*!@file 
  * Implementation of menu system. 
  */
+#include "global_declarations.h"
+
 #include <avr/interrupt.h> /*!< \todo remove? why is this included?*/
 #include <stdint.h>		
 #include <string.h>	
-#include <stdlib.h>	
+#include <stdlib.h>
+#include <util/delay.h>
 
 #include "oled.h"
 #include "menu.h"
 #include "input.h"
-#include "global_declarations.h"
+
 #include "uart.h"				/*!< \todo remove, included only for debug purposes */
 
 #include "game.h"
@@ -23,13 +26,14 @@ void menu_action_nothing(){};
 
 void menu_action_print_legal(){
 	oled_fill(0x00);
-	oled_home();
+	_delay_ms(10);
+	//oled_home();
 	/*
-	fprintf(&uart_out, "Legal\n"));
-	fprintf(&uart_out, " TTK4115 - Byggern\n");
-	fprintf(&uart_out, " Rendell Cale\n");
-	fprintf(&uart_out, " William Ke\n");
-	fprintf(&uart_out, " Frode van der Meeren\n");
+	fprintf(&oled_out, "Legal\n");
+	fprintf(&oled_out, " TTK4115 - Byggern\n");
+	fprintf(&oled_out, " Rendell Cale\n");
+	fprintf(&oled_out, " William Ke\n");
+	fprintf(&oled_out, " Frode van der Meeren\n");
 	*/
 	direction_t joy_dir;
 	do {
@@ -103,14 +107,18 @@ void menu_init(){
 		
 	head = menu_init_menu("Main", head, menu_action_nothing);
 	
-	menu_init_menu("Start", head, game_start);
-	menu_init_menu("Difficulty", head, menu_action_nothing);
+	menu_init_menu("Play", head, game_start);
+	menu_t* menu_difficulty = menu_init_menu("Difficulty", head, menu_action_nothing);
 	menu_t* menu_settings = menu_init_menu("Settings", head, menu_action_nothing);
-	menu_init_menu("Highscore", head, menu_show_highscore);
+	//menu_init_menu("Highscore", head, menu_show_highscore);
 	//menu_init_menu("Legal", head, menu_action_print_legal);
+	menu_init_menu("Freeplay", head, game_state_freeplay);
 		
 	menu_init_menu("Standard", menu_settings, game_setting_standard);
 	menu_init_menu("Alternative", menu_settings, game_setting_alternative);
+	
+	menu_init_menu("Standard", menu_difficulty, game_difficulty_standard);
+	menu_init_menu("Impossible", menu_difficulty, game_difficulty_impossible);
 	
 	current = head;
 }

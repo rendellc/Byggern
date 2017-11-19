@@ -52,6 +52,7 @@ int main()
 	can_init(); // after spi
 	game_init(); // after menu_init
 	
+	fprintf(&uart_out, "system init complete\n");
 	sei();
 	
 	// NOTE(rendellc): required for sram test

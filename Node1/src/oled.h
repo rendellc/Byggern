@@ -17,6 +17,10 @@ extern FILE oled_out;
 
 #define OLED_REFRESH_RATE 60    /*!< Refresh rate in Hz. Unimplemented */
 
+#define OLED_WIDTH 128      /*!< Number of pixels of width of display */
+#define OLED_PAGES 8		/*!< Number of pages */
+#define FONT_HEIGHT	6		/*!< Height of font */
+#define FONT_WIDTH 4		/*!< Width of font  */
 
 /// Initialize oled, clear screen, set cursor to home, and enable autorefresh. 
 void oled_init();
@@ -81,6 +85,12 @@ void oled_buffchar(char chr);
  * Example: val = 0 will clear the entire screen.
  */
 void oled_fill(uint8_t val);
+
+
+/**
+ * Place raw data on screen at cursor position. Doesn't increment cursor.
+ */
+void oled_putraw(uint8_t raw, uint8_t x, uint8_t y);
 
 
 #endif /* OLED_H_ */
