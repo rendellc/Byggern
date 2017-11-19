@@ -69,7 +69,6 @@ void write_d(uint8_t data){
 
 /// Initialize oled, clear screen, set cursor to home, and enable autorefresh. 
 void oled_init(){
-	cli();
 	
 	write_c(SET_DISP_OFF);
 	write_c(SET_SEG_REMAP);
@@ -249,7 +248,7 @@ int oled_putchar(char chr){
  *
  * Example: val = 0 will clear the entire screen.
  */
-void oled_fill(uint8_t val){
+void oled_fill(uint8_t val){    
 	write_c(SET_COL_ADR);  write_c(0x00); write_c(OLED_WIDTH-1);
 	write_c(SET_PAGE_ADR); write_c(0x00); write_c(OLED_PAGES-1);
 	

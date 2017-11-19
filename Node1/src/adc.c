@@ -32,4 +32,3 @@ uint8_t adc_read_channel(uint8_t ch)
 	
 	return *adc_adr;
 }
-

@@ -22,7 +22,6 @@ static volatile uint8_t rx_tail[2] = {};					/*!< Tail of buffers */
  * buffer. 
  */
 ISR(INT1_vect){
-	cli();	
 	///\todo implement overflow such that new data replaces old?
 	// pick correct buffer, RXB1 has highest priority now
 	volatile uint8_t n			  = 0;
@@ -62,7 +61,6 @@ ISR(INT1_vect){
 	//}
 
     mcp_bitmodify(MCP_CANINTF, MCP_RXnIF, 0);
-	sei();
 }
 
 /*!

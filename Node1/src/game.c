@@ -30,7 +30,7 @@ uint8_t interrupt_counter = 0;
 ISR(TIMER3_COMPA_vect){
 	++interrupt_counter;
 	if (!interrupt_counter)
-		fprintf(&uart_out, ":");
+		fprintf(&uart_out, ": %u :", game_state);
 	
 	
 	game_tick();
@@ -113,7 +113,7 @@ void game_tick_playing(){
 	joystick_t joy = joy_get_state();
 	touch_t touch = touch_get_state();
 	
-	fprintf(&uart_out, "%u\n", joy.x);
+	
 	
 	can_msg_t action_cmd = {};
 	action_cmd.sid = can_GAME_CMD;
@@ -125,11 +125,15 @@ void game_tick_playing(){
 			action_cmd.data[game_setting_standard_motor] = touch.slider;
 			action_cmd.data[game_setting_standard_turn]  = convert_range(joy.x);
 			action_cmd.data[game_setting_standard_fire]  = (touch.button > BUTTON_PRESS_THRESHOLD);
+			
+			fprintf(&uart_out, "motor pos %u\n", touch.slider);
 		break;
 		case game_setting_ALTERNATIVE:
-			action_cmd.data[game_setting_alternative_motor] = convert_range(joy.x);
-			action_cmd.data[game_setting_alternative_turn]  = touch.slider;
+			action_cmd.data[game_setting_alternative_motor] = joy.x;
+			action_cmd.data[game_setting_alternative_turn]  = convert_range(touch.slider);
 			action_cmd.data[game_setting_alternative_fire]  = (touch.button > BUTTON_PRESS_THRESHOLD);
+			
+			fprintf(&uart_out, "motor speed %u\n", joy.x);
 		break;
 	}
 	can_send(action_cmd, 0);

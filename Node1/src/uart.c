@@ -29,13 +29,12 @@ volatile int recvtail = 0; 				/*!< Tail of buffer. Where next read will occour.
 
 /// Interrupt vector for Rx. Place recieved data into buffer.
 ISR(USART0_RXC_vect){
-	cli();
 	char input = UDR0;
 	if((recvhead+1)%BUFFER_MAX != recvtail){		// Sjekk at bufferen ikke er full
 		recv_buffer[recvhead] = input;				// If so, legg inn byte
 		recvhead = (recvhead+1)%BUFFER_MAX;
 	}
-	sei();
+	
 }
 
 ///\todo remove interrupt from Tx
