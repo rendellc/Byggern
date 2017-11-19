@@ -23,7 +23,7 @@
 #define PIN_RST PH6 /*!< Encoder reset pin */
 
 #define MOTOR_MAX_FORCE			50
-#define MOTOR_CALIBRATE_SPEED	40 /*!< speed which motor will run with during calibration */
+#define MOTOR_CALIBRATE_SPEED	45 /*!< speed which motor will run with during calibration */
 #define MOTOR_REG_THESHOLD		100 /*!< Regulator is stopped when abs(encoder-setpoint) < threshold */
 
 // calibration
@@ -62,7 +62,7 @@ ISR(TIMER4_OVF_vect){
 	}
 	
 	motor_set_speed(force);
-	fprintf(&uart_out, "force: %i\n", force);
+	//fprintf(&uart_out, "force: %i\n", force);
 	//fprintf(&uart_out, "pi_reg %i\t%i\t%i\n", encoder_setpoint, measurement, force);
 	
 }
@@ -179,7 +179,8 @@ void motor_init(void){
 	TCCR4B |= (1 << CS41); 
 	
 	// set regulator parameters
-	pi_regulator_init(&regulator, 1, 1);
+	motor_tune_regulator(2,1);
+	//pi_regulator_init(&regulator, 2, 1);
 }
 
 /**
@@ -212,40 +213,11 @@ void motor_set_speed(int8_t speed){
  */
 void motor_set_position(uint8_t position){
 	if (is_calibrated){
-		
-	
-		/*
-		#define MOVING_AVG_NUMBER 5
-		static uint8_t position_log[MOVING_AVG_NUMBER] = {};
-		static int16_t last_setpoint = 0;
-		//static int32_t encoder_setpoint[3] = {};
-		
-		uint16_t position_filtered = position;
-		for (uint8_t i = 0; i < MOVING_AVG_NUMBER-1; ++i){
-			position_filtered += position_log[i];
-		}
-		position = (uint8_t)position_filtered / MOVING_AVG_NUMBER;
-		*/
-
-		// Add 1st order IIR filter make measurements more stable
-	
-		//fprintf(&uart_out, "position: %i\n", (int16_t)position);
-	
 		encoder_setpoint = calibrate_min + (calibrate_max - calibrate_min)/256 * (int16_t)position;
 	
-		/*
-		if ( abs(encoder_setpoint - last_setpoint) > 35)
-			fprintf(&uart_out, "difference %i\t%u\n", abs(encoder_setpoint - last_setpoint), position);
-		*/
-
-		//fprintf(&uart_out, "motor %u\n", (uint8_t)position);
-		//fprintf(&uart_out, "encoder: %i\t%i\t%i\n", calibrate_min, encoder_setpoint, calibrate_max);
-		
-		//pi_regulator(&regulator, encoder_setpoint, measurement);
-		
 		// enable interrupts
 		TIMSK4 |= (1 << TOIE4);
-		TIFR4 |= (1 << TOV4);
+		TIFR4 |= (1 << TOV4);	
 	}
 	
 }
@@ -265,4 +237,9 @@ void motor_goto_center(void){
 	
 	
 	motor_disable_position_control();
+}
+
+void motor_tune_regulator(uint16_t Kp, uint16_t Ki){
+	pi_reset_integrator(&regulator);
+	pi_regulator_init(&regulator, Kp, Ki);
 }

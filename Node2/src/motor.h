@@ -35,4 +35,14 @@ void motor_set_position(uint8_t position);
  */
 int16_t motor_read_encoder(void);
 
+/**
+ * Running this will center the motor on the game board. 
+ */
+void motor_goto_center(void);
+
+/**
+ * Set the parameters of the regulator
+ */
+void motor_tune_regulator(uint16_t Kp, uint16_t Ki);
+
 #endif /* MOTOR_H_ */

@@ -22,7 +22,7 @@ src/main.d src/main.o: ../src/main.c ../src/global_declarations.h \
  c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-gnu-toolchain\avr\include\avr\sleep.h \
  ../src/spi_driver.h ../src/uart.h ../src/mcp2515.h ../src/can.h \
  ../src/pwm.h ../src/ir.h ../src/dac.h ../src/motor.h ../src/game_slave.h \
- ../src/solenoid.h
+ ../src/solenoid.h ../src/TWI_Master.h
 
 ../src/global_declarations.h:
 
@@ -87,3 +87,5 @@ c:\program\ files\ (x86)\atmel\atmel\ toolchain\avr8\ gcc\native\3.4.1061\avr8-g
 ../src/game_slave.h:
 
 ../src/solenoid.h:
+
+../src/TWI_Master.h:

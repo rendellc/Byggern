@@ -22,6 +22,7 @@
 #include "motor.h"
 #include "game_slave.h"
 #include "solenoid.h"
+#include "TWI_Master.h"
 
 int main(void)
 {
@@ -66,7 +67,12 @@ int main(void)
 	fprintf(&uart_out, "system init complete\n");
 	
 	
-    while(1);
+	
+    while(1){
+	//	uint16_t ir = ir_read();
+		
+	//	fprintf(&uart_out, "%u\n", ir);	
+	}
 	
 	
 	return 0;

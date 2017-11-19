@@ -35,5 +35,9 @@ void pi_regulator_init(struct pi_t_* regulator_p, uint16_t Kp, uint16_t Ki);
  */
 int16_t pi_regulator(struct pi_t_* regulator_p, int16_t setpoint, int16_t measurement);
 
+/**
+ * Reset the integrator term of regulator.
+ */
+void pi_reset_integrator(pi_t* regulator_p);
 
 #endif
