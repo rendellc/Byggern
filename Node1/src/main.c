@@ -27,6 +27,7 @@
 #include "can.h"
 #include "input.h"
 #include "game.h"
+#include "lyd.h"
 
 #include "mcp2515.h"
 
@@ -50,6 +51,7 @@ int main()
 	menu_init(); // after oled
 	spi_init();
 	can_init(); // after spi
+	lyd_init();
 	game_init(); // after menu_init
 	
 	fprintf(&uart_out, "system init complete\n");
