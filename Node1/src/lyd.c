@@ -1,9 +1,11 @@
-v/*
+/*
  * lyd.c
  *
  * Created: 19.11.2017 21.22.06
  *  Author: frode
  */ 
+
+
 #include "lyd.h"
 
 #define CHIP1R         0x1200
@@ -32,11 +34,12 @@ int8_t stoyteller[] = {0, 0};
 int8_t stoyretning[] = {0, 0};
 
 void lyd_init(){
-	CHIP1R = 7;
-	CHIP1D = 0xFF;
-	CHIP2R = 7;
-	CHIP2D = 0xFF;
+	*((uint8_t *)CHIP1R) = 7;
+	*((uint8_t *)CHIP1D) = 0xFF;
+	*((uint8_t *)CHIP2R) = 7;
+	*((uint8_t *)CHIP2D) = 0xFF;
 }
+
 void lyd_tikk(){
 	//
 	// Sjekk for endring i volum
@@ -89,41 +92,42 @@ void lyd_tikk(){
 	{
 		if(toner[i] != -1)				// Sett toner
 		{
-			CHIP1R = i*2;
-			CHIP1D = (frekvenstabell[toner[i]])&0xFF;
-			CHIP1R = 1+(i*2);
-			CHIP1D = (frekvenstabell[toner[i]]>>8)&0x0F;
+			*((uint8_t *)CHIP1R) = i*2;
+			*((uint8_t *)CHIP1D) = (frekvenstabell[toner[i]])&0xFF;
+			*((uint8_t *)CHIP1R) = 1+(i*2);
+			*((uint8_t *)CHIP1D) = (frekvenstabell[toner[i]]>>8)&0x0F;
 			kontroll1 &= ~(1<<i);
 		}
 		if(toner[i+3] != -1)
 		{
-			CHIP2R = i*2;
-			CHIP2D = (frekvenstabell[toner[i+3]])&0xFF;
-			CHIP2R = 1+(i*2);
-			CHIP2D = (frekvenstabell[toner[i+3]]>>8)&0x0F;
+			*((uint8_t *)CHIP2R) = i*2;
+			*((uint8_t *)CHIP2D) = (frekvenstabell[toner[i+3]])&0xFF;
+			*((uint8_t *)CHIP2R) = 1+(i*2);
+			*((uint8_t *)CHIP2D) = (frekvenstabell[toner[i+3]]>>8)&0x0F;
 			kontroll2 &= ~(1<<i);
 		}
-		CHIP1R = 8+i;					// Sett volum
-		CHIP1D = volum[i];
-		CHIP2R = 8+i;
-		CHIP2D = volum[i+3];
+		*((uint8_t *)CHIP1R) = 8+i;					// Sett volum
+		*((uint8_t *)CHIP1D) = volum[i];
+		*((uint8_t *)CHIP2R) = 8+i;
+		*((uint8_t *)CHIP2D) = volum[i+3];
 	}
 	if(stoy[0] != -1)					// Sett støygenerator
 	{
-		CHIP1R = 6;
-		CHIP1D = (stoytoner[0])&0x1F;
+		*((uint8_t *)CHIP1R) = 6;
+		*((uint8_t *)CHIP1D) = (stoytoner[0])&0x1F;
 		kontroll1 &= ~(1<<(3+stoy[0]));
 	}
 	if(stoy[1] != -1)
 	{
-		CHIP2R = 6
-		CHIP2D = (stoytoner[1])&0x1F;
+		*((uint8_t *)CHIP2R) = 6;
+		*((uint8_t *)CHIP2D) = (stoytoner[1])&0x1F;
 		kontroll2 &= ~(1<<stoy[1]);		// (på chip to er kanal ID allerede lagt til 3 fra før)
 	}
-	CHIP1R = 7;							// Sett kontrollbits
-	CHIP1D = kontroll1;
-	CHIP2R = 7;
-	CHIP2D = kontroll2;
+	*((uint8_t *)CHIP1R) = 7;							// Sett kontrollbits
+	*((uint8_t *)CHIP1D) = kontroll1;
+	*((uint8_t *)CHIP2R) = 7;
+	*((uint8_t *)CHIP2D) = kontroll2;
+	
 }
 
 void spilltone(lyd_TONENAVN tonenavn, uint8_t oktav, lyd_FORTEGN fortegn, uint8_t id){

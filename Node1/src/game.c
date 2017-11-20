@@ -16,6 +16,7 @@
 #include "input.h"
 #include "uart.h"
 #include "oled.h"
+#include "lyd.h"
 
 #define JOY_Y_TRESHOLD 32
 #define BUTTON_PRESS_THRESHOLD 240
@@ -47,6 +48,7 @@ void game_init(){
 
 
 void game_tick(){
+	lyd_tikk();
 	
 	switch (game_state){
 		case game_INVALID:
