@@ -43,6 +43,11 @@ void mcp_init()
 	mcp_bitmodify(MCP_RXB0CTRL, 0x60, 0x60);
 	mcp_bitmodify(MCP_RXB1CTRL, 0x60, 0x60);	
 	
+
+    // Enable clkout for use by other devices
+    mcp_bitmodify(MCP_CANCTRL, CLKOUT_ENABLE, CLKOUT_ENABLE);
+
+
 	// go to normal mode
 	mcp_bitmodify(MCP_CANCTRL, MODE_MASK, MODE_NORMAL);
 	
