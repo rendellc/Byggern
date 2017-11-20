@@ -20,7 +20,7 @@ ISR(TIMER5_COMPA_vect){
 }
 
 
-void solenoid_init(){
+void solenoid_init(void){
 	// set up interrupt
 	TCCR5A |= (1 << COM5A1); //| (1 << FOC3A); // CTC, Top=OCR3A
 		
@@ -35,7 +35,7 @@ void solenoid_init(){
 }
 
 
-void solenoid_trigger(){
+void solenoid_trigger(void){
 	PORTE &= ~(1 << PE4);
 	
 	TIMSK5 |= (1 << OCIE5A);

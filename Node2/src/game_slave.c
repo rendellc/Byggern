@@ -7,7 +7,7 @@
  *  Author: rendellc
  */ 
 
-#include "common.h"
+#include "../../Common/common.h"
 #include "global_declarations.h"
 #include "solenoid.h"
 #include "game_slave.h"

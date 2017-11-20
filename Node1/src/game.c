@@ -22,7 +22,7 @@
 #define BUTTON_PRESS_THRESHOLD 240
 #define HIGHSCORE_SIZE 5
 
-static game_state_t game_state = game_INVALID;
+volatile static game_state_t game_state = game_INVALID;
 static game_setting_t game_setting = game_setting_STANDARD;
 
 static int8_t health_left = 100; 
