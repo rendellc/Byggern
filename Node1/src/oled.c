@@ -89,7 +89,6 @@ void oled_init(){
 	write_c(SET_FOLLOW_RAM);
 	write_c(SET_NORMAL_DISP);
 	write_c(SET_DISP_ON);
-
 	
 	oled_fill(0);
 	oled_home();

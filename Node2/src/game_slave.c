@@ -20,7 +20,7 @@
 #include <avr/interrupt.h>
 
 
-#define BALL_PICKED_UP_THRESHHOLD	110 // needs adjustment
+#define BALL_DROPPED_THRESHOLD	40 // needs adjustment
 
 #define TURN_MID 50 // value to center servo
 
@@ -30,13 +30,17 @@ static BOOL ball_dropped = FALSE;
 /// game state
 static game_setting_t game_setting = game_setting_STANDARD;
 
-/// calibration of ball drop detection. set to proper values by game_init
-static uint8_t ball_dropped_threshold = 40;
-static uint8_t ball_picked_up_threshold = 90;
-
 // Declare reset acknowledgment message, initialized in init
 //static const can_msg_t msg_reset_ack = {can_GAME_DATA, 2, {game_cmd_SLAVE_ACK, game_cmd_RESET_GAME}};
 //static const can_msg_t msg_start_ack = {can_GAME_DATA, 2, {game_cmd_SLAVE_ACK, game_cmd_RESET_GAME}};
+
+
+
+/// Convert range from 0-to-255 to -100-to-100
+static int8_t convert_range(uint8_t data){
+	return (int8_t)((200*data) / 255 - 100);
+}
+
 
 static uint8_t interrupt_counter = 0;
 ISR(TIMER3_COMPA_vect){
@@ -59,18 +63,6 @@ void game_init(){
 	
 	TIMSK3 |= (1 << OCIE3A);
 	
-	
-	// calibrate ir
-	uint16_t ir_sum = 0;
-	for (uint8_t i = -1; i; --i){
-		ir_sum += ir_read();
-	}
-	uint16_t ir_avg = ir_sum/256;
-	
-	ball_dropped_threshold = 4*ir_avg/8;
-	//ball_picked_up_threshold = 3*ir_avg/4;
-	
-	fprintf(&uart_out, "drop(%u)\n", ball_dropped_threshold);//, ball_picked_up_threshold);
 }
 
 
@@ -105,16 +97,23 @@ void game_tick(){
 			case game_cmd_ACTION:{
 				//fprintf(&uart_out, "action %i\n", (int8_t)msg.data[1]);
 				uint8_t turn = 0;
-				int8_t motor = 0;
+				uint8_t motor = 0;
 				if (game_setting == game_setting_STANDARD){
 					motor = msg.cmd_data[game_slider_index];
-					turn = TURN_MID + (int8_t)msg.cmd_data[game_joy_x_index]/2;
-					motor_set_position((uint8_t)motor);
+					turn = TURN_MID - convert_range(msg.cmd_data[game_joy_x_index])/2;
+					//fprintf(&uart_out, "motor: %");
+					
+					motor_position_setpoint(motor);
 				}
-				else if (game_setting == game_setting_ALTERNATIVE){	
-					motor = msg.cmd_data[game_slider_index];
-					turn = TURN_MID + (int8_t)msg.cmd_data[game_joy_x_index]/2;
-					motor_set_position((uint8_t)motor);
+				else if (game_setting == game_setting_ALTERNATIVE){
+					//motor_disable_position_control();
+					//motor = msg.cmd_data[game_slider_index];
+					
+					//motor = (uint8_t)((((int16_t)(100) + (int16_t)(msg.cmd_data[game_joy_x_index]))*255)/200);
+					motor = msg.cmd_data[game_joy_x_index];
+					turn = 100-(uint8_t)msg.cmd_data[game_slider_index]*100/255;
+					fprintf(&uart_out, "motor: %u %i \n", (uint8_t)motor, (int16_t)msg.cmd_data[game_joy_x_index]);
+					motor_position_setpoint(motor);
 					/*
 					//fprintf(&uart_out, "turn: %i\n", ((int8_t)msg.cmd_data[game_slider_index]+128)/2);
 					fprintf(&uart_out, "motor: %i\n", (int8_t)msg.cmd_data[game_joy_x_index]/2);
@@ -128,7 +127,6 @@ void game_tick(){
 				
 				//fprintf(&uart_out, "%i\t%i\t%u\n", (int8_t)turn, (uint8_t)motor, fire);
 				
-				motor_set_position((uint8_t)motor);
 				pwm_set_duty(turn);
 				if (fire){
 					solenoid_trigger();
@@ -173,7 +171,7 @@ void game_update_ball_dropped(){
 	// check if ball has been dropped
 	uint16_t light_level = ir_read();
 	
-    if (!ball_dropped && light_level < ball_dropped_threshold){
+    if (!ball_dropped && light_level < BALL_DROPPED_THRESHOLD){
 		fprintf(&uart_out, "ball dropped\n");
 		ball_dropped = TRUE;
 	}

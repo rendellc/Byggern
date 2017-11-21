@@ -62,16 +62,16 @@ int main(void)
 	motor_enable();
 	motor_encoder_calibrate(); // after enabling interrupts
 	
-	motor_set_position(128);
+	motor_position_setpoint(128);
 	
 	fprintf(&uart_out, "system init complete\n");
 	
 	
 	
     while(1){
-	//	uint16_t ir = ir_read();
+		uint16_t ir = ir_read();
 		
-	//	fprintf(&uart_out, "%u\n", ir);	
+		fprintf(&uart_out, "%u\n", ir);	
 	}
 	
 	

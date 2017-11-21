@@ -23,7 +23,7 @@
 #define PIN_RST PH6 /*!< Encoder reset pin */
 
 #define MOTOR_MAX_FORCE			50
-#define MOTOR_CALIBRATE_SPEED	45 /*!< speed which motor will run with during calibration */
+#define MOTOR_CALIBRATE_SPEED	40 /*!< speed which motor will run with during calibration */
 #define MOTOR_REG_THESHOLD		100 /*!< Regulator is stopped when abs(encoder-setpoint) < threshold */
 
 // calibration
@@ -37,9 +37,10 @@ const int16_t lowpass_coeff = 4;
 const int16_t lowpass_enable = 1; /*!< set to zero to disable low pass filter */
 
 // regulator
-pi_t regulator;
+static pi_t regulator;
 
 /// position set point
+static volatile BOOL position_regulator_enabled;
 static volatile int16_t encoder_setpoint = 0;
 
 
@@ -51,8 +52,14 @@ ISR(TIMER4_OVF_vect){
 	
 	//fprintf(&uart_out, "encoder setpoint: %i\t%i\n", encoder_setpoint, calibrate_min);
 	//fprintf(&uart_out, "encoder: %i\t%i\t%i\n", calibrate_min, encoder_setpoint, calibrate_max);
-	measurement = motor_read_encoder();
-	int8_t force = pi_regulator(&regulator, encoder_setpoint, measurement);
+	int8_t force;
+	if (position_regulator_enabled){
+		measurement = motor_read_encoder(0);
+		force = pi_regulator(&regulator, encoder_setpoint, measurement);
+	} else {
+		measurement = motor_read_encoder(1);
+		force = pi_regulator(&regulator, encoder_setpoint, measurement);
+	}
 	
 	if (force > MOTOR_MAX_FORCE){
 		force = MOTOR_MAX_FORCE;
@@ -76,32 +83,32 @@ void motor_encoder_calibrate()
 	fprintf(&uart_out, "Motor calibration\n");
 	
 	motor_set_speed(-MOTOR_CALIBRATE_SPEED);
-	int16_t old_value = motor_read_encoder();
+	int16_t old_value = motor_read_encoder(0);
 	_delay_ms(100);
-	int16_t new_value = motor_read_encoder();
+	int16_t new_value = motor_read_encoder(0);
 	
 	//find max value
 	while(new_value > old_value)
 	{
-		old_value = motor_read_encoder();
+		old_value = motor_read_encoder(0);
 		_delay_ms(100);
-		new_value = motor_read_encoder();
+		new_value = motor_read_encoder(0);
 		
 	}
 	calibrate_min = new_value;
 	fprintf(&uart_out, "\tleft %i <---> ", calibrate_min);
 	
 	motor_set_speed(MOTOR_CALIBRATE_SPEED);
-	old_value = motor_read_encoder();
+	old_value = motor_read_encoder(0);
 	_delay_ms(100);
-	new_value = motor_read_encoder();
+	new_value = motor_read_encoder(0);
 	//find min value
 	
 	while(new_value < old_value)
 	{
-		old_value = motor_read_encoder();
+		old_value = motor_read_encoder(0);
 		_delay_ms(100);
-		new_value = motor_read_encoder();
+		new_value = motor_read_encoder(0);
 	}
 	calibrate_max = new_value;
 	fprintf(&uart_out, "%i right\n", calibrate_max);
@@ -130,7 +137,7 @@ int8_t motor_encoder_convert_range(uint16_t raw_data){
  * Read encoder position by sending commands to the motor box. 
  * This takes 40-50 microseconds and is a blocking process.
  */
-int16_t motor_read_encoder(){
+int16_t motor_read_encoder(BOOL speed){
 	
 	// set !OE low
 	PORTH &= ~(1 << PIN_OE);
@@ -152,11 +159,15 @@ int16_t motor_read_encoder(){
 	
 	// read lsb
 	read |= PINK;
+	if (speed)
+	{
+		PORTH &= ~(1 << PIN_RST);	
+	}
 	
-	// toggle !RST comment out PORTH &= ~(1 << PIN_RST); if you want position encoder
-	//PORTH &= ~(1 << PIN_RST);
 	_delay_us(10);
 	PORTH |= (1 << PIN_RST);
+	// toggle !RST comment out PORTH &= ~(1 << PIN_RST); if you want position encoder
+	//PORTH &= ~(1 << PIN_RST);
 	
 	
 	// set !OE high
@@ -211,15 +222,26 @@ void motor_set_speed(int8_t speed){
  * Set setpoint for motor and enable position regulator. 
  * @param[in] position 0 is left and 255 is right. 
  */
-void motor_set_position(uint8_t position){
+void motor_position_setpoint(uint8_t position){
 	if (is_calibrated){
 		encoder_setpoint = calibrate_min + (calibrate_max - calibrate_min)/256 * (int16_t)position;
-	
+		
+		position_regulator_enabled = TRUE;
+		
 		// enable interrupts
 		TIMSK4 |= (1 << TOIE4);
 		TIFR4 |= (1 << TOV4);	
 	}
 	
+}
+
+void motor_speed_setpoint(int8_t speed){
+	position_regulator_enabled = FALSE;
+	encoder_setpoint = speed;
+	
+	// enable interrupts
+	TIMSK4 |= (1 << TOIE4);
+	TIFR4 |= (1 << TOV4);	
 }
 
 
@@ -231,7 +253,7 @@ void motor_disable_position_control(void){
 
 void motor_goto_center(void){
 	
-	motor_set_position(128);
+	motor_position_setpoint(128);
 	
 	while (abs(encoder_setpoint - measurement) > MOTOR_REG_THESHOLD);
 	

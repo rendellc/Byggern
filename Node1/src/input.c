@@ -16,10 +16,7 @@
 
 /// Convert range from 0-to-255 to -100-to-100
 int8_t convert_range(uint8_t data){
-	/// \test this must be tested for rounding errors
 	return (int8_t)((200*data) / 255 - 100);
-
-	//return (float)data*0.784314 - 100;
 }
 
 /**

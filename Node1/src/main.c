@@ -55,14 +55,22 @@ int main()
 	game_init(); // after menu_init
 	
 	fprintf(&uart_out, "system init complete\n");
-	sei();
+	
 	
 	// NOTE(rendellc): required for sram test
 	stdout = &uart_out; 
 	stdin  = &uart_in;
 	
 	//sram_test();
+	fprintf(&uart_out, "RANDOM: %u\n", rand() % 10);
+	fprintf(&uart_out, "RANDOM: %u\n", rand() % 10);
+	fprintf(&uart_out, "RANDOM: %u\n", rand() % 10);
+	fprintf(&uart_out, "RANDOM: %u\n", rand() % 10);
+	fprintf(&uart_out, "RANDOM: %u\n", rand() % 10);
+		
 	
+	
+	sei();
 	while (1);
 	
 	return 0;

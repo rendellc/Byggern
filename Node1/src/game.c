@@ -18,14 +18,16 @@
 #include "oled.h"
 #include "lyd.h"
 
+
 #define JOY_Y_TRESHOLD 32
-#define BUTTON_PRESS_THRESHOLD 240
-#define HIGHSCORE_SIZE 5
+#define BUTTON_PRESS_THRESHOLD 128
+#define MAX_DAMAGE 10
+#define STARTING_HEALTH 100
 
 volatile static game_state_t game_state = game_INVALID;
 static game_setting_t game_setting = game_setting_STANDARD;
 
-static int8_t health_left = 100; 
+static int8_t health_left = STARTING_HEALTH; 
 
 /// game "loop" interrupt
 ISR(TIMER3_COMPA_vect){
@@ -79,21 +81,34 @@ void game_tick(){
 }
 
 void game_tick_paused(){
-	static BOOL do_once = TRUE;
+	static volatile BOOL do_once = TRUE;
 	if (do_once){
+		do_once = FALSE;
+		
 		//fprintf(&uart_out, "ball dropped\n");
+		int8_t damage = rand() % MAX_DAMAGE;
+		health_left -= damage;
+		
 		oled_home();
 		oled_fill(0x0);
 		fprintf(&oled_out, "Ball dropped!\n---\nPress button to retry\n");
-	
-		oled_pos(OLED_PAGES-1,0);
-		fprintf(&oled_out, "Lives left: %u\n", health_left);
-		--health_left;
-	
-		if (health_left <= 0){
-			game_state = game_GAME_OVER;
-			do_once = TRUE;
+		
+		
+		oled_pos(OLED_PAGES-2, 0);
+		if (damage > 7){
+			fprintf(&oled_out, "Ouch! %i dmg\n", damage);
+		} else if (damage <= 5){
+			fprintf(&oled_out, "gtfo: %i dmg\n", damage);
 		}
+		
+		oled_pos(OLED_PAGES - 1,0);
+		fprintf(&oled_out, "HP left: %u\n", health_left);
+		_delay_us(10);
+	}
+	
+	if (health_left <= 0){
+		game_state = game_GAME_OVER;
+		do_once = TRUE;
 	}
 	
 	touch_t touch = touch_get_state();
@@ -108,7 +123,7 @@ void game_tick_paused(){
 		msg.length = 1;
 		can_send(msg,0);
 		
-		_delay_ms(10);
+		_delay_us(100);
 		
 		game_state = game_PLAYING;
 		do_once = TRUE;
@@ -118,13 +133,16 @@ void game_tick_paused(){
 
 void game_tick_game_over(void){
 	fprintf(&uart_out, "game over\n");
+	
+	oled_home();
 	oled_fill(0x0);
 	
-	oled_pos(OLED_PAGES/2 , OLED_WIDTH/8);
+	oled_pos(OLED_PAGES/2 , 0);
 	fprintf(&oled_out, "GAME OVER");
 	
-	_delay_ms(5000);
+	_delay_ms(3000);
 	game_state = game_IN_MENU;
+	health_left = STARTING_HEALTH;
 }
 
 void game_tick_playing(){
@@ -150,8 +168,8 @@ void game_tick_playing(){
 	action_cmd.sid = can_GAME_CMD;
 	action_cmd.length = 5;
 	action_cmd.cmd_specifier = game_cmd_ACTION;
-	action_cmd.cmd_data[game_joy_x_index] = convert_range(joy.x);
-	action_cmd.cmd_data[game_joy_y_index] = convert_range(joy.y);
+	action_cmd.cmd_data[game_joy_x_index] = joy.x;  //convert_range(joy.x);
+	action_cmd.cmd_data[game_joy_y_index] = joy.y;
 	action_cmd.cmd_data[game_slider_index] = touch.slider;
 	action_cmd.cmd_data[game_button_index] = (touch.button > BUTTON_PRESS_THRESHOLD);	
 	
@@ -195,8 +213,8 @@ void game_tick_freeplay(void){
 	action_cmd.sid = can_GAME_CMD;
 	action_cmd.length = 5;
 	action_cmd.cmd_specifier = game_cmd_ACTION;
-	action_cmd.cmd_data[game_joy_x_index] = convert_range(joy.x);
-	action_cmd.cmd_data[game_joy_y_index] = convert_range(joy.y);
+	action_cmd.cmd_data[game_joy_x_index] = joy.x; //convert_range(joy.x);
+	action_cmd.cmd_data[game_joy_y_index] = joy.y;
 	action_cmd.cmd_data[game_slider_index] = touch.slider;
 	action_cmd.cmd_data[game_button_index] = (touch.button > BUTTON_PRESS_THRESHOLD);
 	

@@ -196,6 +196,7 @@ void menu_free_submenus(menu_t* parent)
 
 void menu_enter_current(void)
 {
+	
 	oled_fill(0x00); // needed if next submenu has fewer menus than current
 	
 	// check if current choice is valid and that current choice has any children
